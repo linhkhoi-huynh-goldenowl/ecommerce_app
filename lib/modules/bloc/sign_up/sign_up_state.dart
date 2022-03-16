@@ -1,8 +1,8 @@
 part of 'sign_up_bloc.dart';
 
 class SignUpState {
-  final String username;
-  bool get isValidUsername => username.length > 3;
+  final String name;
+  bool get isValidName => name.length > 3;
 
   final String email;
   bool get isValidEmail => email.contains('@');
@@ -13,20 +13,20 @@ class SignUpState {
   final FormSignUpStatus formStatus;
 
   SignUpState({
-    this.username = '',
+    this.name = '',
     this.email = '',
     this.password = '',
     this.formStatus = const InitialFormSignUpStatus(),
   });
 
   SignUpState copyWith({
-    String? username,
+    String? name,
     String? email,
     String? password,
     FormSignUpStatus? formStatus,
   }) {
     return SignUpState(
-      username: username ?? this.username,
+      name: name ?? this.name,
       email: email ?? this.email,
       password: password ?? this.password,
       formStatus: formStatus ?? this.formStatus,
@@ -48,8 +48,8 @@ class FormSignUpSubmitting extends FormSignUpStatus {}
 
 class SignUpSuccess extends FormSignUpStatus {}
 
-class SignUpExistsUsername extends FormSignUpStatus {
-  final String message = "Username Exists";
+class SignUpExistsEmail extends FormSignUpStatus {
+  final String message = "Email Exists";
 }
 
 class SignUpFailed extends FormSignUpStatus {

@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/modules/screens/intro_screen.dart';
 import 'package:ecommerce_app/modules/screens/login/login_screen.dart';
 import 'package:ecommerce_app/modules/screens/sign_up/sign_up_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ class AuthNavigator extends StatelessWidget {
     return BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
       return Navigator(
         pages: [
+          if (state == AuthState.intro)
+            const MaterialPage(child: IntroScreen()),
           // Show login
           if (state == AuthState.login) MaterialPage(child: LoginScreen()),
 

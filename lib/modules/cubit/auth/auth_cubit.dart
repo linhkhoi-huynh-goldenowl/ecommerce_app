@@ -3,15 +3,15 @@ import 'package:ecommerce_app/modules/models/auth_credentials.dart';
 
 import '../dashboard/dashboard_cubit.dart';
 
-enum AuthState { login, signUp, confirmSignUp }
+enum AuthState { login, signUp, intro }
 
 class AuthCubit extends Cubit<AuthState> {
   final DashboardCubit dashboardCubit;
 
-  AuthCubit({required this.dashboardCubit}) : super(AuthState.login);
+  AuthCubit({required this.dashboardCubit}) : super(AuthState.intro);
 
   late AuthCredentials credentials;
-
+  void showIntro() => emit(AuthState.intro);
   void showLogin() => emit(AuthState.login);
   void showSignUp() => emit(AuthState.signUp);
 
