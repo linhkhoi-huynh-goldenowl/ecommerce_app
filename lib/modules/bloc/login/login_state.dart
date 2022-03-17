@@ -2,7 +2,7 @@ part of 'login_bloc.dart';
 
 class LoginState {
   final String email;
-  bool get isValidEmail => email.length > 3;
+  bool get isValidEmail => email.contains('@');
 
   final String password;
   bool get isValidPassword => password.length > 6;
