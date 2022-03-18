@@ -1,18 +1,16 @@
+import 'package:ecommerce_app/modules/bloc/login/login_bloc.dart';
+import 'package:ecommerce_app/modules/repositories/auth_repository.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
+import 'package:ecommerce_app/widgets/social_button.dart';
 import 'package:ecommerce_app/widgets/text_button_intro.dart';
 import 'package:ecommerce_app/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../widgets/social_button.dart';
-import '../../bloc/sign_up/sign_up_bloc.dart';
-import '../../cubit/auth/auth_cubit.dart';
-import '../../repositories/auth_repository.dart';
-
-class SignUpScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
-  SignUpScreen({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +20,7 @@ class SignUpScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            context.read<AuthCubit>().showIntro();
+            Navigator.of(context).pop();
           },
           icon: const Icon(
             Icons.arrow_back_ios,
@@ -31,24 +29,24 @@ class SignUpScreen extends StatelessWidget {
         ),
       ),
       body: BlocProvider(
-        create: (context) => SignUpBloc(
-          authRepo: context.read<AuthRepository>(),
-          authCubit: context.read<AuthCubit>(),
+        create: (context) => LoginBloc(
+          authenticationRepository: context.read<AuthRepository>(),
+          context: context,
         ),
-        child: _signUpForm(context),
+        child: _loginForm(),
       ),
     );
   }
 
-  Widget _signUpForm(BuildContext context) {
-    return BlocConsumer<SignUpBloc, SignUpState>(
+  Widget _loginForm() {
+    return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         final formStatus = state.formStatus;
-        if (formStatus is SignUpFailed) {
-          _showSnackBar(context, formStatus.exception.toString());
-        }
-        if (formStatus is SignUpExistsEmail) {
+        if (formStatus is LoginWrongPassword) {
           _showSnackBar(context, formStatus.message);
+        }
+        if (formStatus is LoginFailed) {
+          _showSnackBar(context, formStatus.exception.toString());
         }
       },
       builder: (context, state) {
@@ -57,9 +55,12 @@ class SignUpScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             children: [
+              const SizedBox(
+                height: 10,
+              ),
               const Align(
                 child: Text(
-                  "Sign Up",
+                  "Login",
                   style: TextStyle(
                       color: Color(0xff222222),
                       fontSize: 40,
@@ -68,58 +69,43 @@ class SignUpScreen extends StatelessWidget {
                 alignment: Alignment.centerLeft,
               ),
               const SizedBox(
-                height: 60,
+                height: 80,
               ),
               TextFieldWidget(
-                labelText: 'Name',
-                validatorText: 'Name must more than 3',
-                isValid: state.isValidName,
-                func: (value) => context.read<SignUpBloc>().add(
-                      SignUpNameChanged(name: value),
-                    ),
-                isPassword: false,
-              ),
+                  labelText: 'Email',
+                  validatorText: 'Name must more than 3',
+                  isValid: state.isValidEmail,
+                  func: (value) => context.read<LoginBloc>().add(
+                        LoginEmailChanged(email: value),
+                      ),
+                  isPassword: false),
               const SizedBox(
                 height: 20,
               ),
               TextFieldWidget(
-                labelText: 'Email',
-                validatorText: 'Email must contain @',
-                isValid: state.isValidEmail,
-                func: (value) => context.read<SignUpBloc>().add(
-                      SignUpEmailChanged(email: value),
-                    ),
-                isPassword: false,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFieldWidget(
-                labelText: 'Password',
-                validatorText: 'Password must more than 6',
-                isValid: state.isValidPassword,
-                func: (value) => context.read<SignUpBloc>().add(
-                      SignUpPasswordChanged(password: value),
-                    ),
-                isPassword: true,
-              ),
+                  labelText: 'Password',
+                  validatorText: 'Password must more than 6',
+                  isValid: state.isValidPassword,
+                  func: (value) => context.read<LoginBloc>().add(
+                        LoginPasswordChanged(password: value),
+                      ),
+                  isPassword: true),
               Align(
                 alignment: Alignment.topRight,
-                child: TextButtonIntro(
-                    func: () => context.read<AuthCubit>().showLogin(),
-                    text: "Already have an account?"),
+                child:
+                    TextButtonIntro(func: () {}, text: "Forgot your password?"),
               ),
-              state.formStatus is FormSignUpSubmitting
+              state.formStatus is FormLoginSubmitting
                   ? const CircularProgressIndicator()
                   : ButtonIntro(
                       func: () {
                         if (_formKey.currentState!.validate()) {
-                          context.read<SignUpBloc>().add(SignUpSubmitted());
+                          context.read<LoginBloc>().add(LoginSubmitted());
                         }
                       },
-                      title: 'Sign Up'),
+                      title: 'Login'),
               const SizedBox(
-                height: 70,
+                height: 150,
               ),
               Column(
                 children: [

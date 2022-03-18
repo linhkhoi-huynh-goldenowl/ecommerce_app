@@ -5,10 +5,12 @@ import '../../models/auth_credentials.dart';
 
 part 'dashboard_state.dart';
 
+//TODO: sửa lại DashboardCubit => AccountBloc
+// Vì DashboardCubit nhưng không sử dụng ở màn hình dashboard
 class DashboardCubit extends Cubit<DashboardState> {
   final AuthRepository authRepo;
 
-  DashboardCubit({required this.authRepo}) : super(UnknownDashboardState()) {
+  DashboardCubit({required this.authRepo}) : super(DashboardState()) {
     attemptAutoLogin();
   }
 
@@ -16,22 +18,22 @@ class DashboardCubit extends Cubit<DashboardState> {
     try {
       final checkAuth = await authRepo.attemptAutoLogin();
       if (checkAuth) {
-        emit(Authenticated());
+        emit(state.copyWith(status: LoginStatus.authenticated));
       } else {
-        emit(Unauthenticated());
+        emit(state.copyWith(status: LoginStatus.unauthenticated));
       }
     } on Exception {
-      emit(Unauthenticated());
+      emit(state.copyWith(status: LoginStatus.unauthenticated));
     }
   }
 
-  void showAuth() => emit(Unauthenticated());
-  void showDashboard(AuthCredentials credentials) {
-    emit(Authenticated());
+  // void showAuth() => emit(Unauthenticated());
+  void navigateDashboard(AuthCredentials credentials) {
+    // emit(Authenticated());
   }
 
   void signOut() {
     authRepo.signOut();
-    emit(Unauthenticated());
+    // emit(Unauthenticated());
   }
 }
