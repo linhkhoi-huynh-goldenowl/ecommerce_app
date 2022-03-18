@@ -148,4 +148,4 @@ lib/
 ```
 
 ## Wiki
-Checkout [wiki](https://github.com/j1mmyto9/flutter-boilerplate/wiki) for more info
+Checkout [wiki](https://github.com/j1mmyto9/flutter-boilerplate/wiki) for more infomation
