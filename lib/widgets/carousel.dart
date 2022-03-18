@@ -1,0 +1,57 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+
+class CarouselWidget extends StatefulWidget {
+  const CarouselWidget({Key? key}) : super(key: key);
+
+  @override
+  _CarouselWidgetState createState() => _CarouselWidgetState();
+}
+
+class _CarouselWidgetState extends State<CarouselWidget> {
+  final imgList = <String, String>{
+    "Street clothes": 'assets/images/carousel1.jpg',
+    "Sleep clothes": 'assets/images/carousel2.jpg',
+    "Sport clothes": 'assets/images/carousel3.jpg',
+    "Inform clothes": 'assets/images/carousel4.jpg',
+  };
+
+  final CarouselController _controller = CarouselController();
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> imageSliders = imgList.entries
+        .map((entry) => InkWell(
+            onTap: () {},
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 300,
+                  child: Image.asset(entry.value, fit: BoxFit.cover),
+                ),
+                Positioned(
+                    bottom: 20,
+                    left: 15,
+                    child: Text(
+                      entry.key,
+                      style: const TextStyle(
+                          fontFamily: "Metropolis",
+                          color: Colors.white,
+                          fontSize: 34,
+                          fontWeight: FontWeight.w800),
+                    ))
+              ],
+            )))
+        .toList();
+
+    return CarouselSlider(
+      items: imageSliders,
+      carouselController: _controller,
+      options: CarouselOptions(
+        autoPlay: true,
+        aspectRatio: 2.0,
+        viewportFraction: 1,
+      ),
+    );
+  }
+}

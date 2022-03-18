@@ -1,3 +1,6 @@
+import 'package:ecommerce_app/widgets/button_intro.dart';
+import 'package:ecommerce_app/widgets/text_button_intro.dart';
+import 'package:ecommerce_app/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,17 +41,18 @@ class SignUpScreen extends StatelessWidget {
   }
 
   Widget _signUpForm(BuildContext context) {
-    return BlocListener<SignUpBloc, SignUpState>(
-        listener: (context, state) {
-          final formStatus = state.formStatus;
-          if (formStatus is SignUpFailed) {
-            _showSnackBar(context, formStatus.exception.toString());
-          }
-          if (formStatus is SignUpExistsEmail) {
-            _showSnackBar(context, formStatus.message);
-          }
-        },
-        child: Form(
+    return BlocConsumer<SignUpBloc, SignUpState>(
+      listener: (context, state) {
+        final formStatus = state.formStatus;
+        if (formStatus is SignUpFailed) {
+          _showSnackBar(context, formStatus.exception.toString());
+        }
+        if (formStatus is SignUpExistsEmail) {
+          _showSnackBar(context, formStatus.message);
+        }
+      },
+      builder: (context, state) {
+        return Form(
           key: _formKey,
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -66,20 +70,54 @@ class SignUpScreen extends StatelessWidget {
               const SizedBox(
                 height: 60,
               ),
-              _usernameField(),
+              TextFieldWidget(
+                labelText: 'Name',
+                validatorText: 'Name must more than 3',
+                isValid: state.isValidName,
+                func: (value) => context.read<SignUpBloc>().add(
+                      SignUpNameChanged(name: value),
+                    ),
+                isPassword: false,
+              ),
               const SizedBox(
                 height: 20,
               ),
-              _emailField(),
+              TextFieldWidget(
+                labelText: 'Email',
+                validatorText: 'Email must contain @',
+                isValid: state.isValidEmail,
+                func: (value) => context.read<SignUpBloc>().add(
+                      SignUpEmailChanged(email: value),
+                    ),
+                isPassword: false,
+              ),
               const SizedBox(
                 height: 20,
               ),
-              _passwordField(),
+              TextFieldWidget(
+                labelText: 'Password',
+                validatorText: 'Password must more than 6',
+                isValid: state.isValidPassword,
+                func: (value) => context.read<SignUpBloc>().add(
+                      SignUpPasswordChanged(password: value),
+                    ),
+                isPassword: true,
+              ),
               Align(
                 alignment: Alignment.topRight,
-                child: _haveAccountButton(context),
+                child: TextButtonIntro(
+                    func: () => context.read<AuthCubit>().showLogin(),
+                    text: "Already have an account?"),
               ),
-              _signUpButton(),
+              state.formStatus is FormSignUpSubmitting
+                  ? const CircularProgressIndicator()
+                  : ButtonIntro(
+                      func: () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<SignUpBloc>().add(SignUpSubmitted());
+                        }
+                      },
+                      title: 'Sign Up'),
               const SizedBox(
                 height: 70,
               ),
@@ -103,183 +141,9 @@ class SignUpScreen extends StatelessWidget {
               )
             ],
           ),
-        ));
-  }
-
-  Widget _usernameField() {
-    return BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
-      return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3), // changes position of shadow
-                ),
-              ]),
-          child: TextFormField(
-            decoration: InputDecoration(
-              suffix: state.isValidEmail
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                  : const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
-              border: InputBorder.none,
-              labelStyle: const TextStyle(color: Color(0xffbcbcbc)),
-              floatingLabelStyle: const TextStyle(color: Color(0xffbcbcbc)),
-              labelText: 'Name',
-              fillColor: const Color(0xffbcbcbc),
-              hoverColor: const Color(0xffbcbcbc),
-              focusColor: const Color(0xffbcbcbc),
-            ),
-            validator: (value) =>
-                state.isValidName ? null : 'Name is too short',
-            onChanged: (value) => context.read<SignUpBloc>().add(
-                  SignUpNameChanged(name: value),
-                ),
-          ));
-    });
-  }
-
-  Widget _emailField() {
-    return BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
-      return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3), // changes position of shadow
-                ),
-              ]),
-          child: TextFormField(
-            decoration: InputDecoration(
-              suffix: state.isValidEmail
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                  : const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
-              border: InputBorder.none,
-              labelStyle: const TextStyle(color: Color(0xffbcbcbc)),
-              floatingLabelStyle: const TextStyle(color: Color(0xffbcbcbc)),
-              labelText: 'Email',
-              fillColor: const Color(0xffbcbcbc),
-              hoverColor: const Color(0xffbcbcbc),
-              focusColor: const Color(0xffbcbcbc),
-            ),
-            validator: (value) => state.isValidEmail ? null : 'Invalid email',
-            onChanged: (value) => context.read<SignUpBloc>().add(
-                  SignUpEmailChanged(email: value),
-                ),
-          ));
-    });
-  }
-
-  Widget _passwordField() {
-    return BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
-      return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3), // changes position of shadow
-                ),
-              ]),
-          child: TextFormField(
-            obscureText: true,
-            decoration: InputDecoration(
-              suffix: state.isValidPassword
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                  : const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
-              border: InputBorder.none,
-              labelStyle: const TextStyle(color: Color(0xffbcbcbc)),
-              floatingLabelStyle: const TextStyle(color: Color(0xffbcbcbc)),
-              labelText: 'Password',
-              fillColor: const Color(0xffbcbcbc),
-              hoverColor: const Color(0xffbcbcbc),
-              focusColor: const Color(0xffbcbcbc),
-            ),
-            validator: (value) =>
-                state.isValidPassword ? null : 'Password is too short',
-            onChanged: (value) => context.read<SignUpBloc>().add(
-                  SignUpPasswordChanged(password: value),
-                ),
-          ));
-    });
-  }
-
-  Widget _haveAccountButton(BuildContext context) {
-    return TextButton(
-        onPressed: () => context.read<AuthCubit>().showLogin(),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            Text(
-              "Already have an account?",
-              style: TextStyle(color: Color(0xff7d7d7d)),
-            ),
-            Icon(
-              Icons.arrow_forward_rounded,
-              color: Color(0xffdb3325),
-            )
-          ],
-        ));
-  }
-
-  Widget _signUpButton() {
-    return BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
-      return state.formStatus is FormSignUpSubmitting
-          ? const CircularProgressIndicator()
-          : SizedBox(
-              width: double.maxFinite,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  primary: const Color(0xffdb3022),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  elevation: 15.0,
-                ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    context.read<SignUpBloc>().add(SignUpSubmitted());
-                  }
-                },
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 18, color: Color(0xfffbedec)),
-                ),
-              ),
-            );
-    });
+        );
+      },
+    );
   }
 
   void _showSnackBar(BuildContext context, String message) {
