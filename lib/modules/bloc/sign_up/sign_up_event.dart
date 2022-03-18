@@ -2,10 +2,10 @@ part of 'sign_up_bloc.dart';
 
 abstract class SignUpEvent {}
 
-class SignUpUsernameChanged extends SignUpEvent {
-  final String username;
+class SignUpNameChanged extends SignUpEvent {
+  final String name;
 
-  SignUpUsernameChanged({required this.username});
+  SignUpNameChanged({required this.name});
 }
 
 class SignUpEmailChanged extends SignUpEvent {

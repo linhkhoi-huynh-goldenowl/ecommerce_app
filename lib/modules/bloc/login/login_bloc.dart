@@ -13,7 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       required this.authCubit})
       : _authenticationRepository = authenticationRepository,
         super(LoginState()) {
-    on<LoginUsernameChanged>(_onUsernameChanged);
+    on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
   }
@@ -21,12 +21,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthRepository _authenticationRepository;
   final AuthCubit authCubit;
 
-  void _onUsernameChanged(
-    LoginUsernameChanged event,
+  void _onEmailChanged(
+    LoginEmailChanged event,
     Emitter<LoginState> emit,
   ) {
     emit(
-      state.copyWith(username: event.username, formStatus: FormLoginTyping()),
+      state.copyWith(email: event.email, formStatus: FormLoginTyping()),
     );
   }
 
@@ -46,11 +46,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(state.copyWith(formStatus: FormLoginSubmitting()));
     try {
       if (await _authenticationRepository.login(
-            username: state.username,
+            email: state.email,
             password: state.password,
           ) ==
           true) {
-        authCubit.launchDashboard(AuthCredentials(username: state.username));
+        authCubit.launchDashboard(AuthCredentials(email: state.email));
         emit(state.copyWith(formStatus: LoginSuccess()));
       } else {
         emit(state.copyWith(formStatus: LoginWrongPassword()));

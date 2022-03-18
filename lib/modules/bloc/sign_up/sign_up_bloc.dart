@@ -9,7 +9,7 @@ part 'sign_up_state.dart';
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   SignUpBloc({required this.authRepo, required this.authCubit})
       : super(SignUpState()) {
-    on<SignUpUsernameChanged>(_onSignUpUsernameChanged);
+    on<SignUpNameChanged>(_onSignUpNameChanged);
     on<SignUpEmailChanged>(_onSignUpEmailChanged);
     on<SignUpPasswordChanged>(_onSignUpPasswordChanged);
     on<SignUpSubmitted>(_onSubmitted);
@@ -18,12 +18,12 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   final AuthRepository authRepo;
   final AuthCubit authCubit;
 
-  void _onSignUpUsernameChanged(
-    SignUpUsernameChanged event,
+  void _onSignUpNameChanged(
+    SignUpNameChanged event,
     Emitter<SignUpState> emit,
   ) {
     emit(
-      state.copyWith(username: event.username, formStatus: FormSignUpTyping()),
+      state.copyWith(name: event.name, formStatus: FormSignUpTyping()),
     );
   }
 
@@ -52,15 +52,15 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(formStatus: FormSignUpSubmitting()));
     try {
       if (await authRepo.signUp(
-            username: state.username,
+            name: state.name,
             email: state.email,
             password: state.password,
           ) ==
           false) {
-        emit(state.copyWith(formStatus: SignUpExistsUsername()));
+        emit(state.copyWith(formStatus: SignUpExistsEmail()));
       } else {
         emit(state.copyWith(formStatus: SignUpSuccess()));
-        authCubit.launchDashboard(AuthCredentials(username: state.username));
+        authCubit.launchDashboard(AuthCredentials(email: state.email));
       }
     } catch (e) {
       emit(state.copyWith(formStatus: SignUpFailed(e as Exception)));

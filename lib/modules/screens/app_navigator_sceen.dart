@@ -30,7 +30,6 @@ class AppNavigator extends StatelessWidget {
               ),
             ),
 
-          // Show dashboard flow
           if (state is Authenticated)
             const MaterialPage(child: DashboardScreen())
         ],

@@ -1,8 +1,8 @@
 part of 'login_bloc.dart';
 
 class LoginState {
-  final String username;
-  bool get isValidUsername => username.length > 3;
+  final String email;
+  bool get isValidEmail => email.length > 3;
 
   final String password;
   bool get isValidPassword => password.length > 6;
@@ -10,18 +10,18 @@ class LoginState {
   final FormLoginStatus formStatus;
 
   LoginState({
-    this.username = '',
+    this.email = '',
     this.password = '',
     this.formStatus = const InitialFormLoginStatus(),
   });
 
   LoginState copyWith({
-    String? username,
+    String? email,
     String? password,
     FormLoginStatus? formStatus,
   }) {
     return LoginState(
-      username: username ?? this.username,
+      email: email ?? this.email,
       password: password ?? this.password,
       formStatus: formStatus ?? this.formStatus,
     );

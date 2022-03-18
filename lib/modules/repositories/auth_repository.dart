@@ -11,17 +11,17 @@ class AuthRepository {
   }
 
   Future<bool> login({
-    required String username,
+    required String email,
     required String password,
   }) async {
     final prefs = await SharedPreferences.getInstance();
 
-    List<String>? listUsername = prefs.getStringList('usernames');
+    List<String>? listEmail = prefs.getStringList('emails');
     List<String>? listPassword = prefs.getStringList('passwords');
-    if (listUsername != null && listPassword != null) {
-      if (listUsername.contains(username)) {
-        if (listPassword[listUsername.indexOf(username)] == password) {
-          prefs.setString("usernameInfo", username);
+    if (listEmail != null && listPassword != null) {
+      if (listEmail.contains(email)) {
+        if (listPassword[listEmail.indexOf(email)] == password) {
+          prefs.setString("emailInfo", email);
           prefs.setBool("isLogin", true);
           return true;
         }
@@ -32,42 +32,34 @@ class AuthRepository {
   }
 
   Future<bool> signUp({
-    required String username,
+    required String name,
     required String email,
     required String password,
   }) async {
     final prefs = await SharedPreferences.getInstance();
 
-    List<String>? listUsername = prefs.getStringList('usernames');
+    List<String>? listName = prefs.getStringList('names');
     List<String>? listPassword = prefs.getStringList('passwords');
     List<String>? listEmail = prefs.getStringList('emails');
-    if (listUsername != null && listPassword != null && listEmail != null) {
-      if (listUsername.contains(username)) {
+    if (listName != null && listPassword != null && listEmail != null) {
+      if (listEmail.contains(email)) {
         return false;
       } else {
-        listUsername.add(username);
+        listName.add(name);
         listPassword.add(password);
         listEmail.add(email);
-        prefs.setString("usernameInfo", username);
+        prefs.setString("emailInfo", email);
         prefs.setBool("isLogin", true);
       }
     } else {
-      listUsername = [username];
+      listName = [name];
       listPassword = [password];
       listEmail = [email];
     }
-    await prefs.setStringList('usernames', listUsername);
+    await prefs.setStringList('names', listName);
     await prefs.setStringList('passwords', listPassword);
     await prefs.setStringList('emails', listEmail);
     return true;
-  }
-
-  Future<String> confirmSignUp({
-    required String username,
-    required String confirmationCode,
-  }) async {
-    await Future.delayed(const Duration(seconds: 2));
-    return 'abc';
   }
 
   Future<void> signOut() async {
