@@ -3,12 +3,12 @@ import 'package:ecommerce_app/modules/screens/dashboard_screen.dart';
 import 'package:ecommerce_app/modules/screens/favorite_screen.dart';
 import 'package:ecommerce_app/modules/screens/profile_screen.dart';
 import 'package:ecommerce_app/modules/screens/shop_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/navigation/navigation_cubit.dart';
 
+//TODO: sửa RootScreen => DashboardScreen
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
 
@@ -19,6 +19,10 @@ class RootScreen extends StatefulWidget {
 class _RootScreenState extends State<RootScreen> {
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(create: (_) => NavigationCubit(), child: _buildBody());
+  }
+
+  Widget _buildBody() {
     return Scaffold(
       bottomNavigationBar: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {

@@ -1,13 +1,13 @@
 import 'package:bloc/bloc.dart';
-import 'package:ecommerce_app/modules/cubit/auth/auth_cubit.dart';
-import 'package:ecommerce_app/modules/models/auth_credentials.dart';
+import 'package:ecommerce_app/config/routes/router.dart';
+import 'package:flutter/material.dart';
 import '../../repositories/auth_repository.dart';
 
 part 'sign_up_event.dart';
 part 'sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  SignUpBloc({required this.authRepo, required this.authCubit})
+  SignUpBloc({required this.authRepo, required this.context})
       : super(SignUpState()) {
     on<SignUpNameChanged>(_onSignUpNameChanged);
     on<SignUpEmailChanged>(_onSignUpEmailChanged);
@@ -16,7 +16,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   }
 
   final AuthRepository authRepo;
-  final AuthCubit authCubit;
+  final BuildContext context;
 
   void _onSignUpNameChanged(
     SignUpNameChanged event,
@@ -45,10 +45,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     );
   }
 
-  void _onSubmitted(
-    SignUpSubmitted event,
-    Emitter<SignUpState> emit,
-  ) async {
+  void _onSubmitted(SignUpSubmitted event, Emitter<SignUpState> emit) async {
     emit(state.copyWith(formStatus: FormSignUpSubmitting()));
     try {
       if (await authRepo.signUp(
@@ -60,7 +57,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         emit(state.copyWith(formStatus: SignUpExistsEmail()));
       } else {
         emit(state.copyWith(formStatus: SignUpSuccess()));
-        authCubit.launchDashboard(AuthCredentials(email: state.email));
+        Navigator.of(context).pushNamed(Routes.root);
       }
     } catch (e) {
       emit(state.copyWith(formStatus: SignUpFailed(e as Exception)));

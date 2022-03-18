@@ -1,16 +1,14 @@
 import 'package:bloc/bloc.dart';
-import 'package:ecommerce_app/modules/cubit/auth/auth_cubit.dart';
+import 'package:ecommerce_app/config/routes/router.dart';
 import 'package:ecommerce_app/modules/repositories/auth_repository.dart';
-
-import '../../models/auth_credentials.dart';
+import 'package:flutter/material.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc(
-      {required AuthRepository authenticationRepository,
-      required this.authCubit})
+      {required AuthRepository authenticationRepository, required this.context})
       : _authenticationRepository = authenticationRepository,
         super(LoginState()) {
     on<LoginEmailChanged>(_onEmailChanged);
@@ -19,7 +17,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   final AuthRepository _authenticationRepository;
-  final AuthCubit authCubit;
+  final BuildContext context;
 
   void _onEmailChanged(
     LoginEmailChanged event,
@@ -50,7 +48,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             password: state.password,
           ) ==
           true) {
-        authCubit.launchDashboard(AuthCredentials(email: state.email));
+        Navigator.of(context).pushNamed(Routes.root);
         emit(state.copyWith(formStatus: LoginSuccess()));
       } else {
         emit(state.copyWith(formStatus: LoginWrongPassword()));

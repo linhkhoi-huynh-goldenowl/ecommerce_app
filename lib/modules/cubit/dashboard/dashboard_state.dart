@@ -1,9 +1,15 @@
 part of 'dashboard_cubit.dart';
 
-abstract class DashboardState {}
+enum LoginStatus {
+  unKnow,
+  authenticated,
+  unauthenticated,
+}
 
-class UnknownDashboardState extends DashboardState {}
+class DashboardState {
+  final LoginStatus status;
+  DashboardState({this.status = LoginStatus.unKnow});
 
-class Unauthenticated extends DashboardState {}
-
-class Authenticated extends DashboardState {}
+  DashboardState copyWith({LoginStatus? status}) =>
+      DashboardState(status: status ?? this.status);
+}
