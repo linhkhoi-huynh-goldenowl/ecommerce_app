@@ -1,16 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:ecommerce_app/modules/repositories/auth_repository.dart';
 
-import '../../models/auth_credentials.dart';
+part 'authentication_state.dart';
 
-part 'dashboard_state.dart';
-
-//TODO: sửa lại DashboardCubit => AccountBloc
-// Vì DashboardCubit nhưng không sử dụng ở màn hình dashboard
-class DashboardCubit extends Cubit<DashboardState> {
+class AuthenticationCubit extends Cubit<AuthenticationState> {
   final AuthRepository authRepo;
 
-  DashboardCubit({required this.authRepo}) : super(DashboardState()) {
+  AuthenticationCubit({required this.authRepo}) : super(AuthenticationState()) {
     attemptAutoLogin();
   }
 
@@ -27,13 +23,13 @@ class DashboardCubit extends Cubit<DashboardState> {
     }
   }
 
-  // void showAuth() => emit(Unauthenticated());
-  void navigateDashboard(AuthCredentials credentials) {
-    // emit(Authenticated());
-  }
+  // // void showAuth() => emit(Unauthenticated());
+  // void navigateDashboard(AuthCredentials credentials) {
+  //   // emit(Authenticated());
+  // }
 
   void signOut() {
     authRepo.signOut();
-    // emit(Unauthenticated());
+    attemptAutoLogin();
   }
 }

@@ -1,8 +1,10 @@
+import 'package:ecommerce_app/modules/bloc/product/product_bloc.dart';
+import 'package:ecommerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:ecommerce_app/modules/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'config/routes/router.dart';
-import 'modules/cubit/dashboard/dashboard_cubit.dart';
 import 'modules/repositories/auth_repository.dart';
 
 void main() {
@@ -16,15 +18,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (context) => AuthRepository(),
-      child: BlocProvider(
-        create: (context) =>
-            DashboardCubit(authRepo: context.read<AuthRepository>()),
-        child: const MaterialApp(
-          onGenerateRoute: AppRouter.generateRoute,
-          initialRoute: Routes.landing,
-        ),
-      ),
-    );
+        create: (context) => AuthRepository(),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  AuthenticationCubit(authRepo: context.read<AuthRepository>()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  ProductBloc(productRepository: ProductRepository())
+                    ..add(ProductLoadedEvent()),
+            ),
+          ],
+          child: const MaterialApp(
+            onGenerateRoute: AppRouter.generateRoute,
+            initialRoute: Routes.landing,
+          ),
+        ));
   }
 }

@@ -1,5 +1,5 @@
 import 'package:ecommerce_app/modules/screens/bag_screen.dart';
-import 'package:ecommerce_app/modules/screens/dashboard_screen.dart';
+import 'package:ecommerce_app/modules/screens/home_screen.dart';
 import 'package:ecommerce_app/modules/screens/favorite_screen.dart';
 import 'package:ecommerce_app/modules/screens/profile_screen.dart';
 import 'package:ecommerce_app/modules/screens/shop_screen.dart';
@@ -8,15 +8,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/navigation/navigation_cubit.dart';
 
-//TODO: sửa RootScreen => DashboardScreen
-class RootScreen extends StatefulWidget {
-  const RootScreen({Key? key}) : super(key: key);
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({Key? key}) : super(key: key);
 
   @override
-  _RootScreenState createState() => _RootScreenState();
+  _DashboardScreenState createState() => _DashboardScreenState();
 }
 
-class _RootScreenState extends State<RootScreen> {
+class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(create: (_) => NavigationCubit(), child: _buildBody());
@@ -132,9 +131,9 @@ class _RootScreenState extends State<RootScreen> {
       body: BlocBuilder<NavigationCubit, NavigationState>(
           builder: (context, state) {
         if (state.navbarItem == NavbarItem.home) {
-          return const DashboardScreen();
+          return const HomeScreen();
         } else if (state.navbarItem == NavbarItem.shop) {
-          return const ShopScreen();
+          return ShopScreen();
         } else if (state.navbarItem == NavbarItem.bag) {
           return const BagScreen();
         } else if (state.navbarItem == NavbarItem.favorites) {

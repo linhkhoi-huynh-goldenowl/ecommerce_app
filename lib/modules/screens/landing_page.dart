@@ -1,20 +1,22 @@
 import 'package:ecommerce_app/config/routes/router.dart';
+import 'package:ecommerce_app/modules/cubit/authentication/authentication_cubit.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../cubit/dashboard/dashboard_cubit.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<DashboardCubit, DashboardState>(
-      listenWhen: (previous, current) => previous.status != current.status,
+    return BlocConsumer<AuthenticationCubit, AuthenticationState>(
+      // listenWhen: (previous, current) => previous.status == current.status,
       listener: (BuildContext context, state) {
         if (state.status == LoginStatus.authenticated) {
-          Navigator.of(context).pushNamed(Routes.root);
+          Navigator.of(context).popAndPushNamed(Routes.dashboard);
+        }
+        if (state.status == LoginStatus.unauthenticated) {
+          Navigator.of(context).popAndPushNamed(Routes.logIn);
         }
       },
       builder: (context, state) => Scaffold(

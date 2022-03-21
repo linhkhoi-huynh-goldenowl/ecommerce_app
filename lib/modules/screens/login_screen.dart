@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/routes/router.dart';
 import 'package:ecommerce_app/modules/bloc/login/login_bloc.dart';
 import 'package:ecommerce_app/modules/repositories/auth_repository.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
@@ -20,7 +21,7 @@ class LoginScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(Routes.landing);
           },
           icon: const Icon(
             Icons.arrow_back_ios,
