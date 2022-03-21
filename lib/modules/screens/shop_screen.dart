@@ -67,6 +67,8 @@ class ShopScreen extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ButtonIntro(
               func: () {
+                BlocProvider.of<ProductBloc>(context).add(
+                    const ProductCategoryEvent(categoryName: "All products"));
                 Navigator.of(context).pushNamed(Routes.shopCategoryScreen);
               },
               title: "VIEW ALL ITEMS"),
