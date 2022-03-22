@@ -13,10 +13,10 @@ class LandingScreen extends StatelessWidget {
       // listenWhen: (previous, current) => previous.status == current.status,
       listener: (BuildContext context, state) {
         if (state.status == LoginStatus.authenticated) {
-          Navigator.of(context).popAndPushNamed(Routes.dashboard);
+          Navigator.of(context).pushNamed(Routes.dashboard);
         }
         if (state.status == LoginStatus.unauthenticated) {
-          Navigator.of(context).popAndPushNamed(Routes.logIn);
+          Navigator.of(context).pushNamed(Routes.logIn);
         }
       },
       builder: (context, state) => Scaffold(

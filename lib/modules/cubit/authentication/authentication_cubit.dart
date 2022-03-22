@@ -7,12 +7,12 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   final AuthRepository authRepo;
 
   AuthenticationCubit({required this.authRepo}) : super(AuthenticationState()) {
-    attemptAutoLogin();
+    checkAuth();
   }
 
-  void attemptAutoLogin() async {
+  void checkAuth() async {
     try {
-      final checkAuth = await authRepo.attemptAutoLogin();
+      final checkAuth = await authRepo.checkAuthentication();
       if (checkAuth) {
         emit(state.copyWith(status: LoginStatus.authenticated));
       } else {
@@ -28,8 +28,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   //   // emit(Authenticated());
   // }
 
-  void signOut() {
-    authRepo.signOut();
-    attemptAutoLogin();
+  void signOut() async {
+    await authRepo.signOut();
+    checkAuth();
   }
 }

@@ -1,9 +1,8 @@
 import 'package:ecommerce_app/config/routes/router.dart';
+import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../bloc/product/product_bloc.dart';
 
 class ShopScreen extends StatelessWidget {
   ShopScreen({Key? key}) : super(key: key);
@@ -27,8 +26,8 @@ class ShopScreen extends StatelessWidget {
     final List<Widget> categoriesWidget = titles
         .map((entry) => InkWell(
             onTap: () {
-              BlocProvider.of<ProductBloc>(context)
-                  .add(ProductCategoryEvent(categoryName: entry));
+              BlocProvider.of<ProductCubit>(context)
+                  .productCategoryEvent(entry);
               Navigator.of(context).pushNamed(Routes.shopCategoryScreen);
             },
             child: Container(
@@ -67,8 +66,8 @@ class ShopScreen extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: ButtonIntro(
               func: () {
-                BlocProvider.of<ProductBloc>(context).add(
-                    const ProductCategoryEvent(categoryName: "All products"));
+                BlocProvider.of<ProductCubit>(context)
+                    .productCategoryEvent("All products");
                 Navigator.of(context).pushNamed(Routes.shopCategoryScreen);
               },
               title: "VIEW ALL ITEMS"),

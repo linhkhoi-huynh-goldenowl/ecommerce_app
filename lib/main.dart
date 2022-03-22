@@ -1,5 +1,5 @@
-import 'package:ecommerce_app/modules/bloc/product/product_bloc.dart';
 import 'package:ecommerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:ecommerce_app/modules/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,8 +27,7 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) =>
-                  ProductBloc(productRepository: ProductRepository())
-                    ..add(ProductLoadedEvent()),
+                  ProductCubit(productRepository: ProductRepository()),
             ),
           ],
           child: const MaterialApp(

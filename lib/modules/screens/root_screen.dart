@@ -2,10 +2,12 @@ import 'package:ecommerce_app/modules/screens/bag_screen.dart';
 import 'package:ecommerce_app/modules/screens/home_screen.dart';
 import 'package:ecommerce_app/modules/screens/favorite_screen.dart';
 import 'package:ecommerce_app/modules/screens/profile_screen.dart';
+import 'package:ecommerce_app/modules/screens/shop_category_screen.dart';
 import 'package:ecommerce_app/modules/screens/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../config/routes/router.dart';
 import '../cubit/navigation/navigation_cubit.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -88,7 +90,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       size: 38,
                     ),
                     icon: ImageIcon(
-                      AssetImage("assets/images/icons/heart.png"),
+                      AssetImage("assets/images/icons/hear_outline.png"),
                       size: 38,
                     ),
                     label: 'favorites',
@@ -133,7 +135,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         if (state.navbarItem == NavbarItem.home) {
           return const HomeScreen();
         } else if (state.navbarItem == NavbarItem.shop) {
-          return ShopScreen();
+          return Navigator(
+            onGenerateRoute: (settings) {
+              Widget page = ShopScreen();
+              if (settings.name == Routes.shopCategoryScreen) {
+                page = ShopCategoryScreen();
+              }
+              return MaterialPageRoute(builder: (_) => page);
+            },
+          );
         } else if (state.navbarItem == NavbarItem.bag) {
           return const BagScreen();
         } else if (state.navbarItem == NavbarItem.favorites) {
