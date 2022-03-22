@@ -1,34 +1,24 @@
+import 'package:ecommerce_app/modules/cubit/category/category_cubit.dart';
 import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:ecommerce_app/widgets/category_button_chip.dart';
 import 'package:ecommerce_app/widgets/filter_product_bar.dart';
 import 'package:ecommerce_app/widgets/search_text_field.dart';
 import 'package:ecommerce_app/widgets/shop_product_card.dart';
+import 'package:ecommerce_app/widgets/sliver_appber_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/main_product_card.dart';
 
 class ShopCategoryScreen extends StatelessWidget {
-  ShopCategoryScreen({Key? key}) : super(key: key);
-
-  final titles = <String>[
-    "Tops",
-    "Shirts & Blouses",
-    "Cardigans & Sweaters",
-    "Knitwear",
-    "Blazers",
-    "Outerwear",
-    "Pants",
-    "Jeans",
-    "Shorts",
-    "Skirts",
-    "Dresses"
-  ];
+  const ShopCategoryScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> _categoryWidget(BuildContext context, ProductState state) {
-      return titles
+      return BlocProvider.of<CategoryCubit>(context)
+          .state
+          .categories
           .map((entry) => CategoryButtonChip(
               func: () {
                 BlocProvider.of<ProductCubit>(context)
@@ -91,7 +81,7 @@ class ShopCategoryScreen extends StatelessWidget {
                                   }))),
                   SliverPersistentHeader(
                       pinned: true,
-                      delegate: _SliverAppBarDelegate(
+                      delegate: SliverAppBarDelegate(
                           child: PreferredSize(
                               preferredSize: const Size.fromHeight(120.0),
                               child: BlocBuilder<ProductCubit, ProductState>(
@@ -186,28 +176,5 @@ class ShopCategoryScreen extends StatelessWidget {
         }
       },
     );
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  final PreferredSize child;
-
-  _SliverAppBarDelegate({required this.child});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => child.preferredSize.height;
-
-  @override
-  double get minExtent => child.preferredSize.height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
   }
 }

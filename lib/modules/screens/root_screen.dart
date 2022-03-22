@@ -137,9 +137,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         } else if (state.navbarItem == NavbarItem.shop) {
           return Navigator(
             onGenerateRoute: (settings) {
-              Widget page = ShopScreen();
+              Widget page = const ShopScreen();
               if (settings.name == Routes.shopCategoryScreen) {
-                page = ShopCategoryScreen();
+                page = const ShopCategoryScreen();
               }
               return MaterialPageRoute(builder: (_) => page);
             },

@@ -67,6 +67,8 @@ class ProductState extends Equatable {
         sort,
         searchInput,
         isSearch,
-        categoryName
+        categoryName,
+        gridStatus,
+        searchStatus
       ];
 }

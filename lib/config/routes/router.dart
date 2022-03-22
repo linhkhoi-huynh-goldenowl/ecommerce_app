@@ -41,7 +41,7 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const NewProductScreen());
       case Routes.shopCategoryScreen:
         return MaterialPageRoute(builder: (_) {
-          return ShopCategoryScreen();
+          return const ShopCategoryScreen();
         });
       default:
         return MaterialPageRoute(
