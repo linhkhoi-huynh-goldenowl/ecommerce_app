@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
-  Future<bool> attemptAutoLogin() async {
+  Future<bool> checkAuthentication() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool("isLogin") == false || prefs.getBool("isLogin") == null) {
       return false;

@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
 import 'package:ecommerce_app/widgets/text_button_intro.dart';
 import 'package:ecommerce_app/widgets/text_field_widget.dart';
@@ -57,14 +58,10 @@ class SignUpScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             children: [
-              const Align(
-                child: Text(
-                  "Sign Up",
-                  style: TextStyle(
-                      color: Color(0xff222222),
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold),
-                ),
+              Align(
+                child: Text("Sign Up",
+                    style: ETextStyle.metropolis(
+                        fontSize: 40, weight: FontWeight.bold)),
                 alignment: Alignment.centerLeft,
               ),
               const SizedBox(
@@ -124,10 +121,9 @@ class SignUpScreen extends StatelessWidget {
               ),
               Column(
                 children: [
-                  const Text(
-                    "Or login with social account",
-                    style: TextStyle(color: Color(0xff414141), fontSize: 18),
-                  ),
+                  Text("Or login with social account",
+                      style: ETextStyle.metropolis(
+                          color: const Color(0xff414141), fontSize: 18)),
                   const SizedBox(
                     height: 10,
                   ),

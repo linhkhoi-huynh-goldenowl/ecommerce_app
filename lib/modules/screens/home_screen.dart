@@ -3,9 +3,8 @@ import 'package:ecommerce_app/widgets/home_label_widget.dart';
 import 'package:ecommerce_app/widgets/main_product_card.dart';
 import 'package:flutter/material.dart';
 
-//TODO: sửa DashboardScreen => HomeScreen
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class CarouselWidget extends StatefulWidget {
@@ -34,11 +35,10 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                     left: 15,
                     child: Text(
                       entry.key,
-                      style: const TextStyle(
-                          fontFamily: "Metropolis",
+                      style: ETextStyle.metropolis(
                           color: Colors.white,
                           fontSize: 34,
-                          fontWeight: FontWeight.w800),
+                          weight: FontWeight.w800),
                     ))
               ],
             )))

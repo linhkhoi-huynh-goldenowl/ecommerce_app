@@ -57,7 +57,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         emit(state.copyWith(formStatus: SignUpExistsEmail()));
       } else {
         emit(state.copyWith(formStatus: SignUpSuccess()));
-        Navigator.of(context).pushNamed(Routes.root);
+        Navigator.of(context).pushNamed(Routes.dashboard);
       }
     } catch (e) {
       emit(state.copyWith(formStatus: SignUpFailed(e as Exception)));

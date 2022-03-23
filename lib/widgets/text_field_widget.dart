@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatelessWidget {
@@ -45,8 +46,9 @@ class TextFieldWidget extends StatelessWidget {
                     size: 14,
                   ),
             border: InputBorder.none,
-            labelStyle: const TextStyle(color: Color(0xffbcbcbc)),
-            floatingLabelStyle: const TextStyle(color: Color(0xffbcbcbc)),
+            labelStyle: ETextStyle.metropolis(color: const Color(0xffbcbcbc)),
+            floatingLabelStyle:
+                ETextStyle.metropolis(color: const Color(0xffbcbcbc)),
             labelText: labelText,
             fillColor: const Color(0xffbcbcbc),
             hoverColor: const Color(0xffbcbcbc),

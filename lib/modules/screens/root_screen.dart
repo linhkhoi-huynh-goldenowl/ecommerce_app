@@ -1,22 +1,24 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/screens/bag_screen.dart';
-import 'package:ecommerce_app/modules/screens/dashboard_screen.dart';
+import 'package:ecommerce_app/modules/screens/home_screen.dart';
 import 'package:ecommerce_app/modules/screens/favorite_screen.dart';
 import 'package:ecommerce_app/modules/screens/profile_screen.dart';
+import 'package:ecommerce_app/modules/screens/shop_category_screen.dart';
 import 'package:ecommerce_app/modules/screens/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../config/routes/router.dart';
 import '../cubit/navigation/navigation_cubit.dart';
 
-//TODO: sửa RootScreen => DashboardScreen
-class RootScreen extends StatefulWidget {
-  const RootScreen({Key? key}) : super(key: key);
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({Key? key}) : super(key: key);
 
   @override
-  _RootScreenState createState() => _RootScreenState();
+  _DashboardScreenState createState() => _DashboardScreenState();
 }
 
-class _RootScreenState extends State<RootScreen> {
+class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(create: (_) => NavigationCubit(), child: _buildBody());
@@ -47,8 +49,8 @@ class _RootScreenState extends State<RootScreen> {
                 selectedItemColor: Colors.red,
                 selectedFontSize: 14,
                 unselectedFontSize: 14,
-                selectedLabelStyle: const TextStyle(fontFamily: "Metropolis"),
-                unselectedLabelStyle: const TextStyle(fontFamily: "Metropolis"),
+                selectedLabelStyle: ETextStyle.metropolis(),
+                unselectedLabelStyle: ETextStyle.metropolis(),
                 items: const [
                   BottomNavigationBarItem(
                     activeIcon: ImageIcon(
@@ -89,7 +91,7 @@ class _RootScreenState extends State<RootScreen> {
                       size: 38,
                     ),
                     icon: ImageIcon(
-                      AssetImage("assets/images/icons/heart.png"),
+                      AssetImage("assets/images/icons/hear_outline.png"),
                       size: 38,
                     ),
                     label: 'favorites',
@@ -131,18 +133,26 @@ class _RootScreenState extends State<RootScreen> {
       ),
       body: BlocBuilder<NavigationCubit, NavigationState>(
           builder: (context, state) {
-        if (state.navbarItem == NavbarItem.home) {
-          return const DashboardScreen();
-        } else if (state.navbarItem == NavbarItem.shop) {
-          return const ShopScreen();
-        } else if (state.navbarItem == NavbarItem.bag) {
-          return const BagScreen();
-        } else if (state.navbarItem == NavbarItem.favorites) {
-          return const FavoriteScreen();
-        } else if (state.navbarItem == NavbarItem.profile) {
-          return const ProfileScreen();
+        switch (state.navbarItem) {
+          case NavbarItem.home:
+            return const HomeScreen();
+          case NavbarItem.shop:
+            return Navigator(
+              onGenerateRoute: (settings) {
+                Widget page = ShopScreen();
+                if (settings.name == Routes.shopCategoryScreen) {
+                  page = const ShopCategoryScreen();
+                }
+                return MaterialPageRoute(builder: (_) => page);
+              },
+            );
+          case NavbarItem.bag:
+            return const BagScreen();
+          case NavbarItem.favorites:
+            return const FavoriteScreen();
+          case NavbarItem.profile:
+            return const ProfileScreen();
         }
-        return Container();
       }),
     );
   }

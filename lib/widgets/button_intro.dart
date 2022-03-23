@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class ButtonIntro extends StatelessWidget {
@@ -22,11 +23,9 @@ class ButtonIntro extends StatelessWidget {
           elevation: 15.0,
         ),
         onPressed: func,
-        child: Text(
-          title,
-          style: const TextStyle(
-              fontSize: 18, color: Color(0xfffbedec), fontFamily: "Metropolis"),
-        ),
+        child: Text(title,
+            style: ETextStyle.metropolis(
+                fontSize: 18, color: const Color(0xfffbedec))),
       ),
     );
   }

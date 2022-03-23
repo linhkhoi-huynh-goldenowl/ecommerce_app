@@ -48,7 +48,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             password: state.password,
           ) ==
           true) {
-        Navigator.of(context).pushNamed(Routes.root);
+        Navigator.of(context).pushNamed(Routes.dashboard);
         emit(state.copyWith(formStatus: LoginSuccess()));
       } else {
         emit(state.copyWith(formStatus: LoginWrongPassword()));
