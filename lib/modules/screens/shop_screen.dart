@@ -1,6 +1,8 @@
 import 'package:ecommerce_app/config/routes/router.dart';
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
+import 'package:ecommerce_app/widgets/category_title_button.dart';
 import 'package:ecommerce_app/widgets/search_text_field.dart';
 import 'package:ecommerce_app/widgets/sliver_appber_delegate.dart';
 import 'package:flutter/material.dart';
@@ -30,30 +32,9 @@ class ShopScreen extends StatelessWidget {
                     backgroundColor: const Color(0xffF9F9F9),
                     expandedHeight: 100.0,
                     pinned: true,
-                    actions: [
-                      IconButton(
-                          onPressed: () {
-                            BlocProvider.of<CategoryCubit>(context)
-                                .categoryOpenSearchBar();
-                          },
-                          icon: Image.asset('assets/images/icons/find.png'))
-                    ],
-                    flexibleSpace: FlexibleSpaceBar(
-                        centerTitle: true,
-                        title: state.isSearch == false
-                            ? const Text(
-                                "Categories",
-                                style: TextStyle(
-                                    color: Color(0xff222222),
-                                    fontFamily: "Metropolis",
-                                    fontWeight: FontWeight.w600),
-                              )
-                            : SearchTextField(
-                                initValue: state.searchInput,
-                                func: (value) {
-                                  BlocProvider.of<CategoryCubit>(context)
-                                      .categorySearch(value);
-                                }))),
+                    actions: [_findButton(context)],
+                    flexibleSpace: _flexibleSpaceBar(
+                        context, state.isSearch, state.searchInput)),
                 SliverPersistentHeader(
                     pinned: true,
                     delegate: SliverAppBarDelegate(
@@ -81,14 +62,13 @@ class ShopScreen extends StatelessWidget {
                                             },
                                             title: "VIEW ALL ITEMS"),
                                       ),
-                                      const Padding(
-                                        padding: EdgeInsets.all(10),
+                                      Padding(
+                                        padding: const EdgeInsets.all(10),
                                         child: Text(
                                           "Choose category",
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: "Metropolis",
-                                              color: Color(0xff9B9B9B)),
+                                          style: ETextStyle.metropolis(
+                                              color: const Color(0xff9B9B9B),
+                                              fontSize: 14),
                                         ),
                                       ),
                                       const SizedBox(
@@ -105,25 +85,8 @@ class ShopScreen extends StatelessWidget {
                   )
                 : ListView.builder(
                     itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                          onTap: () {
-                            BlocProvider.of<ProductCubit>(context)
-                                .productCategoryEvent(state.categories[index]);
-                            Navigator.of(context)
-                                .pushNamed(Routes.shopCategoryScreen);
-                          },
-                          child: Container(
-                            width: double.maxFinite,
-                            padding: const EdgeInsets.only(
-                                left: 40, bottom: 16, top: 16, right: 0),
-                            child: Text(
-                              state.categories[index],
-                              style: const TextStyle(
-                                  color: Color(0xff222222),
-                                  fontSize: 16,
-                                  fontFamily: "Metropolis"),
-                            ),
-                          ));
+                      return CategoryTitleButton(
+                          title: state.categories[index]);
                     },
                     itemCount: state.categories.length),
           ));
@@ -132,4 +95,28 @@ class ShopScreen extends StatelessWidget {
       }
     });
   }
+}
+
+Widget _findButton(BuildContext context) {
+  return IconButton(
+      onPressed: () {
+        BlocProvider.of<CategoryCubit>(context).categoryOpenSearchBar();
+      },
+      icon: Image.asset('assets/images/icons/find.png'));
+}
+
+FlexibleSpaceBar _flexibleSpaceBar(
+    BuildContext context, bool isSearch, String searchInput) {
+  return FlexibleSpaceBar(
+      centerTitle: true,
+      title: isSearch == false
+          ? Text(
+              "Categories",
+              style: ETextStyle.metropolis(weight: FontWeight.w600),
+            )
+          : SearchTextField(
+              initValue: searchInput,
+              func: (value) {
+                BlocProvider.of<CategoryCubit>(context).categorySearch(value);
+              }));
 }

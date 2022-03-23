@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/screens/bag_screen.dart';
 import 'package:ecommerce_app/modules/screens/home_screen.dart';
 import 'package:ecommerce_app/modules/screens/favorite_screen.dart';
@@ -48,8 +49,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 selectedItemColor: Colors.red,
                 selectedFontSize: 14,
                 unselectedFontSize: 14,
-                selectedLabelStyle: const TextStyle(fontFamily: "Metropolis"),
-                unselectedLabelStyle: const TextStyle(fontFamily: "Metropolis"),
+                selectedLabelStyle: ETextStyle.metropolis(),
+                unselectedLabelStyle: ETextStyle.metropolis(),
                 items: const [
                   BottomNavigationBarItem(
                     activeIcon: ImageIcon(
@@ -132,26 +133,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: BlocBuilder<NavigationCubit, NavigationState>(
           builder: (context, state) {
-        if (state.navbarItem == NavbarItem.home) {
-          return const HomeScreen();
-        } else if (state.navbarItem == NavbarItem.shop) {
-          return Navigator(
-            onGenerateRoute: (settings) {
-              Widget page = const ShopScreen();
-              if (settings.name == Routes.shopCategoryScreen) {
-                page = const ShopCategoryScreen();
-              }
-              return MaterialPageRoute(builder: (_) => page);
-            },
-          );
-        } else if (state.navbarItem == NavbarItem.bag) {
-          return const BagScreen();
-        } else if (state.navbarItem == NavbarItem.favorites) {
-          return const FavoriteScreen();
-        } else if (state.navbarItem == NavbarItem.profile) {
-          return const ProfileScreen();
+        switch (state.navbarItem) {
+          case NavbarItem.home:
+            return const HomeScreen();
+          case NavbarItem.shop:
+            return Navigator(
+              onGenerateRoute: (settings) {
+                Widget page = const ShopScreen();
+                if (settings.name == Routes.shopCategoryScreen) {
+                  page = const ShopCategoryScreen();
+                }
+                return MaterialPageRoute(builder: (_) => page);
+              },
+            );
+          case NavbarItem.bag:
+            return const BagScreen();
+          case NavbarItem.favorites:
+            return const FavoriteScreen();
+          case NavbarItem.profile:
+            return const ProfileScreen();
         }
-        return Container();
       }),
     );
   }

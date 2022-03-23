@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class TextButtonIntro extends StatelessWidget {
@@ -14,8 +15,7 @@ class TextButtonIntro extends StatelessWidget {
           children: [
             Text(
               text,
-              style: const TextStyle(
-                  color: Color(0xff222222), fontFamily: "Metropolis"),
+              style: ETextStyle.metropolis(),
             ),
             const ImageIcon(
               AssetImage("assets/images/icons/arrow_right.png"),
