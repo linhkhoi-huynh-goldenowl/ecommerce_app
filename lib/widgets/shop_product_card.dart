@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/widgets/button_circle.dart';
 import 'package:ecommerce_app/widgets/chip_label.dart';
 import 'package:ecommerce_app/widgets/image_product_widget.dart';
@@ -58,15 +59,15 @@ class ShopProductCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(title,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                              style: ETextStyle.metropolis(
+                                  weight: FontWeight.bold)),
                           const SizedBox(
                             height: 5,
                           ),
                           Text(
                             brandName,
-                            style: const TextStyle(
-                                fontSize: 11, color: Color(0xff9B9B9B)),
+                            style: ETextStyle.metropolis(
+                                fontSize: 11, color: const Color(0xff9B9B9B)),
                           ),
                           ReviewStarWidget(
                               reviewStars: reviewStars,

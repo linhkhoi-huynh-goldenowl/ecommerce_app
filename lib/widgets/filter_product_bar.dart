@@ -1,15 +1,28 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bottom_sheet_up.dart';
+import 'sort_button_sheet.dart';
+import 'category_button_chip.dart';
 
 class FilterProductBar extends StatelessWidget {
-  const FilterProductBar(
-      {Key? key, required this.categoryWidget, required this.state})
-      : super(key: key);
-  final List<Widget> categoryWidget;
+  FilterProductBar({Key? key, required this.state}) : super(key: key);
   final ProductState state;
+
+  final titles = <String>[
+    "Tops",
+    "Shirts & Blouses",
+    "Cardigans & Sweaters",
+    "Knitwear",
+    "Blazers",
+    "Outerwear",
+    "Pants",
+    "Jeans",
+    "Shorts",
+    "Skirts",
+    "Dresses"
+  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,9 +33,18 @@ class FilterProductBar extends StatelessWidget {
         children: [
           SizedBox(
             height: 50,
-            child: ListView(
+            child: ListView.builder(
+              itemCount: titles.length,
               scrollDirection: Axis.horizontal,
-              children: categoryWidget,
+              itemBuilder: (context, i) {
+                return CategoryButtonChip(
+                    func: () {
+                      BlocProvider.of<ProductCubit>(context)
+                          .productCategoryEvent(titles[i]);
+                    },
+                    title: titles[i],
+                    categoryName: state.categoryName);
+              },
             ),
           ),
           Container(
@@ -33,15 +55,14 @@ class FilterProductBar extends StatelessWidget {
                 TextButton.icon(
                     style: TextButton.styleFrom(
                         primary: const Color(0xff222222),
-                        textStyle: const TextStyle(
-                            fontFamily: "Metropolis", fontSize: 11)),
+                        textStyle: ETextStyle.metropolis(fontSize: 11)),
                     onPressed: () {},
                     icon: const ImageIcon(
                         AssetImage("assets/images/icons/filter.png")),
                     label: const Text(
                       "Filter",
                     )),
-                BottomSheetUpWidget(state: state),
+                SortBottomSheet(state: state),
                 IconButton(
                     onPressed: () {
                       BlocProvider.of<ProductCubit>(context)

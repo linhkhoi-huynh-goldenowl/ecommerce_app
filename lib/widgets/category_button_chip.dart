@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class CategoryButtonChip extends StatelessWidget {
@@ -24,13 +25,10 @@ class CategoryButtonChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(25),
           ),
         ),
-        child: Text(
-          title,
-          style: TextStyle(
-              fontSize: 14,
-              fontFamily: "Metropolis",
-              color: categoryName == title ? Colors.black : Colors.white),
-        ),
+        child: Text(title,
+            style: ETextStyle.metropolis(
+                fontSize: 14,
+                color: categoryName == title ? Colors.black : Colors.white)),
       ),
     );
   }

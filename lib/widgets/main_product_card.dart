@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/widgets/price_text.dart';
 import 'package:ecommerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
@@ -56,17 +57,14 @@ class MainProductCard extends StatelessWidget {
                 const SizedBox(
                   height: 5,
                 ),
-                Text(
-                  brandName,
-                  style:
-                      const TextStyle(fontSize: 11, color: Color(0xff9B9B9B)),
-                ),
+                Text(brandName,
+                    style: ETextStyle.metropolis(
+                        fontSize: 11, color: Color(0xff9B9B9B))),
                 const SizedBox(
                   height: 5,
                 ),
                 Text(title,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: ETextStyle.metropolis(weight: FontWeight.bold)),
                 const SizedBox(
                   height: 5,
                 ),

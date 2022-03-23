@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/config/routes/router.dart';
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/bloc/login/login_bloc.dart';
 import 'package:ecommerce_app/modules/repositories/auth_repository.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
@@ -59,13 +60,11 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              const Align(
+              Align(
                 child: Text(
                   "Login",
-                  style: TextStyle(
-                      color: Color(0xff222222),
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold),
+                  style: ETextStyle.metropolis(
+                      fontSize: 40, weight: FontWeight.bold),
                 ),
                 alignment: Alignment.centerLeft,
               ),
@@ -110,10 +109,9 @@ class LoginScreen extends StatelessWidget {
               ),
               Column(
                 children: [
-                  const Text(
-                    "Or login with social account",
-                    style: TextStyle(color: Color(0xff414141), fontSize: 18),
-                  ),
+                  Text("Or login with social account",
+                      style: ETextStyle.metropolis(
+                          color: const Color(0xff414141), fontSize: 18)),
                   const SizedBox(
                     height: 10,
                   ),

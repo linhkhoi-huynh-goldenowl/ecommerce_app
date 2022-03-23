@@ -1,6 +1,8 @@
 import 'package:ecommerce_app/config/routes/router.dart';
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:ecommerce_app/widgets/button_intro.dart';
+import 'package:ecommerce_app/widgets/category_title_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,26 +25,6 @@ class ShopScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> categoriesWidget = titles
-        .map((entry) => InkWell(
-            onTap: () {
-              BlocProvider.of<ProductCubit>(context)
-                  .productCategoryEvent(entry);
-              Navigator.of(context).pushNamed(Routes.shopCategoryScreen);
-            },
-            child: Container(
-              width: double.maxFinite,
-              padding: const EdgeInsets.only(
-                  left: 40, bottom: 16, top: 16, right: 0),
-              child: Text(
-                entry,
-                style: const TextStyle(
-                    color: Color(0xff222222),
-                    fontSize: 16,
-                    fontFamily: "Metropolis"),
-              ),
-            )))
-        .toList();
     return Scaffold(
       appBar: AppBar(
           leading: null,
@@ -54,12 +36,9 @@ class ShopScreen extends StatelessWidget {
                 icon: Image.asset('assets/images/icons/find.png'))
           ],
           centerTitle: true,
-          title: const Text(
+          title: Text(
             "Categories",
-            style: TextStyle(
-                color: Color(0xff222222),
-                fontFamily: "Metropolis",
-                fontWeight: FontWeight.w600),
+            style: ETextStyle.metropolis(weight: FontWeight.w600),
           )),
       body: ListView(children: [
         Padding(
@@ -72,14 +51,12 @@ class ShopScreen extends StatelessWidget {
               },
               title: "VIEW ALL ITEMS"),
         ),
-        const Padding(
-          padding: EdgeInsets.all(10),
+        Padding(
+          padding: const EdgeInsets.all(10),
           child: Text(
             "Choose category",
-            style: TextStyle(
-                fontSize: 14,
-                fontFamily: "Metropolis",
-                color: Color(0xff9B9B9B)),
+            style: ETextStyle.metropolis(
+                fontSize: 14, color: const Color(0xff9B9B9B)),
           ),
         ),
         const SizedBox(
@@ -87,7 +64,8 @@ class ShopScreen extends StatelessWidget {
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: categoriesWidget,
+          children:
+              titles.map((entry) => CategoryTitleButton(title: entry)).toList(),
         )
       ]),
     );

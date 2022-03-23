@@ -1,16 +1,17 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BottomSheetUpWidget extends StatelessWidget {
-  const BottomSheetUpWidget({Key? key, required this.state}) : super(key: key);
+class SortBottomSheet extends StatelessWidget {
+  const SortBottomSheet({Key? key, required this.state}) : super(key: key);
   final ProductState state;
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
         style: TextButton.styleFrom(
             primary: const Color(0xff222222),
-            textStyle: const TextStyle(fontFamily: "Metropolis", fontSize: 11)),
+            textStyle: ETextStyle.metropolis(fontSize: 11)),
         onPressed: () {
           showModalBottomSheet<void>(
             constraints: const BoxConstraints(maxHeight: 375),
@@ -32,14 +33,9 @@ class BottomSheetUpWidget extends StatelessWidget {
                   const SizedBox(
                     height: 16,
                   ),
-                  const Text(
-                    "Sort by",
-                    style: TextStyle(
-                        color: Color(0xff222222),
-                        fontFamily: "Metropolis",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  Text("Sort by",
+                      style: ETextStyle.metropolis(
+                          fontSize: 18, weight: FontWeight.w600)),
                   const SizedBox(
                     height: 33,
                   ),
@@ -82,14 +78,10 @@ Widget sortSelection(BuildContext context, ChooseSort chooseSort,
         color: state.sort == chooseSort ? const Color(0xffDB3022) : null,
         width: double.maxFinite,
         padding: const EdgeInsets.only(left: 16, bottom: 16, top: 16, right: 0),
-        child: Text(
-          title,
-          style: TextStyle(
-              color: state.sort == chooseSort
-                  ? const Color(0xffffffff)
-                  : const Color(0xff222222),
-              fontSize: 16,
-              fontFamily: "Metropolis"),
-        ),
+        child: Text(title,
+            style: ETextStyle.metropolis(
+                color: state.sort == chooseSort
+                    ? const Color(0xffffffff)
+                    : const Color(0xff222222))),
       ));
 }

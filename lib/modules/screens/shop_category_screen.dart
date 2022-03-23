@@ -1,5 +1,5 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:ecommerce_app/widgets/category_button_chip.dart';
 import 'package:ecommerce_app/widgets/filter_product_bar.dart';
 import 'package:ecommerce_app/widgets/search_text_field.dart';
 import 'package:ecommerce_app/widgets/shop_product_card.dart';
@@ -9,36 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../widgets/main_product_card.dart';
 
 class ShopCategoryScreen extends StatelessWidget {
-  ShopCategoryScreen({Key? key}) : super(key: key);
-
-  final titles = <String>[
-    "Tops",
-    "Shirts & Blouses",
-    "Cardigans & Sweaters",
-    "Knitwear",
-    "Blazers",
-    "Outerwear",
-    "Pants",
-    "Jeans",
-    "Shorts",
-    "Skirts",
-    "Dresses"
-  ];
+  const ShopCategoryScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _categoryWidget(BuildContext context, ProductState state) {
-      return titles
-          .map((entry) => CategoryButtonChip(
-              func: () {
-                BlocProvider.of<ProductCubit>(context)
-                    .productCategoryEvent(entry);
-              },
-              title: entry,
-              categoryName: state.categoryName))
-          .toList();
-    }
-
     return BlocBuilder<ProductCubit, ProductState>(
       builder: (context, state) {
         switch (state.status) {
@@ -58,37 +32,13 @@ class ShopCategoryScreen extends StatelessWidget {
                       backgroundColor: const Color(0xffF9F9F9),
                       expandedHeight: 100.0,
                       pinned: true,
-                      leading: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_new,
-                            color: Colors.black),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      actions: [
-                        IconButton(
-                            onPressed: () {
-                              BlocProvider.of<ProductCubit>(context)
-                                  .productOpenSearchBarEvent();
-                            },
-                            icon: Image.asset('assets/images/icons/find.png'))
-                      ],
-                      flexibleSpace: FlexibleSpaceBar(
-                          centerTitle: true,
-                          title: state.isSearch == false
-                              ? Text(
-                                  state.categoryName,
-                                  style: const TextStyle(
-                                      color: Color(0xff222222),
-                                      fontFamily: "Metropolis",
-                                      fontWeight: FontWeight.w600),
-                                )
-                              : SearchTextField(
-                                  initValue: state.searchInput,
-                                  func: (value) {
-                                    BlocProvider.of<ProductCubit>(context)
-                                        .productSearchEvent(value);
-                                  }))),
+                      leading: _leadingButton(context),
+                      actions: [_findButton(context)],
+                      flexibleSpace: _flexibleSpaceBar(
+                          context,
+                          state.categoryName,
+                          state.isSearch,
+                          state.searchInput)),
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: _SliverAppBarDelegate(
@@ -96,10 +46,7 @@ class ShopCategoryScreen extends StatelessWidget {
                               preferredSize: const Size.fromHeight(120.0),
                               child: BlocBuilder<ProductCubit, ProductState>(
                                   builder: (context, state) {
-                                return FilterProductBar(
-                                    categoryWidget:
-                                        _categoryWidget(context, state),
-                                    state: state);
+                                return FilterProductBar(state: state);
                               })))),
                 ];
               },
@@ -113,72 +60,8 @@ class ShopCategoryScreen extends StatelessWidget {
                           child: Text("No products"),
                         )
                       : state.isGridLayout
-                          ? GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 300,
-                                childAspectRatio: 0.6,
-                              ),
-                              itemBuilder: (BuildContext context, int index) {
-                                return MainProductCard(
-                                    title: state.productList[index].title,
-                                    brandName:
-                                        state.productList[index].brandName,
-                                    image: state.productList[index].image,
-                                    price: state.productList[index].price,
-                                    isNew:
-                                        state.productList[index].createdDate ==
-                                            DateTime.now(),
-                                    priceSale:
-                                        state.productList[index].priceSale,
-                                    salePercent: state
-                                                .productList[index].priceSale !=
-                                            null
-                                        ? (1 -
-                                                (state.productList[index]
-                                                            .priceSale! /
-                                                        state.productList[index]
-                                                            .price)
-                                                    .roundToDouble()) *
-                                            100
-                                        : null,
-                                    numberReviews:
-                                        state.productList[index].numberReviews,
-                                    reviewStars:
-                                        state.productList[index].reviewStars);
-                              },
-                              itemCount: state.productList.length,
-                            )
-                          : ListView.builder(
-                              itemBuilder: (BuildContext context, int index) {
-                                return ShopProductCard(
-                                    title: state.productList[index].title,
-                                    brandName:
-                                        state.productList[index].brandName,
-                                    image: state.productList[index].image,
-                                    price: state.productList[index].price,
-                                    isNew:
-                                        state.productList[index].createdDate ==
-                                            DateTime.now(),
-                                    priceSale:
-                                        state.productList[index].priceSale,
-                                    salePercent: state
-                                                .productList[index].priceSale !=
-                                            null
-                                        ? (1 -
-                                                (state.productList[index]
-                                                            .priceSale! /
-                                                        state.productList[index]
-                                                            .price)
-                                                    .roundToDouble()) *
-                                            100
-                                        : null,
-                                    numberReviews:
-                                        state.productList[index].numberReviews,
-                                    reviewStars:
-                                        state.productList[index].reviewStars);
-                              },
-                              itemCount: state.productList.length),
+                          ? _displayGridview(state.productList)
+                          : _displayListView(state.productList),
             ));
 
           default:
@@ -187,6 +70,91 @@ class ShopCategoryScreen extends StatelessWidget {
       },
     );
   }
+}
+
+GridView _displayGridview(List productItems) {
+  return GridView.builder(
+    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+      maxCrossAxisExtent: 300,
+      childAspectRatio: 0.6,
+    ),
+    itemBuilder: (BuildContext context, int index) {
+      return MainProductCard(
+          title: productItems[index].title,
+          brandName: productItems[index].brandName,
+          image: productItems[index].image,
+          price: productItems[index].price,
+          isNew: productItems[index].createdDate == DateTime.now(),
+          priceSale: productItems[index].priceSale,
+          salePercent: productItems[index].priceSale != null
+              ? (1 -
+                      (productItems[index].priceSale! /
+                              productItems[index].price)
+                          .roundToDouble()) *
+                  100
+              : null,
+          numberReviews: productItems[index].numberReviews,
+          reviewStars: productItems[index].reviewStars);
+    },
+    itemCount: productItems.length,
+  );
+}
+
+ListView _displayListView(List productItems) {
+  return ListView.builder(
+      itemBuilder: (BuildContext context, int index) {
+        return ShopProductCard(
+            title: productItems[index].title,
+            brandName: productItems[index].brandName,
+            image: productItems[index].image,
+            price: productItems[index].price,
+            isNew: productItems[index].createdDate == DateTime.now(),
+            priceSale: productItems[index].priceSale,
+            salePercent: productItems[index].priceSale != null
+                ? (1 -
+                        (productItems[index].priceSale! /
+                                productItems[index].price)
+                            .roundToDouble()) *
+                    100
+                : null,
+            numberReviews: productItems[index].numberReviews,
+            reviewStars: productItems[index].reviewStars);
+      },
+      itemCount: productItems.length);
+}
+
+Widget _leadingButton(BuildContext context) {
+  return IconButton(
+    icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+    onPressed: () {
+      Navigator.pop(context);
+    },
+  );
+}
+
+Widget _findButton(BuildContext context) {
+  return IconButton(
+      onPressed: () {
+        BlocProvider.of<ProductCubit>(context).productOpenSearchBarEvent();
+      },
+      icon: Image.asset('assets/images/icons/find.png'));
+}
+
+FlexibleSpaceBar _flexibleSpaceBar(BuildContext context, String categoryName,
+    bool isSearch, String searchInput) {
+  return FlexibleSpaceBar(
+      centerTitle: true,
+      title: isSearch == false
+          ? Text(
+              categoryName,
+              style: ETextStyle.metropolis(weight: FontWeight.w600),
+            )
+          : SearchTextField(
+              initValue: searchInput,
+              func: (value) {
+                BlocProvider.of<ProductCubit>(context)
+                    .productSearchEvent(value);
+              }));
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {

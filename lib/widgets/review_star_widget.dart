@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class ReviewStarWidget extends StatelessWidget {
@@ -68,10 +69,9 @@ class ReviewStarWidget extends StatelessWidget {
         const SizedBox(
           height: 30,
         ),
-        Text(
-          "($numberReviews)",
-          style: const TextStyle(color: Color(0xff9B9B9B), fontSize: 13),
-        )
+        Text("($numberReviews)",
+            style: ETextStyle.metropolis(
+                color: const Color(0xff9B9B9B), fontSize: 13))
       ],
     );
   }

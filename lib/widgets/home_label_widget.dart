@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class HomeLabelWidget extends StatelessWidget {
@@ -17,36 +18,21 @@ class HomeLabelWidget extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                  color: Color(0xff222222),
-                  fontFamily: "Metropolis",
-                  fontWeight: FontWeight.w800,
-                  fontSize: 34),
-            ),
+            Text(title,
+                style: ETextStyle.metropolis(
+                    fontSize: 34, weight: FontWeight.w800)),
             const SizedBox(
               height: 4,
             ),
-            Text(
-              subTitle,
-              style: const TextStyle(
-                  color: Color(0xff9B9B9B),
-                  fontFamily: "Metropolis",
-                  fontSize: 11),
-            )
+            Text(subTitle,
+                style: ETextStyle.metropolis(
+                    color: const Color(0xff9B9B9B), fontSize: 11))
           ],
         ),
         const Spacer(),
         TextButton(
             onPressed: func,
-            child: const Text(
-              "View all",
-              style: TextStyle(
-                  color: Color(0xff222222),
-                  fontFamily: "Metropolis",
-                  fontSize: 11),
-            ))
+            child: Text("View all", style: ETextStyle.metropolis(fontSize: 11)))
       ],
     );
   }
