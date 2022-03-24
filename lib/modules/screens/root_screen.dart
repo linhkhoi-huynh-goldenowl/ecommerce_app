@@ -3,12 +3,10 @@ import 'package:ecommerce_app/modules/screens/bag_screen.dart';
 import 'package:ecommerce_app/modules/screens/home_screen.dart';
 import 'package:ecommerce_app/modules/screens/favorite_screen.dart';
 import 'package:ecommerce_app/modules/screens/profile_screen.dart';
-import 'package:ecommerce_app/modules/screens/shop_category_screen.dart';
 import 'package:ecommerce_app/modules/screens/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../config/routes/router.dart';
 import '../cubit/navigation/navigation_cubit.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -132,28 +130,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
       ),
       body: BlocBuilder<NavigationCubit, NavigationState>(
+          buildWhen: (previous, current) => previous.index != current.index,
           builder: (context, state) {
-        switch (state.navbarItem) {
-          case NavbarItem.home:
-            return const HomeScreen();
-          case NavbarItem.shop:
-            return Navigator(
-              onGenerateRoute: (settings) {
-                Widget page = const ShopScreen();
-                if (settings.name == Routes.shopCategoryScreen) {
-                  page = const ShopCategoryScreen();
-                }
-                return MaterialPageRoute(builder: (_) => page);
-              },
-            );
-          case NavbarItem.bag:
-            return const BagScreen();
-          case NavbarItem.favorites:
-            return const FavoriteScreen();
-          case NavbarItem.profile:
-            return const ProfileScreen();
-        }
-      }),
+            switch (state.navbarItem) {
+              case NavbarItem.home:
+                return const HomeScreen();
+              case NavbarItem.shop:
+                return const ShopScreen();
+              case NavbarItem.bag:
+                return const BagScreen();
+              case NavbarItem.favorites:
+                return const FavoriteScreen();
+              case NavbarItem.profile:
+                return const ProfileScreen();
+            }
+          }),
     );
   }
 }

@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/main_product_card.dart';
+import '../cubit/category/category_cubit.dart';
+import '../repositories/category_repository.dart';
 
 class ShopCategoryScreen extends StatelessWidget {
   const ShopCategoryScreen({Key? key}) : super(key: key);
@@ -37,18 +39,24 @@ class ShopCategoryScreen extends StatelessWidget {
                       actions: [_findButton(context)],
                       flexibleSpace: _flexibleSpaceBar(
                           context,
-                          state.categoryName,
+                          state.type == TypeList.newest
+                              ? "New - " + state.categoryName
+                              : state.type == TypeList.sale
+                                  ? "Sale - " + state.categoryName
+                                  : "" + state.categoryName,
                           state.isSearch,
                           state.searchInput)),
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverAppBarDelegate(
                           child: PreferredSize(
-                              preferredSize: const Size.fromHeight(120.0),
-                              child: BlocBuilder<ProductCubit, ProductState>(
-                                  builder: (context, state) {
-                                return FilterProductBar(state: state);
-                              })))),
+                        preferredSize: const Size.fromHeight(120.0),
+                        child: BlocProvider<CategoryCubit>(
+                          create: (BuildContext context) => CategoryCubit(
+                              categoryRepository: CategoryRepository()),
+                          child: FilterProductBar(stateProduct: state),
+                        ),
+                      ))),
                 ];
               },
               body: state.searchStatus == SearchProductStatus.loadingSearch ||
@@ -81,21 +89,8 @@ GridView _displayGridview(List productItems) {
     ),
     itemBuilder: (BuildContext context, int index) {
       return MainProductCard(
-          title: productItems[index].title,
-          brandName: productItems[index].brandName,
-          image: productItems[index].image,
-          price: productItems[index].price,
-          isNew: productItems[index].createdDate == DateTime.now(),
-          priceSale: productItems[index].priceSale,
-          salePercent: productItems[index].priceSale != null
-              ? (1 -
-                      (productItems[index].priceSale! /
-                              productItems[index].price)
-                          .roundToDouble()) *
-                  100
-              : null,
-          numberReviews: productItems[index].numberReviews,
-          reviewStars: productItems[index].reviewStars);
+        product: productItems[index],
+      );
     },
     itemCount: productItems.length,
   );
@@ -105,21 +100,8 @@ ListView _displayListView(List productItems) {
   return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
         return ShopProductCard(
-            title: productItems[index].title,
-            brandName: productItems[index].brandName,
-            image: productItems[index].image,
-            price: productItems[index].price,
-            isNew: productItems[index].createdDate == DateTime.now(),
-            priceSale: productItems[index].priceSale,
-            salePercent: productItems[index].priceSale != null
-                ? (1 -
-                        (productItems[index].priceSale! /
-                                productItems[index].price)
-                            .roundToDouble()) *
-                    100
-                : null,
-            numberReviews: productItems[index].numberReviews,
-            reviewStars: productItems[index].reviewStars);
+          productItem: productItems[index],
+        );
       },
       itemCount: productItems.length);
 }
@@ -128,6 +110,7 @@ Widget _leadingButton(BuildContext context) {
   return IconButton(
     icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
     onPressed: () {
+      context.read<ProductCubit>().productLoaded();
       Navigator.pop(context);
     },
   );

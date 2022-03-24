@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/config/styles/text_style.dart';
+import 'package:ecommerce_app/modules/cubit/category/category_cubit.dart';
 import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,22 +8,10 @@ import 'sort_button_sheet.dart';
 import 'category_button_chip.dart';
 
 class FilterProductBar extends StatelessWidget {
-  FilterProductBar({Key? key, required this.state}) : super(key: key);
-  final ProductState state;
+  const FilterProductBar({Key? key, required this.stateProduct})
+      : super(key: key);
+  final ProductState stateProduct;
 
-  final titles = <String>[
-    "Tops",
-    "Shirts & Blouses",
-    "Cardigans & Sweaters",
-    "Knitwear",
-    "Blazers",
-    "Outerwear",
-    "Pants",
-    "Jeans",
-    "Shorts",
-    "Skirts",
-    "Dresses"
-  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,21 +21,24 @@ class FilterProductBar extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height: 50,
-            child: ListView.builder(
-              itemCount: titles.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, i) {
-                return CategoryButtonChip(
-                    func: () {
-                      BlocProvider.of<ProductCubit>(context)
-                          .productCategoryEvent(titles[i]);
-                    },
-                    title: titles[i],
-                    categoryName: state.categoryName);
-              },
-            ),
-          ),
+              height: 50,
+              child: BlocBuilder<CategoryCubit, CategoryState>(
+                  builder: (context, state) {
+                return ListView.builder(
+                  itemCount:
+                      context.read<CategoryCubit>().state.categories.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, i) {
+                    return CategoryButtonChip(
+                      func: () {
+                        BlocProvider.of<ProductCubit>(context)
+                            .productCategoryEvent(state.categories[i]);
+                      },
+                      title: state.categories[i],
+                    );
+                  },
+                );
+              })),
           Container(
             color: const Color(0xffF9F9F9),
             child: Row(
@@ -62,13 +54,13 @@ class FilterProductBar extends StatelessWidget {
                     label: const Text(
                       "Filter",
                     )),
-                SortBottomSheet(state: state),
+                SortBottomSheet(state: stateProduct),
                 IconButton(
                     onPressed: () {
                       BlocProvider.of<ProductCubit>(context)
                           .productLoadGridLayout();
                     },
-                    icon: ImageIcon(AssetImage(state.isGridLayout
+                    icon: ImageIcon(AssetImage(stateProduct.isGridLayout
                         ? "assets/images/icons/grid.png"
                         : "assets/images/icons/list.png")))
               ],

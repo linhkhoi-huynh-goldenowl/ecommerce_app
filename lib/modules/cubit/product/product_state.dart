@@ -6,6 +6,8 @@ enum ProductStatus {
   failure,
   loading,
 }
+
+enum TypeList { all, newest, sale }
 enum GridProductStatus { initialGrid, loadingGrid, successGrid, failureGrid }
 enum SearchProductStatus {
   initialSearch,
@@ -26,7 +28,8 @@ class ProductState extends Equatable {
       this.sort = ChooseSort.newest,
       this.isGridLayout = false,
       this.productList = const <ProductItem>[],
-      this.status = ProductStatus.initial});
+      this.status = ProductStatus.initial,
+      this.type = TypeList.all});
   final List<ProductItem> productList;
   final ProductStatus status;
   final GridProductStatus gridStatus;
@@ -36,6 +39,7 @@ class ProductState extends Equatable {
   final String searchInput;
   final bool isSearch;
   final String categoryName;
+  final TypeList type;
 
   ProductState copyWith(
       {ProductStatus? status,
@@ -46,7 +50,8 @@ class ProductState extends Equatable {
       String? searchInput,
       String? categoryName,
       GridProductStatus? gridStatus,
-      SearchProductStatus? searchStatus}) {
+      SearchProductStatus? searchStatus,
+      TypeList? type}) {
     return ProductState(
         status: status ?? this.status,
         productList: productList ?? this.productList,
@@ -56,7 +61,8 @@ class ProductState extends Equatable {
         isSearch: isSearch ?? this.isSearch,
         categoryName: categoryName ?? this.categoryName,
         gridStatus: gridStatus ?? this.gridStatus,
-        searchStatus: searchStatus ?? this.searchStatus);
+        searchStatus: searchStatus ?? this.searchStatus,
+        type: type ?? this.type);
   }
 
   @override
@@ -69,6 +75,7 @@ class ProductState extends Equatable {
         isSearch,
         categoryName,
         gridStatus,
-        searchStatus
+        searchStatus,
+        type
       ];
 }

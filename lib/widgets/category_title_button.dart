@@ -1,20 +1,15 @@
 import 'package:ecommerce_app/config/styles/text_style.dart';
-import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../config/routes/router.dart';
 
 class CategoryTitleButton extends StatelessWidget {
-  const CategoryTitleButton({Key? key, required this.title}) : super(key: key);
+  const CategoryTitleButton({Key? key, required this.title, required this.func})
+      : super(key: key);
   final String title;
+  final VoidCallback func;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-          BlocProvider.of<ProductCubit>(context).productCategoryEvent(title);
-          Navigator.of(context).pushNamed(Routes.shopCategoryScreen);
-        },
+        onTap: func,
         child: Container(
           width: double.maxFinite,
           padding:
