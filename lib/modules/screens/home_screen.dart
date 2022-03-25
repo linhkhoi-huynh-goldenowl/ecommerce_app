@@ -1,6 +1,5 @@
 import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_app/modules/screens/shop_category_screen.dart';
 import 'package:e_commerce_app/utils/helpers/product_helpers.dart';
 import 'package:e_commerce_app/widgets/carousel.dart';
 import 'package:e_commerce_app/widgets/home_label_widget.dart';
@@ -9,23 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../repositories/product_repository.dart';
+import 'base_screens/product_coordinator_base.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ProductCoordinatorBase {
   const HomeScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProductCubit>(
         create: (BuildContext context) =>
             ProductCubit(productRepository: ProductRepository()),
-        child: Navigator(
-          onGenerateRoute: (settings) {
-            Widget page = _buildBody();
-            if (settings.name == Routes.shopCategoryScreen) {
-              page = const ShopCategoryScreen();
-            }
-            return MaterialPageRoute(builder: (_) => page);
-          },
-        ));
+        child: stackView(context));
+  }
+
+  @override
+  Widget buildInitialBody() {
+    return _buildBody();
   }
 }
 
