@@ -19,7 +19,11 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => NavigationCubit(), child: _buildBody());
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+        create: (context) => NavigationCubit(),
+      ),
+    ], child: _buildBody());
   }
 
   Widget _buildBody() {
@@ -41,6 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 topLeft: Radius.circular(13),
               ),
               child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
                 currentIndex: state.index,
                 showUnselectedLabels: true,
                 unselectedItemColor: const Color(0xffadadad),

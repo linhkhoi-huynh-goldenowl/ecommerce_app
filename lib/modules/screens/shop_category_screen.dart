@@ -47,9 +47,9 @@ class ShopCategoryScreen extends StatelessWidget {
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverAppBarDelegate(
-                        child: PreferredSize(
-                          preferredSize: const Size.fromHeight(120.0),
-                          child: FilterProductBar(stateProduct: state),
+                        child: const PreferredSize(
+                          preferredSize: Size.fromHeight(120.0),
+                          child: FilterProductBar(),
                         ),
                       ))
                 ];

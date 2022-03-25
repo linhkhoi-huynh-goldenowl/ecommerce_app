@@ -1,6 +1,6 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
-import 'package:e_commerce_app/widgets/button_circle.dart';
+import 'package:e_commerce_app/widgets/button_add_favorite.dart';
 import 'package:e_commerce_app/widgets/chip_label.dart';
 import 'package:e_commerce_app/widgets/image_product_widget.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
@@ -92,13 +92,7 @@ class ShopProductCard extends StatelessWidget {
           Positioned(
               bottom: 5,
               right: -23,
-              child: ButtonCircle(
-                  func: () {},
-                  iconPath: "assets/images/icons/heart.png",
-                  iconSize: 16,
-                  iconColor: const Color(0xffDADADA),
-                  fillColor: Colors.white,
-                  padding: 12))
+              child: ButtonAddFavorite(product: productItem))
         ],
       ),
     );

@@ -1,14 +1,14 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/category/category_cubit.dart';
-import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
+import 'package:e_commerce_app/widgets/sort_bottom_favorite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'sort_button_sheet.dart';
 import 'category_button_chip.dart';
 
-class FilterProductBar extends StatelessWidget {
-  const FilterProductBar({Key? key}) : super(key: key);
+class FilterFavoriteBar extends StatelessWidget {
+  const FilterFavoriteBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +28,15 @@ class FilterProductBar extends StatelessWidget {
                       itemCount: state.categories.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, i) {
-                        return BlocBuilder<ProductCubit, ProductState>(
+                        return BlocBuilder<FavoriteCubit, FavoriteState>(
                             buildWhen: (previous, current) =>
                                 previous.categoryName != current.categoryName,
-                            builder: (context, stateProduct) {
+                            builder: (context, stateFavorite) {
                               return CategoryButtonChip(
-                                chooseCategory: stateProduct.categoryName,
+                                chooseCategory: stateFavorite.categoryName,
                                 func: () {
-                                  BlocProvider.of<ProductCubit>(context)
-                                      .productCategoryEvent(
+                                  BlocProvider.of<FavoriteCubit>(context)
+                                      .favoriteCategoryEvent(
                                           state.categories[i]);
                                 },
                                 title: state.categories[i],
@@ -60,20 +60,18 @@ class FilterProductBar extends StatelessWidget {
                       label: const Text(
                         "Filter",
                       )),
-                  BlocBuilder<ProductCubit, ProductState>(
-                      buildWhen: (previous, current) =>
-                          previous.sort != current.sort,
+                  BlocBuilder<FavoriteCubit, FavoriteState>(
                       builder: (context, state) {
-                        return SortBottomSheet(state: state);
-                      }),
-                  BlocBuilder<ProductCubit, ProductState>(
+                    return SortBottomFavorite(state: state);
+                  }),
+                  BlocBuilder<FavoriteCubit, FavoriteState>(
                       buildWhen: (previous, current) =>
                           previous.isGridLayout != current.isGridLayout,
                       builder: (context, state) {
                         return IconButton(
                             onPressed: () {
-                              BlocProvider.of<ProductCubit>(context)
-                                  .productLoadGridLayout();
+                              BlocProvider.of<FavoriteCubit>(context)
+                                  .favoriteLoadGridLayout();
                             },
                             icon: ImageIcon(AssetImage(state.isGridLayout
                                 ? "assets/images/icons/grid.png"

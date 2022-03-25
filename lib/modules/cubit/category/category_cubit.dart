@@ -26,6 +26,7 @@ class CategoryCubit extends Cubit<CategoryState> {
 
   void categorySearch(String searchInput) async {
     try {
+      emit(state.copyWith(status: CategoryStatus.loading));
       final categories =
           await categoryRepository.getCategoriesByName(searchInput);
       emit(state.copyWith(
@@ -39,7 +40,9 @@ class CategoryCubit extends Cubit<CategoryState> {
 
   void categoryOpenSearchBar() async {
     try {
-      emit(state.copyWith(isSearch: !state.isSearch));
+      emit(state.copyWith(status: CategoryStatus.loading));
+      emit(state.copyWith(
+          isSearch: !state.isSearch, status: CategoryStatus.success));
     } catch (_) {
       emit(state.copyWith(status: CategoryStatus.failure));
     }

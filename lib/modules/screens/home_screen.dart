@@ -7,6 +7,8 @@ import 'package:e_commerce_app/widgets/main_product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../cubit/category/category_cubit.dart';
+import '../repositories/category_repository.dart';
 import '../repositories/product_repository.dart';
 import 'base_screens/product_coordinator_base.dart';
 
@@ -14,10 +16,16 @@ class HomeScreen extends ProductCoordinatorBase {
   const HomeScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProductCubit>(
+    return MultiBlocProvider(providers: [
+      BlocProvider<CategoryCubit>(
+        create: (BuildContext context) =>
+            CategoryCubit(categoryRepository: CategoryRepository()),
+      ),
+      BlocProvider<ProductCubit>(
         create: (BuildContext context) =>
             ProductCubit(productRepository: ProductRepository()),
-        child: stackView(context));
+      ),
+    ], child: stackView(context));
   }
 
   @override

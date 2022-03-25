@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'config/routes/router.dart';
+import 'modules/cubit/favorite/favorite_cubit.dart';
 import 'modules/repositories/auth_repository.dart';
+import 'modules/repositories/favorite_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +24,10 @@ class MyApp extends StatelessWidget {
             BlocProvider(
               create: (context) =>
                   AuthenticationCubit(authRepo: context.read<AuthRepository>()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  FavoriteCubit(favoriteRepository: FavoriteRepository()),
             ),
           ],
           child: const MaterialApp(
