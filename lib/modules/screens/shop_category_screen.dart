@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/main_product_card.dart';
-import '../cubit/category/category_cubit.dart';
-import '../repositories/category_repository.dart';
 
 class ShopCategoryScreen extends StatelessWidget {
   const ShopCategoryScreen({Key? key}) : super(key: key);
@@ -49,14 +47,11 @@ class ShopCategoryScreen extends StatelessWidget {
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverAppBarDelegate(
-                          child: PreferredSize(
-                        preferredSize: const Size.fromHeight(120.0),
-                        child: BlocProvider<CategoryCubit>(
-                          create: (BuildContext context) => CategoryCubit(
-                              categoryRepository: CategoryRepository()),
+                        child: PreferredSize(
+                          preferredSize: const Size.fromHeight(120.0),
                           child: FilterProductBar(stateProduct: state),
                         ),
-                      ))),
+                      ))
                 ];
               },
               body: state.searchStatus == SearchProductStatus.loadingSearch ||

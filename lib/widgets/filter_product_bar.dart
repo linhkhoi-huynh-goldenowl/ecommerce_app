@@ -40,32 +40,34 @@ class FilterProductBar extends StatelessWidget {
                 );
               })),
           Container(
-            color: const Color(0xffF9F9F9),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton.icon(
-                    style: TextButton.styleFrom(
-                        primary: const Color(0xff222222),
-                        textStyle: ETextStyle.metropolis(fontSize: 11)),
-                    onPressed: () {},
-                    icon: const ImageIcon(
-                        AssetImage("assets/images/icons/filter.png")),
-                    label: const Text(
-                      "Filter",
-                    )),
-                SortBottomSheet(state: stateProduct),
-                IconButton(
-                    onPressed: () {
-                      BlocProvider.of<ProductCubit>(context)
-                          .productLoadGridLayout();
-                    },
-                    icon: ImageIcon(AssetImage(stateProduct.isGridLayout
-                        ? "assets/images/icons/grid.png"
-                        : "assets/images/icons/list.png")))
-              ],
-            ),
-          )
+              color: const Color(0xffF9F9F9),
+              child: BlocBuilder<ProductCubit, ProductState>(
+                  builder: (context, state) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton.icon(
+                        style: TextButton.styleFrom(
+                            primary: const Color(0xff222222),
+                            textStyle: ETextStyle.metropolis(fontSize: 11)),
+                        onPressed: () {},
+                        icon: const ImageIcon(
+                            AssetImage("assets/images/icons/filter.png")),
+                        label: const Text(
+                          "Filter",
+                        )),
+                    SortBottomSheet(state: state),
+                    IconButton(
+                        onPressed: () {
+                          BlocProvider.of<ProductCubit>(context)
+                              .productLoadGridLayout();
+                        },
+                        icon: ImageIcon(AssetImage(state.isGridLayout
+                            ? "assets/images/icons/grid.png"
+                            : "assets/images/icons/list.png")))
+                  ],
+                );
+              }))
         ],
       ),
     );

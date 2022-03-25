@@ -26,5 +26,5 @@ class CategoryState extends Equatable {
   }
 
   @override
-  List<Object> get props => [categories, status, isSearch];
+  List<Object> get props => [categories, status, isSearch, searchInput];
 }
