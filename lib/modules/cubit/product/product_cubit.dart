@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:ecommerce_app/modules/repositories/product_repository.dart';
+import 'package:e_commerce_app/modules/repositories/product_repository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/product_item.dart';

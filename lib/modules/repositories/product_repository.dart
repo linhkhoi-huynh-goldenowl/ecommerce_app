@@ -1,5 +1,5 @@
-import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:ecommerce_app/modules/models/product_item.dart';
+import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
 
 class ProductRepository {
   List<ProductItem> products = <ProductItem>[
@@ -15,7 +15,7 @@ class ProductRepository {
       "Tops",
     ),
     ProductItem(
-      "Addidas",
+      "Adidas",
       "assets/images/sale_product2.png",
       11,
       4,

@@ -1,9 +1,9 @@
-import 'package:ecommerce_app/config/styles/text_style.dart';
-import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:ecommerce_app/widgets/filter_product_bar.dart';
-import 'package:ecommerce_app/widgets/search_text_field.dart';
-import 'package:ecommerce_app/widgets/shop_product_card.dart';
-import 'package:ecommerce_app/widgets/sliver_appber_delegate.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/widgets/filter_product_bar.dart';
+import 'package:e_commerce_app/widgets/search_text_field.dart';
+import 'package:e_commerce_app/widgets/shop_product_card.dart';
+import 'package:e_commerce_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -69,7 +69,7 @@ class ShopCategoryScreen extends StatelessWidget {
                           child: Text("No products"),
                         )
                       : state.isGridLayout
-                          ? _displayGridview(state.productList)
+                          ? _displayGridView(state.productList)
                           : _displayListView(state.productList),
             ));
 
@@ -81,7 +81,7 @@ class ShopCategoryScreen extends StatelessWidget {
   }
 }
 
-GridView _displayGridview(List productItems) {
+GridView _displayGridView(List productItems) {
   return GridView.builder(
     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
       maxCrossAxisExtent: 300,

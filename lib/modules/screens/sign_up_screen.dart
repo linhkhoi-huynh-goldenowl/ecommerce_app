@@ -1,7 +1,7 @@
-import 'package:ecommerce_app/config/styles/text_style.dart';
-import 'package:ecommerce_app/widgets/button_intro.dart';
-import 'package:ecommerce_app/widgets/text_button_intro.dart';
-import 'package:ecommerce_app/widgets/text_field_widget.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/widgets/button_intro.dart';
+import 'package:e_commerce_app/widgets/text_button_intro.dart';
+import 'package:e_commerce_app/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,5 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ecommerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class CarouselWidget extends StatefulWidget {

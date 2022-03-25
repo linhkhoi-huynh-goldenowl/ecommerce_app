@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:ecommerce_app/modules/repositories/auth_repository.dart';
+import 'package:e_commerce_app/modules/repositories/auth_repository.dart';
 
 part 'authentication_state.dart';
 

@@ -1,7 +1,7 @@
-import 'package:ecommerce_app/config/styles/text_style.dart';
-import 'package:ecommerce_app/modules/models/product_item.dart';
-import 'package:ecommerce_app/widgets/price_text.dart';
-import 'package:ecommerce_app/widgets/review_star_widget.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
+import 'package:e_commerce_app/widgets/price_text.dart';
+import 'package:e_commerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'button_circle.dart';
