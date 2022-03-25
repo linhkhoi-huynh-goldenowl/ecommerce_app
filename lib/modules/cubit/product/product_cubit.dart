@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:ecommerce_app/modules/repositories/product_repository.dart';
+import 'package:e_commerce_app/modules/repositories/product_repository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/product_item.dart';
@@ -16,12 +16,40 @@ class ProductCubit extends Cubit<ProductState> {
 
   void productLoaded() async {
     try {
-      if (state.status == ProductStatus.initial) {
-        emit(state.copyWith(status: ProductStatus.loading));
-        final products = await productRepository.getProducts();
-        emit(state.copyWith(
-            status: ProductStatus.success, productList: products));
-      }
+      emit(state.copyWith(status: ProductStatus.loading));
+      final products = await productRepository.getProducts();
+      emit(state.copyWith(
+          status: ProductStatus.success,
+          productList: products,
+          type: TypeList.all));
+    } catch (_) {
+      emit(state.copyWith(status: ProductStatus.failure));
+    }
+  }
+
+  void productNewLoaded() async {
+    try {
+      emit(state.copyWith(status: ProductStatus.loading));
+      final products =
+          await productRepository.getProductsNew(state.productList);
+      emit(state.copyWith(
+          status: ProductStatus.success,
+          productList: products,
+          type: TypeList.newest));
+    } catch (_) {
+      emit(state.copyWith(status: ProductStatus.failure));
+    }
+  }
+
+  void productSaleLoaded() async {
+    try {
+      emit(state.copyWith(status: ProductStatus.loading));
+      final products =
+          await productRepository.getProductsSale(state.productList);
+      emit(state.copyWith(
+          status: ProductStatus.success,
+          productList: products,
+          type: TypeList.sale));
     } catch (_) {
       emit(state.copyWith(status: ProductStatus.failure));
     }
@@ -41,7 +69,8 @@ class ProductCubit extends Cubit<ProductState> {
   void productSearchEvent(String searchName) async {
     try {
       emit(state.copyWith(searchStatus: SearchProductStatus.loadingSearch));
-      var products = await productRepository.getProductsByName(searchName);
+      var products =
+          await productRepository.getProductsByName(state.type, searchName);
       emit(state.copyWith(
           productList: products,
           searchStatus: SearchProductStatus.successSearch,
@@ -63,13 +92,20 @@ class ProductCubit extends Cubit<ProductState> {
     try {
       if (categoryName == "All products" ||
           categoryName == state.categoryName) {
-        var products = await productRepository.getProducts();
+        var products = await productRepository.getProductsByType(state.type);
+
         emit(state.copyWith(
-            categoryName: "All products", productList: products));
+            categoryName: "All products",
+            productList: products,
+            type: state.type));
       } else {
-        var products =
-            await productRepository.getProductsByCategory(categoryName);
-        emit(state.copyWith(categoryName: categoryName, productList: products));
+        var products = await productRepository.getProductsByCategory(
+            state.type, categoryName);
+
+        emit(state.copyWith(
+            categoryName: categoryName,
+            productList: products,
+            type: state.type));
       }
     } catch (_) {
       emit(state.copyWith(status: ProductStatus.failure));
@@ -82,20 +118,20 @@ class ProductCubit extends Cubit<ProductState> {
       var products = await productRepository.getProducts();
       switch (chooseSort) {
         case ChooseSort.popular:
-          products = await productRepository.getProductsByPopular();
+          products = await productRepository.getProductsByPopular(state.type);
           break;
         case ChooseSort.newest:
-          products = await productRepository.getProductsByNewest();
+          products = await productRepository.getProductsByNewest(state.type);
           break;
 
         case ChooseSort.review:
-          products = await productRepository.getProductsByReview();
+          products = await productRepository.getProductsByReview(state.type);
           break;
         case ChooseSort.priceLowest:
-          products = await productRepository.getProductsByLowest();
+          products = await productRepository.getProductsByLowest(state.type);
           break;
         case ChooseSort.priceHighest:
-          products = await productRepository.getProductsByHighest();
+          products = await productRepository.getProductsByHighest(state.type);
           break;
       }
       emit(state.copyWith(

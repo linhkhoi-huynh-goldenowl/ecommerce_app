@@ -1,3 +1,0 @@
-// class FilterProduct {
-//   bool isGrid;
-// }

@@ -1,11 +1,11 @@
-import 'package:ecommerce_app/config/routes/router.dart';
-import 'package:ecommerce_app/config/styles/text_style.dart';
-import 'package:ecommerce_app/modules/bloc/login/login_bloc.dart';
-import 'package:ecommerce_app/modules/repositories/auth_repository.dart';
-import 'package:ecommerce_app/widgets/button_intro.dart';
-import 'package:ecommerce_app/widgets/social_button.dart';
-import 'package:ecommerce_app/widgets/text_button_intro.dart';
-import 'package:ecommerce_app/widgets/text_field_widget.dart';
+import 'package:e_commerce_app/config/routes/router.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/bloc/login/login_bloc.dart';
+import 'package:e_commerce_app/modules/repositories/auth_repository.dart';
+import 'package:e_commerce_app/widgets/button_intro.dart';
+import 'package:e_commerce_app/widgets/social_button.dart';
+import 'package:e_commerce_app/widgets/text_button_intro.dart';
+import 'package:e_commerce_app/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

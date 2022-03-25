@@ -1,6 +1,4 @@
-import 'package:ecommerce_app/modules/cubit/authentication/authentication_cubit.dart';
-import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:ecommerce_app/modules/repositories/product_repository.dart';
+import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,12 +23,9 @@ class MyApp extends StatelessWidget {
               create: (context) =>
                   AuthenticationCubit(authRepo: context.read<AuthRepository>()),
             ),
-            BlocProvider(
-              create: (context) =>
-                  ProductCubit(productRepository: ProductRepository()),
-            ),
           ],
           child: const MaterialApp(
+            debugShowCheckedModeBanner: false,
             onGenerateRoute: AppRouter.generateRoute,
             initialRoute: Routes.landing,
           ),

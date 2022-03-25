@@ -1,5 +1,5 @@
-import 'package:ecommerce_app/config/styles/text_style.dart';
-import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

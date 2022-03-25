@@ -1,4 +1,4 @@
-import 'package:ecommerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class PriceText extends StatelessWidget {

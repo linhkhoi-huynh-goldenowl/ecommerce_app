@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:ecommerce_app/config/routes/router.dart';
+import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:flutter/material.dart';
 import '../../repositories/auth_repository.dart';
 

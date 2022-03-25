@@ -1,12 +1,15 @@
-import 'package:ecommerce_app/config/styles/text_style.dart';
-import 'package:ecommerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:ecommerce_app/widgets/filter_product_bar.dart';
-import 'package:ecommerce_app/widgets/search_text_field.dart';
-import 'package:ecommerce_app/widgets/shop_product_card.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/widgets/filter_product_bar.dart';
+import 'package:e_commerce_app/widgets/search_text_field.dart';
+import 'package:e_commerce_app/widgets/shop_product_card.dart';
+import 'package:e_commerce_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/main_product_card.dart';
+import '../cubit/category/category_cubit.dart';
+import '../repositories/category_repository.dart';
 
 class ShopCategoryScreen extends StatelessWidget {
   const ShopCategoryScreen({Key? key}) : super(key: key);
@@ -36,18 +39,24 @@ class ShopCategoryScreen extends StatelessWidget {
                       actions: [_findButton(context)],
                       flexibleSpace: _flexibleSpaceBar(
                           context,
-                          state.categoryName,
+                          state.type == TypeList.newest
+                              ? "New - " + state.categoryName
+                              : state.type == TypeList.sale
+                                  ? "Sale - " + state.categoryName
+                                  : "" + state.categoryName,
                           state.isSearch,
                           state.searchInput)),
                   SliverPersistentHeader(
                       pinned: true,
-                      delegate: _SliverAppBarDelegate(
+                      delegate: SliverAppBarDelegate(
                           child: PreferredSize(
-                              preferredSize: const Size.fromHeight(120.0),
-                              child: BlocBuilder<ProductCubit, ProductState>(
-                                  builder: (context, state) {
-                                return FilterProductBar(state: state);
-                              })))),
+                        preferredSize: const Size.fromHeight(120.0),
+                        child: BlocProvider<CategoryCubit>(
+                          create: (BuildContext context) => CategoryCubit(
+                              categoryRepository: CategoryRepository()),
+                          child: FilterProductBar(stateProduct: state),
+                        ),
+                      ))),
                 ];
               },
               body: state.searchStatus == SearchProductStatus.loadingSearch ||
@@ -60,7 +69,7 @@ class ShopCategoryScreen extends StatelessWidget {
                           child: Text("No products"),
                         )
                       : state.isGridLayout
-                          ? _displayGridview(state.productList)
+                          ? _displayGridView(state.productList)
                           : _displayListView(state.productList),
             ));
 
@@ -72,7 +81,7 @@ class ShopCategoryScreen extends StatelessWidget {
   }
 }
 
-GridView _displayGridview(List productItems) {
+GridView _displayGridView(List productItems) {
   return GridView.builder(
     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
       maxCrossAxisExtent: 300,
@@ -80,21 +89,8 @@ GridView _displayGridview(List productItems) {
     ),
     itemBuilder: (BuildContext context, int index) {
       return MainProductCard(
-          title: productItems[index].title,
-          brandName: productItems[index].brandName,
-          image: productItems[index].image,
-          price: productItems[index].price,
-          isNew: productItems[index].createdDate == DateTime.now(),
-          priceSale: productItems[index].priceSale,
-          salePercent: productItems[index].priceSale != null
-              ? (1 -
-                      (productItems[index].priceSale! /
-                              productItems[index].price)
-                          .roundToDouble()) *
-                  100
-              : null,
-          numberReviews: productItems[index].numberReviews,
-          reviewStars: productItems[index].reviewStars);
+        product: productItems[index],
+      );
     },
     itemCount: productItems.length,
   );
@@ -104,21 +100,8 @@ ListView _displayListView(List productItems) {
   return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
         return ShopProductCard(
-            title: productItems[index].title,
-            brandName: productItems[index].brandName,
-            image: productItems[index].image,
-            price: productItems[index].price,
-            isNew: productItems[index].createdDate == DateTime.now(),
-            priceSale: productItems[index].priceSale,
-            salePercent: productItems[index].priceSale != null
-                ? (1 -
-                        (productItems[index].priceSale! /
-                                productItems[index].price)
-                            .roundToDouble()) *
-                    100
-                : null,
-            numberReviews: productItems[index].numberReviews,
-            reviewStars: productItems[index].reviewStars);
+          productItem: productItems[index],
+        );
       },
       itemCount: productItems.length);
 }
@@ -127,6 +110,7 @@ Widget _leadingButton(BuildContext context) {
   return IconButton(
     icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
     onPressed: () {
+      context.read<ProductCubit>().productLoaded();
       Navigator.pop(context);
     },
   );
@@ -155,27 +139,4 @@ FlexibleSpaceBar _flexibleSpaceBar(BuildContext context, String categoryName,
                 BlocProvider.of<ProductCubit>(context)
                     .productSearchEvent(value);
               }));
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  final PreferredSize child;
-
-  _SliverAppBarDelegate({required this.child});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => child.preferredSize.height;
-
-  @override
-  double get minExtent => child.preferredSize.height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
-  }
 }

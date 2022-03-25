@@ -1,16 +1,11 @@
-import 'package:ecommerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class CategoryButtonChip extends StatelessWidget {
-  const CategoryButtonChip(
-      {Key? key,
-      required this.func,
-      required this.title,
-      required this.categoryName})
+  const CategoryButtonChip({Key? key, required this.func, required this.title})
       : super(key: key);
   final VoidCallback func;
   final String title;
-  final String categoryName;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,17 +13,13 @@ class CategoryButtonChip extends StatelessWidget {
       child: ElevatedButton(
         onPressed: func,
         style: ElevatedButton.styleFrom(
-          primary: categoryName == title
-              ? const Color(0xffffffff)
-              : const Color(0xff222222),
+          primary: const Color(0xff222222),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
         ),
         child: Text(title,
-            style: ETextStyle.metropolis(
-                fontSize: 14,
-                color: categoryName == title ? Colors.black : Colors.white)),
+            style: ETextStyle.metropolis(fontSize: 14, color: Colors.white)),
       ),
     );
   }
