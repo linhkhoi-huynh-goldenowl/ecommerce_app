@@ -1,9 +1,12 @@
+import 'dart:convert';
+
+import 'package:e_commerce_app/modules/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   Future<bool> checkAuthentication() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool("isLogin") == false || prefs.getBool("isLogin") == null) {
+    final pref = await SharedPreferences.getInstance();
+    if (pref.getBool("isLogin") == false || pref.getBool("isLogin") == null) {
       return false;
     } else {
       return true;
@@ -14,15 +17,17 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    List<String>? listEmail = prefs.getStringList('emails');
-    List<String>? listPassword = prefs.getStringList('passwords');
-    if (listEmail != null && listPassword != null) {
+    final pref = await SharedPreferences.getInstance();
+    List<String>? listEmail = pref.getStringList('emails');
+    List<String>? listUser = pref.getStringList('users');
+    if (listEmail != null && listUser != null) {
       if (listEmail.contains(email)) {
-        if (listPassword[listEmail.indexOf(email)] == password) {
-          prefs.setString("emailInfo", email);
-          prefs.setBool("isLogin", true);
+        Map<String, dynamic> userMap =
+            jsonDecode(listUser[listEmail.indexOf(email)]);
+        User user = User.fromJson(userMap);
+        if (user.password == password) {
+          pref.setString("userInfo", json.encode(user.toJson()));
+          pref.setBool("isLogin", true);
           return true;
         }
       }
@@ -36,35 +41,44 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
+    final pref = await SharedPreferences.getInstance();
 
-    List<String>? listName = prefs.getStringList('names');
-    List<String>? listPassword = prefs.getStringList('passwords');
-    List<String>? listEmail = prefs.getStringList('emails');
-    if (listName != null && listPassword != null && listEmail != null) {
+    List<String>? listEmail = pref.getStringList('emails');
+    List<String>? listUser = pref.getStringList('users');
+
+    final User user = User(
+        email: email,
+        name: name,
+        dateOfBirth: DateTime.now(),
+        shippingAddress: [],
+        password: password,
+        notificationSale: false,
+        notificationNewArrivals: false,
+        notificationDelivery: false);
+    String userInfo = json.encode(user.toJson());
+    if (listUser != null && listEmail != null) {
       if (listEmail.contains(email)) {
         return false;
       } else {
-        listName.add(name);
-        listPassword.add(password);
         listEmail.add(email);
-        prefs.setString("emailInfo", email);
-        prefs.setBool("isLogin", true);
+        pref.setBool("isLogin", true);
+
+        listUser.add(userInfo);
       }
     } else {
-      listName = [name];
-      listPassword = [password];
       listEmail = [email];
+      listUser = [userInfo];
     }
-    await prefs.setStringList('names', listName);
-    await prefs.setStringList('passwords', listPassword);
-    await prefs.setStringList('emails', listEmail);
+    await pref.setString('userInfo', userInfo);
+    await pref.setStringList('users', listUser);
+    await pref.setStringList('emails', listEmail);
     return true;
   }
 
   Future<void> signOut() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool("isLogin", false);
+    final pref = await SharedPreferences.getInstance();
+    pref.remove("userInfo");
+    pref.setBool("isLogin", false);
   }
 }
 
