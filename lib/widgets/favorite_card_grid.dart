@@ -17,7 +17,6 @@ class FavoriteCardGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
-      width: 162,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -30,7 +29,7 @@ class FavoriteCardGrid extends StatelessWidget {
               children: [
                 ImageProductWidget(
                     imagePath: favoriteProduct.productItem.image,
-                    width: double.maxFinite,
+                    width: 162,
                     height: 200,
                     radius: 20),
                 const SizedBox(
@@ -60,18 +59,18 @@ class FavoriteCardGrid extends StatelessWidget {
                   height: 3,
                 ),
                 PriceText(
-                    priceSale: favoriteProduct.productItem.priceSale,
-                    price: favoriteProduct.productItem.price)
+                    salePercent: favoriteProduct.productItem.salePercent,
+                    price: favoriteProduct.productItem.sizes[0].price)
               ],
             ),
           ),
-          favoriteProduct.productItem.priceSale != null
+          favoriteProduct.productItem.salePercent != null
               ? Positioned(
                   top: 5,
                   left: 5,
                   child: ChipLabel(
                       title:
-                          '-${((1 - (favoriteProduct.productItem.priceSale! / favoriteProduct.productItem.price)) * 100).toStringAsFixed(0)}%',
+                          '-${favoriteProduct.productItem.salePercent?.toStringAsFixed(0)}%',
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
@@ -80,7 +79,7 @@ class FavoriteCardGrid extends StatelessWidget {
                   favoriteProduct.productItem.createdDate.year ==
                       DateTime.now().year)
               ? Positioned(
-                  top: favoriteProduct.productItem.priceSale == null ? 5 : 40,
+                  top: favoriteProduct.productItem.salePercent == null ? 5 : 40,
                   left: 5,
                   child: const ChipLabel(
                       title: 'NEW', backgroundColor: Color(0xff222222)),
@@ -88,7 +87,7 @@ class FavoriteCardGrid extends StatelessWidget {
               : const SizedBox(),
           Positioned(
               top: 170,
-              right: -23,
+              right: -10,
               child: ButtonCircle(
                   func: () {},
                   iconPath: "assets/images/icons/bag_favorite.png",

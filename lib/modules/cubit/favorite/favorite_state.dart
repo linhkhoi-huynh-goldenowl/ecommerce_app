@@ -14,8 +14,6 @@ enum SearchFavoriteStatus {
   failureSearch
 }
 
-enum ChooseSortFavorite { popular, newest, review, priceLowest, priceHighest }
-
 class FavoriteState extends Equatable {
   const FavoriteState(
       {this.gridStatus = GridFavoriteStatus.initialGrid,
@@ -23,40 +21,38 @@ class FavoriteState extends Equatable {
       this.categoryName = "Favorites",
       this.searchInput = "",
       this.isSearch = false,
-      this.sort = ChooseSortFavorite.newest,
+      this.sort = ChooseSort.newest,
       this.isGridLayout = false,
       this.favorites = const <FavoriteProduct>[],
       this.status = FavoriteStatus.initial,
       this.size = "",
-      this.favoritesListSub = const <FavoriteProduct>[],
-      this.useListSub = false});
-  final List favorites;
+      this.products = const <ProductItem>[]});
+  final List<FavoriteProduct> favorites;
+  final List<ProductItem> products;
   final FavoriteStatus status;
   final GridFavoriteStatus gridStatus;
   final SearchFavoriteStatus searchStatus;
   final bool isGridLayout;
-  final ChooseSortFavorite sort;
+  final ChooseSort sort;
   final String searchInput;
   final bool isSearch;
-  //This is a sub list which use for filter or search
-  final List favoritesListSub;
-  final bool useListSub;
+
   final String categoryName;
   final String size;
 
-  FavoriteState copyWith(
-      {FavoriteStatus? status,
-      List? favorites,
-      bool? isGridLayout,
-      ChooseSortFavorite? sort,
-      bool? isSearch,
-      String? searchInput,
-      String? categoryName,
-      List? favoritesListSub,
-      bool? useListSub,
-      GridFavoriteStatus? gridStatus,
-      SearchFavoriteStatus? searchStatus,
-      String? size}) {
+  FavoriteState copyWith({
+    FavoriteStatus? status,
+    List<FavoriteProduct>? favorites,
+    bool? isGridLayout,
+    ChooseSort? sort,
+    bool? isSearch,
+    String? searchInput,
+    String? categoryName,
+    GridFavoriteStatus? gridStatus,
+    SearchFavoriteStatus? searchStatus,
+    String? size,
+    List<ProductItem>? products,
+  }) {
     return FavoriteState(
         status: status ?? this.status,
         favorites: favorites ?? this.favorites,
@@ -68,8 +64,7 @@ class FavoriteState extends Equatable {
         gridStatus: gridStatus ?? this.gridStatus,
         searchStatus: searchStatus ?? this.searchStatus,
         size: size ?? this.size,
-        favoritesListSub: favoritesListSub ?? this.favoritesListSub,
-        useListSub: useListSub ?? this.useListSub);
+        products: products ?? this.products);
   }
 
   @override
@@ -84,7 +79,6 @@ class FavoriteState extends Equatable {
         gridStatus,
         searchStatus,
         size,
-        favoritesListSub,
-        useListSub
+        products
       ];
 }

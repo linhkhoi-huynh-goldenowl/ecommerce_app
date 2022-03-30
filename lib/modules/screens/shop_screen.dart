@@ -1,6 +1,8 @@
 import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository_impl/category_repository_impl.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository_impl/product_repository_impl.dart';
 import 'package:e_commerce_app/widgets/button_intro.dart';
 import 'package:e_commerce_app/widgets/category_title_button.dart';
 import 'package:e_commerce_app/widgets/search_text_field.dart';
@@ -9,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/category/category_cubit.dart';
-import '../repositories/category_repository.dart';
-import '../repositories/product_repository.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class ShopScreen extends ProductCoordinatorBase {
@@ -20,11 +20,11 @@ class ShopScreen extends ProductCoordinatorBase {
     return MultiBlocProvider(providers: [
       BlocProvider<CategoryCubit>(
         create: (BuildContext context) =>
-            CategoryCubit(categoryRepository: CategoryRepository()),
+            CategoryCubit(categoryRepository: CategoryRepositoryImpl()),
       ),
       BlocProvider<ProductCubit>(
         create: (BuildContext context) =>
-            ProductCubit(productRepository: ProductRepository()),
+            ProductCubit(productRepository: ProductRepositoryImpl()),
       ),
     ], child: stackView(context));
   }

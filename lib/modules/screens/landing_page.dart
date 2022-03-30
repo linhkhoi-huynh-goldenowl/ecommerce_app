@@ -12,15 +12,15 @@ class LandingScreen extends StatelessWidget {
     return BlocConsumer<AuthenticationCubit, AuthenticationState>(
       // listenWhen: (previous, current) => previous.status == current.status,
       listener: (BuildContext context, state) {
-        if (state.status == LoginStatus.authenticated) {
+        if (state.status == AuthenticationStatus.authenticated) {
           Navigator.of(context).pushNamed(Routes.dashboard);
         }
-        if (state.status == LoginStatus.unauthenticated) {
+        if (state.status == AuthenticationStatus.unauthenticated) {
           Navigator.of(context).pushNamed(Routes.logIn);
         }
       },
       builder: (context, state) => Scaffold(
-          body: (state.status == LoginStatus.unKnow)
+          body: (state.status == AuthenticationStatus.unKnow)
               ? _buildLoading()
               : _buildBtn(context)),
     );

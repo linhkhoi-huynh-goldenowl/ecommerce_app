@@ -8,6 +8,6 @@ class ProductHelper {
   }
 
   List getSaleProducts(List products) {
-    return products.where((element) => element.priceSale != null).toList();
+    return products.where((element) => element.salePercent != null).toList();
   }
 }

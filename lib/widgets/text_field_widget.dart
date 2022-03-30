@@ -13,7 +13,7 @@ class TextFieldWidget extends StatelessWidget {
   final String labelText;
   final String validatorText;
   final bool isValid;
-  final Function func;
+  final Function(String) func;
   final bool isPassword;
 
   @override
@@ -54,8 +54,8 @@ class TextFieldWidget extends StatelessWidget {
             hoverColor: const Color(0xffbcbcbc),
             focusColor: const Color(0xffbcbcbc),
           ),
-          validator: (value) => isValid ? null : validatorText,
           onChanged: (value) => func(value),
+          validator: (value) => isValid ? null : validatorText,
         ));
   }
 }

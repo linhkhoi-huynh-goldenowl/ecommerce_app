@@ -1,22 +1,21 @@
+import 'package:e_commerce_app/modules/models/size_cloth.dart';
 import 'package:equatable/equatable.dart';
 
 class ProductItem extends Equatable {
   final String title;
   final String brandName;
   final String image;
-  final double price;
   final DateTime createdDate;
-  final double? priceSale;
+  final double? salePercent;
   final bool isPopular;
   final int numberReviews;
   final int reviewStars;
   final String categoryName;
   final String color;
-  final Map<String, int> size;
+  final List<SizeCloth> sizes;
   const ProductItem(
       this.brandName,
       this.image,
-      this.price,
       this.numberReviews,
       this.reviewStars,
       this.title,
@@ -24,14 +23,13 @@ class ProductItem extends Equatable {
       this.isPopular,
       this.categoryName,
       this.color,
-      this.size,
-      [this.priceSale]);
+      this.sizes,
+      [this.salePercent]);
 
   @override
   List<Object?> get props => [
         title,
         brandName,
-        price,
         image,
         numberReviews,
         reviewStars,
@@ -39,7 +37,7 @@ class ProductItem extends Equatable {
         isPopular,
         categoryName,
         color,
-        size,
-        priceSale
+        sizes,
+        salePercent
       ];
 }

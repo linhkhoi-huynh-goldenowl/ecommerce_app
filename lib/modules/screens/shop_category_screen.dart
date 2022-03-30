@@ -1,12 +1,12 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_app/widgets/filter_product_bar.dart';
 import 'package:e_commerce_app/widgets/search_text_field.dart';
 import 'package:e_commerce_app/widgets/shop_product_card.dart';
 import 'package:e_commerce_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/filter_bar_widget.dart';
 import '../../widgets/main_product_card.dart';
 
 class ShopCategoryScreen extends StatelessWidget {
@@ -15,6 +15,7 @@ class ShopCategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductCubit, ProductState>(
+      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         switch (state.status) {
           case ProductStatus.failure:
@@ -47,10 +48,27 @@ class ShopCategoryScreen extends StatelessWidget {
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverAppBarDelegate(
-                        child: const PreferredSize(
-                          preferredSize: Size.fromHeight(120.0),
-                          child: FilterProductBar(),
-                        ),
+                        child: PreferredSize(
+                            preferredSize: const Size.fromHeight(120.0),
+                            child: BlocBuilder<ProductCubit, ProductState>(
+                                buildWhen: (previous, current) =>
+                                    previous.status != current.status,
+                                builder: (context, state) {
+                                  return FilterBarWidget(
+                                    chooseCategory: state.categoryName,
+                                    applyGrid:
+                                        BlocProvider.of<ProductCubit>(context)
+                                            .productLoadGridLayout,
+                                    applyChoose: context
+                                        .read<ProductCubit>()
+                                        .productSort,
+                                    chooseSort: state.sort,
+                                    isGridLayout: state.isGridLayout,
+                                    applyCategory:
+                                        BlocProvider.of<ProductCubit>(context)
+                                            .productCategoryEvent,
+                                  );
+                                })),
                       ))
                 ];
               },

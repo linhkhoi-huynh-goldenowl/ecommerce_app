@@ -1,4 +1,6 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_app/modules/cubit/sign_up/sign_up_cubit.dart';
 import 'package:e_commerce_app/widgets/button_intro.dart';
 import 'package:e_commerce_app/widgets/text_button_intro.dart';
 import 'package:e_commerce_app/widgets/text_field_widget.dart';
@@ -7,14 +9,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../config/routes/router.dart';
 import '../../widgets/social_button.dart';
-import '../bloc/sign_up/sign_up_bloc.dart';
-import '../repositories/auth_repository.dart';
+import '../cubit/sign_up/sign_up_cubit.dart';
 
 class SignUpScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
   SignUpScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,26 +32,14 @@ class SignUpScreen extends StatelessWidget {
         ),
       ),
       body: BlocProvider(
-        create: (context) => SignUpBloc(
-          authRepo: context.read<AuthRepository>(),
-          context: context,
-        ),
+        create: (context) => SignUpCubit(),
         child: _signUpForm(context),
       ),
     );
   }
 
   Widget _signUpForm(BuildContext context) {
-    return BlocConsumer<SignUpBloc, SignUpState>(
-      listener: (context, state) {
-        final formStatus = state.formStatus;
-        if (formStatus is SignUpFailed) {
-          _showSnackBar(context, formStatus.exception.toString());
-        }
-        if (formStatus is SignUpExistsEmail) {
-          _showSnackBar(context, formStatus.message);
-        }
-      },
+    return BlocBuilder<SignUpCubit, SignUpState>(
       builder: (context, state) {
         return Form(
           key: _formKey,
@@ -71,9 +59,8 @@ class SignUpScreen extends StatelessWidget {
                 labelText: 'Name',
                 validatorText: 'Name must more than 3',
                 isValid: state.isValidName,
-                func: (value) => context.read<SignUpBloc>().add(
-                      SignUpNameChanged(name: value),
-                    ),
+                func: (value) =>
+                    context.read<SignUpCubit>().signUpNameChanged(value),
                 isPassword: false,
               ),
               const SizedBox(
@@ -83,9 +70,8 @@ class SignUpScreen extends StatelessWidget {
                 labelText: 'Email',
                 validatorText: 'Email must contain @',
                 isValid: state.isValidEmail,
-                func: (value) => context.read<SignUpBloc>().add(
-                      SignUpEmailChanged(email: value),
-                    ),
+                func: (value) =>
+                    context.read<SignUpCubit>().signUpEmailChanged(value),
                 isPassword: false,
               ),
               const SizedBox(
@@ -95,9 +81,8 @@ class SignUpScreen extends StatelessWidget {
                 labelText: 'Password',
                 validatorText: 'Password must more than 6',
                 isValid: state.isValidPassword,
-                func: (value) => context.read<SignUpBloc>().add(
-                      SignUpPasswordChanged(password: value),
-                    ),
+                func: (value) =>
+                    context.read<SignUpCubit>().signUpPasswordChanged(value),
                 isPassword: true,
               ),
               Align(
@@ -107,12 +92,14 @@ class SignUpScreen extends StatelessWidget {
                         .pushReplacementNamed(Routes.logIn),
                     text: "Already have an account?"),
               ),
-              state.formStatus is FormSignUpSubmitting
+              state.status == SignUpStatus.typing
                   ? const CircularProgressIndicator()
                   : ButtonIntro(
                       func: () {
                         if (_formKey.currentState!.validate()) {
-                          context.read<SignUpBloc>().add(SignUpSubmitted());
+                          context
+                              .read<AuthenticationCubit>()
+                              .signUp(state.name, state.email, state.password);
                         }
                       },
                       title: 'Sign Up'),
@@ -141,10 +128,5 @@ class SignUpScreen extends StatelessWidget {
         );
       },
     );
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

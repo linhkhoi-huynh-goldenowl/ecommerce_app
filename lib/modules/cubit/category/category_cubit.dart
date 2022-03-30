@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/repositories/category_repository.dart';
+
 import 'package:equatable/equatable.dart';
+
+import '../../repositories/features/repository/category_repository.dart';
 
 part 'category_state.dart';
 

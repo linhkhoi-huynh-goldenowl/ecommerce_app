@@ -1,26 +1,34 @@
 import 'package:bloc/bloc.dart';
 import 'package:e_commerce_app/modules/models/favorite_product.dart';
-import 'package:e_commerce_app/modules/repositories/favorite_repository.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:equatable/equatable.dart';
+
+import '../../repositories/features/repository/favorite_repository.dart';
+import '../product/product_cubit.dart';
 
 part 'favorite_state.dart';
 
 class FavoriteCubit extends Cubit<FavoriteState> {
   FavoriteCubit({required this.favoriteRepository})
       : super(const FavoriteState()) {
-    favoriteLoaded();
+    fetchFavorite();
   }
 
   final FavoriteRepository favoriteRepository;
 
-  void addFavorite(FavoriteProduct productItem) async {
+  void addFavorite(FavoriteProduct favoriteProduct) async {
     try {
       emit(state.copyWith(status: FavoriteStatus.loading));
 
-      var favorites = await favoriteRepository.addProductToFavorite(
-          state.favorites, productItem);
+      var favorites =
+          await favoriteRepository.addProductToFavorite(favoriteProduct);
+      var products =
+          await favoriteRepository.addProducts(favoriteProduct.productItem);
       emit(state.copyWith(
-          status: FavoriteStatus.success, favorites: favorites, size: " "));
+          status: FavoriteStatus.success,
+          favorites: favorites,
+          size: " ",
+          products: products));
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));
     }
@@ -34,7 +42,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     }
   }
 
-  void favoriteLoaded() async {
+  void fetchFavorite() async {
     try {
       if (state.status == FavoriteStatus.initial) {
         emit(state.copyWith(status: FavoriteStatus.loading));
@@ -66,12 +74,11 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       emit(state.copyWith(
           searchStatus: SearchFavoriteStatus.loadingSearch,
           status: FavoriteStatus.loading));
-      var favorites = await favoriteRepository.getFavoritesByName(
-          state.favorites, searchName);
+      var favorites = await favoriteRepository.getFavoritesByName(searchName);
       emit(state.copyWith(
-          favoritesListSub: favorites,
           searchStatus: SearchFavoriteStatus.successSearch,
           status: FavoriteStatus.success,
+          favorites: favorites,
           searchInput: searchName));
     } catch (_) {
       emit(state.copyWith(searchStatus: SearchFavoriteStatus.failureSearch));
@@ -80,11 +87,10 @@ class FavoriteCubit extends Cubit<FavoriteState> {
 
   void favoriteOpenSearchBarEvent() async {
     try {
-      emit(state.copyWith(status: FavoriteStatus.loading));
-      emit(state.copyWith(
-          isSearch: !state.isSearch,
-          useListSub: !state.useListSub,
-          status: FavoriteStatus.success));
+      // emit(state.copyWith(status: FavoriteStatus.loading));
+      emit(state.copyWith(isSearch: !state.isSearch
+          // status: FavoriteStatus.success
+          ));
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));
     }
@@ -94,17 +100,17 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     try {
       emit(state.copyWith(status: FavoriteStatus.loading));
       if (categoryName == "favorites" || categoryName == state.categoryName) {
+        var favorites = await favoriteRepository.getFavorites();
         emit(state.copyWith(
             categoryName: "All products",
-            useListSub: false,
+            favorites: favorites,
             status: FavoriteStatus.success));
       } else {
-        var favorites = await favoriteRepository.getFavoritesByCategory(
-            state.favorites, categoryName);
+        var favorites =
+            await favoriteRepository.getFavoritesByCategory(categoryName);
         emit(state.copyWith(
+            favorites: favorites,
             categoryName: categoryName,
-            favoritesListSub: favorites,
-            useListSub: true,
             status: FavoriteStatus.success));
       }
     } catch (_) {
@@ -112,37 +118,31 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     }
   }
 
-  void favoriteSort(ChooseSortFavorite chooseSort) async {
+  void favoriteSort(ChooseSort chooseSort) async {
     try {
       var favorites = state.favorites;
       emit(state.copyWith(status: FavoriteStatus.loading));
       switch (chooseSort) {
-        case ChooseSortFavorite.popular:
-          favorites =
-              await favoriteRepository.getFavoritesByPopular(state.favorites);
+        case ChooseSort.popular:
+          favorites = await favoriteRepository.getFavoritesByPopular();
           break;
-        case ChooseSortFavorite.newest:
-          favorites =
-              await favoriteRepository.getFavoritesByNewest(state.favorites);
+        case ChooseSort.newest:
+          favorites = await favoriteRepository.getFavoritesByNewest();
           break;
 
-        case ChooseSortFavorite.review:
-          favorites =
-              await favoriteRepository.getFavoritesByReview(state.favorites);
+        case ChooseSort.review:
+          favorites = await favoriteRepository.getFavoritesByReview();
           break;
-        case ChooseSortFavorite.priceLowest:
-          favorites =
-              await favoriteRepository.getFavoritesByLowest(state.favorites);
+        case ChooseSort.priceLowest:
+          favorites = await favoriteRepository.getFavoritesByLowest();
           break;
-        case ChooseSortFavorite.priceHighest:
-          favorites =
-              await favoriteRepository.getFavoritesByHighest(state.favorites);
+        case ChooseSort.priceHighest:
+          favorites = await favoriteRepository.getFavoritesByHighest();
           break;
       }
       emit(state.copyWith(
           sort: chooseSort,
-          useListSub: true,
-          favoritesListSub: favorites,
+          favorites: favorites,
           status: FavoriteStatus.success));
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));

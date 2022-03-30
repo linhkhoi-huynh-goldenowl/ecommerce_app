@@ -38,6 +38,9 @@ dependencies:
   equatable: ^2.0.3
   shared_preferences: ^2.0.13
   carousel_slider: ^4.0.0
+  firebase_core: ^1.13.1
+  firebase_auth: ^3.3.11
+  cloud_firestore: ^3.1.10
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository_impl/category_repository_impl.dart';
 import 'package:e_commerce_app/widgets/favorite_card_grid.dart';
 import 'package:e_commerce_app/widgets/favorite_card_list.dart';
 import 'package:e_commerce_app/widgets/search_text_field.dart';
@@ -8,18 +9,26 @@ import 'package:e_commerce_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/filter_favorite_bar.dart';
+import '../../widgets/filter_bar_widget.dart';
 import '../cubit/category/category_cubit.dart';
-import '../repositories/category_repository.dart';
+import '../repositories/features/repository/favorite_repository.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<CategoryCubit>(
-      create: (BuildContext context) =>
-          CategoryCubit(categoryRepository: CategoryRepository()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CategoryCubit>(
+          create: (BuildContext context) =>
+              CategoryCubit(categoryRepository: CategoryRepositoryImpl()),
+        ),
+        BlocProvider<FavoriteCubit>(
+          create: (BuildContext context) => FavoriteCubit(
+              favoriteRepository: context.read<FavoriteRepository>()),
+        ),
+      ],
       child: _buildBody(context),
     );
   }
@@ -53,10 +62,27 @@ class FavoriteScreen extends StatelessWidget {
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverAppBarDelegate(
-                        child: const PreferredSize(
-                          preferredSize: Size.fromHeight(120.0),
-                          child: FilterFavoriteBar(),
-                        ),
+                        child: PreferredSize(
+                            preferredSize: const Size.fromHeight(120.0),
+                            child: BlocBuilder<FavoriteCubit, FavoriteState>(
+                                buildWhen: (previous, current) =>
+                                    previous.status != current.status,
+                                builder: (context, state) {
+                                  return FilterBarWidget(
+                                    chooseCategory: state.categoryName,
+                                    applyGrid:
+                                        BlocProvider.of<FavoriteCubit>(context)
+                                            .favoriteLoadGridLayout,
+                                    applyChoose: context
+                                        .read<FavoriteCubit>()
+                                        .favoriteSort,
+                                    chooseSort: state.sort,
+                                    isGridLayout: state.isGridLayout,
+                                    applyCategory:
+                                        BlocProvider.of<FavoriteCubit>(context)
+                                            .favoriteCategoryEvent,
+                                  );
+                                })),
                       ))
                 ];
               },
@@ -70,12 +96,8 @@ class FavoriteScreen extends StatelessWidget {
                           child: Text("No favorites"),
                         )
                       : state.isGridLayout
-                          ? _displayGridView(state.useListSub
-                              ? state.favoritesListSub
-                              : state.favorites)
-                          : _displayListView(state.useListSub
-                              ? state.favoritesListSub
-                              : state.favorites),
+                          ? _displayGridView(state.favorites)
+                          : _displayListView(state.favorites),
             ));
 
           default:
