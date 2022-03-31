@@ -110,7 +110,6 @@ class ProfileScreen extends ProductCoordinatorBase {
                     title: "Upload all product",
                     subTitle: "",
                     func: () {
-                      print("==start==");
                       Domain().product.uploadAllProducts();
                     }),
                 ProfileInfoButton(

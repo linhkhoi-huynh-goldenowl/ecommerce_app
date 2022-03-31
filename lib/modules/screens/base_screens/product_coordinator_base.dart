@@ -1,3 +1,5 @@
+import 'package:e_commerce_app/modules/screens/login_screen.dart';
+import 'package:e_commerce_app/modules/screens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../config/routes/router.dart';
@@ -19,6 +21,10 @@ abstract class ProductCoordinatorBase extends StatelessWidget {
     switch (routerName) {
       case Routes.shopCategoryScreen:
         return MaterialPageRoute(builder: (_) => const ShopCategoryScreen());
+      case Routes.logIn:
+        return MaterialPageRoute(builder: (_) => LoginScreen());
+      case Routes.signUp:
+        return MaterialPageRoute(builder: (_) => SignUpScreen());
       default:
         return MaterialPageRoute(builder: (_) => buildInitialBody());
     }

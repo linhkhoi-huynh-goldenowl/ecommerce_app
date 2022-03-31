@@ -24,6 +24,8 @@ class SignUpScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  final FocusNode focusEmail = FocusNode();
+  final FocusNode focusPass = FocusNode();
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationCubit, AuthenticationState>(
@@ -73,6 +75,8 @@ class SignUpScreen extends StatelessWidget {
                 height: 60,
               ),
               TextFieldWidget(
+                onEditComplete: () =>
+                    FocusScope.of(context).requestFocus(focusEmail),
                 labelText: 'Name',
                 validatorText: 'Name must more than 3',
                 isValid: state.isValidName,
@@ -84,6 +88,9 @@ class SignUpScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFieldWidget(
+                focusNode: focusEmail,
+                onEditComplete: () =>
+                    FocusScope.of(context).requestFocus(focusPass),
                 labelText: 'Email',
                 validatorText: 'Email must contain @',
                 isValid: state.isValidEmail,
@@ -95,6 +102,8 @@ class SignUpScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFieldWidget(
+                focusNode: focusPass,
+                onEditComplete: () => focusPass.unfocus(),
                 labelText: 'Password',
                 validatorText: 'Password must more than 6',
                 isValid: state.isValidPassword,
@@ -118,10 +127,15 @@ class SignUpScreen extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           )
                         : ButtonIntro(
-                            func: () {
+                            func: () async {
                               if (_formKey.currentState!.validate()) {
-                                context.read<AuthenticationCubit>().signUp(
-                                    state.name, state.email, state.password);
+                                final result = await context
+                                    .read<AuthenticationCubit>()
+                                    .signUp(state.name, state.email,
+                                        state.password);
+                                if (result) {
+                                  _formKey.currentState!.reset();
+                                }
                               }
                             },
                             title: 'Sign Up');

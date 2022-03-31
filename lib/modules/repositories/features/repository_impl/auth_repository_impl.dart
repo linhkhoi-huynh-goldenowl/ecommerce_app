@@ -11,11 +11,14 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<XResult<EUser>> login(String email, String password) async {
     try {
+      final pref = await SharedPreferences.getInstance();
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       final XResult<EUser> result =
           await userProvider.getUser(userCredential.user!.uid);
       if (result.data != null) {
+        pref.setString("userId", result.data?.id ?? "");
+        pref.setBool("isLogin", true);
         return result;
       }
     } on FirebaseAuthException catch (e) {
@@ -61,7 +64,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final pref = await SharedPreferences.getInstance();
     try {
       await _firebaseAuth.signOut();
-      pref.setBool("isLogin", true);
+      pref.setBool("isLogin", false);
     } catch (e) {
       throw Exception(e);
     }

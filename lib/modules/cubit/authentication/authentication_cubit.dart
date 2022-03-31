@@ -25,7 +25,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
-  void login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     try {
       emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
       final XResult<EUser> result = await Domain().auth.login(email, password);
@@ -40,12 +40,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
             messageError: result.error,
             submitStatus: AuthSubmitStatus.error));
       }
+      return true;
     } on Exception {
       emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
     }
+    return false;
   }
 
-  void signUp(String name, String email, String password) async {
+  Future<bool> signUp(String name, String email, String password) async {
     try {
       emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
       final XResult<EUser> result = await Domain().auth.signUp(
@@ -64,9 +66,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
             messageError: result.error,
             submitStatus: AuthSubmitStatus.error));
       }
+      return true;
     } on Exception {
       emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
     }
+    return false;
   }
 
   void signOut() async {

@@ -23,6 +23,8 @@ class LoginScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  final FocusNode focusPass = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationCubit, AuthenticationState>(
@@ -75,6 +77,8 @@ class LoginScreen extends StatelessWidget {
                 height: 80,
               ),
               TextFieldWidget(
+                  onEditComplete: () =>
+                      FocusScope.of(context).requestFocus(focusPass),
                   labelText: 'Email',
                   validatorText: 'Email must contain @',
                   isValid: state.isValidEmail,
@@ -85,6 +89,8 @@ class LoginScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFieldWidget(
+                  onEditComplete: () => focusPass.unfocus(),
+                  focusNode: focusPass,
                   labelText: 'Password',
                   validatorText: 'Password must more than 6',
                   isValid: state.isValidPassword,
@@ -105,11 +111,14 @@ class LoginScreen extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           )
                         : ButtonIntro(
-                            func: () {
+                            func: () async {
                               if (_formKey.currentState!.validate()) {
-                                context
+                                final result = await context
                                     .read<AuthenticationCubit>()
                                     .login(state.email, state.password);
+                                if (result) {
+                                  _formKey.currentState!.reset();
+                                }
                               }
                             },
                             title: 'Login');

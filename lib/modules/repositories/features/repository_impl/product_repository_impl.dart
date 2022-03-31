@@ -283,7 +283,6 @@ class ProductRepositoryImpl implements ProductRepository {
     ];
     for (ProductItem element in products) {
       await productProvider.createProduct(element);
-      print("==done an object==");
     }
   }
 }
