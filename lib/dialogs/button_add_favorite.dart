@@ -3,7 +3,7 @@ import 'package:e_commerce_app/modules/cubit/choose_size/choose_size_cubit.dart'
 import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_app/modules/models/favorite_product.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
-import 'package:e_commerce_app/modules/repositories/features/repository/favorite_repository.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:e_commerce_app/widgets/button_choose_size.dart';
 import 'package:e_commerce_app/widgets/button_intro.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +23,7 @@ class ButtonAddFavorite extends StatelessWidget {
 
 Widget _buildBody(BuildContext context, ProductItem product) {
   return BlocProvider(
-      create: (BuildContext context) =>
-          FavoriteCubit(favoriteRepository: context.read<FavoriteRepository>()),
+      create: (BuildContext context) => FavoriteCubit(),
       child:
           BlocBuilder<FavoriteCubit, FavoriteState>(builder: (context, state) {
         return ButtonCircle(
@@ -37,10 +36,9 @@ Widget _buildBody(BuildContext context, ProductItem product) {
             iconPath: "assets/images/icons/heart.png",
             iconSize: 16,
             iconColor: const Color(0xffDADADA),
-            fillColor:
-                context.read<FavoriteRepository>().checkContainProduct(product)
-                    ? const Color(0xffDB3022)
-                    : Colors.white,
+            fillColor: Domain().favorite.checkContainProduct(product)
+                ? const Color(0xffDB3022)
+                : Colors.white,
             padding: 12);
       }));
 }

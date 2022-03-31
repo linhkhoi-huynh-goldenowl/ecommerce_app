@@ -3,6 +3,7 @@ import 'package:e_commerce_app/modules/models/product_item.dart';
 
 abstract class FavoriteRepository {
   Future<List<FavoriteProduct>> addProductToFavorite(FavoriteProduct item);
+  Future<List<FavoriteProduct>> removeFavorite(FavoriteProduct item);
 
   Future<List<ProductItem>> addProducts(ProductItem item);
 

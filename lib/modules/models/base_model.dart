@@ -1,6 +1,6 @@
 class BaseModel {
-  String id;
+  String? id;
   BaseModel({
-    required this.id,
+    this.id,
   });
 }

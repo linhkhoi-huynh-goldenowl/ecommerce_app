@@ -124,7 +124,7 @@ class FavoriteCardList extends StatelessWidget {
               child: IconButton(
                 splashRadius: 15,
                 onPressed: () {
-                  context.read<FavoriteCubit>().addFavorite(FavoriteProduct(
+                  context.read<FavoriteCubit>().removeFavorite(FavoriteProduct(
                       favoriteProduct.productItem, favoriteProduct.size));
                 },
                 icon: const ImageIcon(

@@ -10,7 +10,7 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthenticationCubit, AuthenticationState>(
-      // listenWhen: (previous, current) => previous.status == current.status,
+      listenWhen: (previous, current) => previous.status != current.status,
       listener: (BuildContext context, state) {
         if (state.status == AuthenticationStatus.authenticated) {
           Navigator.of(context).pushNamed(Routes.dashboard);

@@ -26,9 +26,17 @@ class FilterBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xffF9F9F9),
-      height: 500,
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: const BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 5.0,
+            offset: Offset(3.0, 0),
+          ),
+        ],
+        color: Color(0xffF9F9F9),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
       child: Column(
         children: [
           _sortCategory(applyCategory, chooseCategory),

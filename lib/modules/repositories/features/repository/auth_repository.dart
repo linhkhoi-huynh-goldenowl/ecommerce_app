@@ -1,10 +1,14 @@
+import 'package:e_commerce_app/modules/models/e_user.dart';
+import 'package:e_commerce_app/modules/repositories/x_result.dart';
+
 abstract class AuthRepository {
-  Future<bool> login(
+  Future<XResult<EUser>> checkAuthentication();
+  Future<XResult<EUser>> login(
     String email,
     String password,
   );
 
-  Future<bool> signUp(
+  Future<XResult<EUser>> signUp(
     String name,
     String email,
     String password,
