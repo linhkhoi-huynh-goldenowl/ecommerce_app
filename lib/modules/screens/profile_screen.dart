@@ -1,5 +1,6 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:e_commerce_app/widgets/profile_info_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -105,6 +106,13 @@ class ProfileScreen extends ProductCoordinatorBase {
                     title: "Settings",
                     subTitle: "Notification, password",
                     func: () {}),
+                ProfileInfoButton(
+                    title: "Upload all product",
+                    subTitle: "",
+                    func: () {
+                      print("==start==");
+                      Domain().product.uploadAllProducts();
+                    }),
                 ProfileInfoButton(
                     title: "Sign out",
                     subTitle: "Log out of app",

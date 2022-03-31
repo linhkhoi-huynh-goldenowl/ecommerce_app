@@ -2,155 +2,16 @@ import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/models/size_cloth.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/product_repository.dart';
+import 'package:e_commerce_app/modules/repositories/provider/product_provider.dart';
+import 'package:e_commerce_app/modules/repositories/x_result.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  List<ProductItem> products = <ProductItem>[
-    ProductItem(
-        "SWE",
-        "assets/images/sale_product1.png",
-        25,
-        3,
-        "T-shirt winter",
-        DateTime.utc(2022, 3, 24),
-        true,
-        "Tops",
-        "Black", const [
-      SizeCloth("XS", 11, 3),
-      SizeCloth("S", 12, 2),
-      SizeCloth("M", 13, 3),
-      SizeCloth("L", 14, 4),
-      SizeCloth("XL", 15, 7)
-    ]),
-    ProductItem(
-        "Adidas",
-        "assets/images/sale_product2.png",
-        11,
-        5,
-        "Brown Paint",
-        DateTime.utc(2022, 3, 21),
-        false,
-        "Shirts & Blouses",
-        "Silver", const [
-      SizeCloth("XS", 33, 3),
-      SizeCloth("S", 44, 2),
-      SizeCloth("M", 45, 3),
-      SizeCloth("L", 67, 4),
-      SizeCloth("XL", 77, 7)
-    ]),
-    ProductItem(
-        "Dirty Coins",
-        "assets/images/sale_product3.png",
-        25,
-        4,
-        "Red Dress flower",
-        DateTime.utc(2022, 3, 11),
-        false,
-        "Tops",
-        "Grey",
-        const [
-          SizeCloth("XS", 44, 3),
-          SizeCloth("S", 44, 2),
-          SizeCloth("M", 47, 3),
-          SizeCloth("L", 47, 4),
-          SizeCloth("XL", 52, 7)
-        ],
-        50),
-    ProductItem(
-        "DeGrey",
-        "assets/images/sale_product4.png",
-        13,
-        3,
-        "Wind jacket",
-        DateTime.utc(2022, 2, 23),
-        false,
-        "Knitwear",
-        "White",
-        const [
-          SizeCloth("XS", 14, 3),
-          SizeCloth("S", 24, 2),
-          SizeCloth("M", 46, 3),
-          SizeCloth("L", 46, 4),
-          SizeCloth("XL", 46, 7)
-        ],
-        20),
-    ProductItem(
-        "Now",
-        "assets/images/sale_product5.png",
-        44,
-        1,
-        "Hoodie Full",
-        DateTime.utc(2021, 5, 5),
-        false,
-        "Tops",
-        "Green",
-        const [
-          SizeCloth("XS", 6, 3),
-          SizeCloth("S", 14, 2),
-          SizeCloth("M", 14, 3),
-          SizeCloth("L", 16, 4),
-          SizeCloth("XL", 16, 7)
-        ],
-        10),
-    ProductItem("Puma", "assets/images/sale_product6.png", 23, 4, "Grid short",
-        DateTime.utc(2020, 12, 11), false, "Jeans", "Pink", const [
-      SizeCloth("XS", 88, 3),
-      SizeCloth("S", 90, 2),
-      SizeCloth("M", 93, 3),
-      SizeCloth("L", 94, 4),
-      SizeCloth("XL", 95, 7)
-    ]),
-    ProductItem("Crown", "assets/images/sale_product7.png", 16, 5, "Anna shirt",
-        DateTime.utc(2019, 2, 4), true, "Skirts", "Orange", const [
-      SizeCloth("XS", 76, 3),
-      SizeCloth("S", 78, 2),
-      SizeCloth("M", 79, 3),
-      SizeCloth("L", 80, 4),
-      SizeCloth("XL", 80, 7)
-    ]),
-    ProductItem("BiTis", "assets/images/sale_product8.png", 6, 2, "New Skirt",
-        DateTime.utc(2022, 1, 27), true, "Shorts", "Yellow", const [
-      SizeCloth("XS", 31, 3),
-      SizeCloth("S", 32, 2),
-      SizeCloth("M", 33, 3),
-      SizeCloth("L", 34, 4),
-      SizeCloth("XL", 54, 7)
-    ]),
-    ProductItem(
-        "Samsung",
-        "assets/images/sale_product9.png",
-        66,
-        2,
-        "Satin Paint",
-        DateTime.utc(2021, 10, 17),
-        false,
-        "Skirts",
-        "Red", const [
-      SizeCloth("XS", 20, 3),
-      SizeCloth("S", 11, 2),
-      SizeCloth("M", 12, 3),
-      SizeCloth("L", 14, 4),
-      SizeCloth("XL", 15, 7)
-    ]),
-    ProductItem(
-        "Apple",
-        "assets/images/sale_product10.png",
-        4,
-        5,
-        "T-shirt Hard",
-        DateTime.utc(2022, 3, 9),
-        true,
-        "Dresses",
-        "Blue", const [
-      SizeCloth("XS", 43, 3),
-      SizeCloth("S", 54, 2),
-      SizeCloth("M", 64, 3),
-      SizeCloth("L", 77, 4),
-      SizeCloth("XL", 76, 7)
-    ]),
-  ];
+  final ProductProvider productProvider = ProductProvider();
   @override
   Future<List<ProductItem>> getProducts() async {
-    return products;
+    final XResult<List<ProductItem>> result =
+        await productProvider.getAllProduct();
+    return result.data ?? <ProductItem>[];
   }
 
   @override
@@ -159,9 +20,9 @@ class ProductRepositoryImpl implements ProductRepository {
       case TypeList.all:
         return getProducts();
       case TypeList.newest:
-        return await getProductsNew(products);
+        return await getProductsNew(await getProducts());
       case TypeList.sale:
-        return await getProductsSale(products);
+        return await getProductsSale(await getProducts());
     }
   }
 
@@ -232,5 +93,197 @@ class ProductRepositoryImpl implements ProductRepository {
             .toLowerCase()
             .contains(categoryName.toLowerCase()))
         .toList();
+  }
+
+  @override
+  Future<void> uploadAllProducts() async {
+    List<ProductItem> products = <ProductItem>[
+      ProductItem(
+          id: "P0001",
+          brandName: "SWE",
+          image: "assets/images/sale_product1.png",
+          numberReviews: 25,
+          reviewStars: 3,
+          title: "T-shirt winter",
+          createdDate: DateTime.utc(2022, 3, 24),
+          isPopular: true,
+          categoryName: "Tops",
+          color: "Black",
+          sizes: [
+            SizeCloth(size: "XS", price: 11, quantity: 3),
+            SizeCloth(size: "S", price: 12, quantity: 2),
+            SizeCloth(size: "M", price: 14, quantity: 4),
+            SizeCloth(size: "L", price: 18, quantity: 5),
+            SizeCloth(size: "XL", price: 18, quantity: 1),
+          ]),
+      ProductItem(
+          id: "P0002",
+          brandName: "Adidas",
+          image: "assets/images/sale_product2.png",
+          numberReviews: 11,
+          reviewStars: 4,
+          title: "Brown Paint",
+          createdDate: DateTime.utc(2021, 4, 24),
+          isPopular: true,
+          categoryName: "Shirts & Blouses",
+          color: "Silver",
+          sizes: [
+            SizeCloth(size: "XS", price: 21, quantity: 3),
+            SizeCloth(size: "S", price: 22, quantity: 2),
+            SizeCloth(size: "M", price: 24, quantity: 4),
+            SizeCloth(size: "L", price: 28, quantity: 5),
+            SizeCloth(size: "XL", price: 28, quantity: 1),
+          ]),
+      ProductItem(
+          id: "P0003",
+          brandName: "Dirty Coins",
+          image: "assets/images/sale_product3.png",
+          numberReviews: 14,
+          reviewStars: 5,
+          title: "Red Dress flower",
+          createdDate: DateTime.utc(2022, 3, 11),
+          isPopular: false,
+          categoryName: "Tops",
+          color: "Grey",
+          sizes: [
+            SizeCloth(size: "XS", price: 23, quantity: 3),
+            SizeCloth(size: "S", price: 25, quantity: 2),
+            SizeCloth(size: "M", price: 27, quantity: 4),
+            SizeCloth(size: "L", price: 28, quantity: 5),
+            SizeCloth(size: "XL", price: 28, quantity: 1),
+          ],
+          salePercent: 50),
+      ProductItem(
+          id: "P0004",
+          brandName: "DeGrey",
+          image: "assets/images/sale_product4.png",
+          numberReviews: 25,
+          reviewStars: 4,
+          title: "Wind jacket",
+          createdDate: DateTime.utc(2022, 1, 21),
+          isPopular: false,
+          categoryName: "Knitwear",
+          color: "White",
+          sizes: [
+            SizeCloth(size: "XS", price: 63, quantity: 3),
+            SizeCloth(size: "S", price: 65, quantity: 2),
+            SizeCloth(size: "M", price: 67, quantity: 4),
+            SizeCloth(size: "L", price: 69, quantity: 5),
+            SizeCloth(size: "XL", price: 69, quantity: 1),
+          ],
+          salePercent: 10),
+      ProductItem(
+          id: "P0005",
+          brandName: "Now",
+          image: "assets/images/sale_product5.png",
+          numberReviews: 3,
+          reviewStars: 1,
+          title: "Hoodie Full",
+          createdDate: DateTime.utc(2021, 10, 11),
+          isPopular: true,
+          categoryName: "Tops",
+          color: "Green",
+          sizes: [
+            SizeCloth(size: "XS", price: 21, quantity: 3),
+            SizeCloth(size: "S", price: 29, quantity: 12),
+            SizeCloth(size: "M", price: 32, quantity: 8),
+            SizeCloth(size: "L", price: 35, quantity: 5),
+            SizeCloth(size: "XL", price: 37, quantity: 11),
+          ]),
+      ProductItem(
+          id: "P0006",
+          brandName: "Puma",
+          image: "assets/images/sale_product6.png",
+          numberReviews: 33,
+          reviewStars: 3,
+          title: "Grid short",
+          createdDate: DateTime.utc(2022, 4, 11),
+          isPopular: true,
+          categoryName: "Jeans",
+          color: "Pink",
+          sizes: [
+            SizeCloth(size: "XS", price: 31, quantity: 3),
+            SizeCloth(size: "S", price: 39, quantity: 12),
+            SizeCloth(size: "M", price: 42, quantity: 18),
+            SizeCloth(size: "L", price: 45, quantity: 55),
+            SizeCloth(size: "XL", price: 47, quantity: 11),
+          ]),
+      ProductItem(
+          id: "P0007",
+          brandName: "Crown",
+          image: "assets/images/sale_product7.png",
+          numberReviews: 33,
+          reviewStars: 3,
+          title: "Anna shirt",
+          createdDate: DateTime.utc(2022, 4, 11),
+          isPopular: false,
+          categoryName: "Skirts",
+          color: "Orange",
+          sizes: [
+            SizeCloth(size: "XS", price: 13, quantity: 13),
+            SizeCloth(size: "S", price: 16, quantity: 12),
+            SizeCloth(size: "M", price: 18, quantity: 18),
+            SizeCloth(size: "L", price: 22, quantity: 15),
+            SizeCloth(size: "XL", price: 23, quantity: 11),
+          ]),
+      ProductItem(
+          id: "P0008",
+          brandName: "BiTis",
+          image: "assets/images/sale_product8.png",
+          numberReviews: 12,
+          reviewStars: 2,
+          title: "New Skirt",
+          createdDate: DateTime.utc(2022, 2, 24),
+          isPopular: false,
+          categoryName: "Shorts",
+          color: "Yellow",
+          sizes: [
+            SizeCloth(size: "XS", price: 13, quantity: 13),
+            SizeCloth(size: "S", price: 16, quantity: 12),
+            SizeCloth(size: "M", price: 18, quantity: 18),
+            SizeCloth(size: "L", price: 22, quantity: 15),
+            SizeCloth(size: "XL", price: 23, quantity: 11),
+          ]),
+      ProductItem(
+          id: "P0009",
+          brandName: "Samsung",
+          image: "assets/images/sale_product9.png",
+          numberReviews: 23,
+          reviewStars: 5,
+          title: "Satin Paint",
+          createdDate: DateTime.utc(2022, 1, 11),
+          isPopular: false,
+          categoryName: "Skirts",
+          color: "Red",
+          sizes: [
+            SizeCloth(size: "XS", price: 44, quantity: 23),
+            SizeCloth(size: "S", price: 44, quantity: 22),
+            SizeCloth(size: "M", price: 45, quantity: 38),
+            SizeCloth(size: "L", price: 47, quantity: 15),
+            SizeCloth(size: "XL", price: 47, quantity: 11),
+          ]),
+      ProductItem(
+          id: "P0010",
+          brandName: "Apple",
+          image: "assets/images/sale_product10.png",
+          numberReviews: 44,
+          reviewStars: 3,
+          title: "Satin Paint",
+          createdDate: DateTime.utc(2022, 4, 11),
+          isPopular: false,
+          categoryName: "Dresses",
+          color: "Blue",
+          sizes: [
+            SizeCloth(size: "XS", price: 54, quantity: 23),
+            SizeCloth(size: "S", price: 54, quantity: 22),
+            SizeCloth(size: "M", price: 55, quantity: 38),
+            SizeCloth(size: "L", price: 57, quantity: 15),
+            SizeCloth(size: "XL", price: 57, quantity: 11),
+          ]),
+    ];
+    for (ProductItem element in products) {
+      await productProvider.createProduct(element);
+      print("==done an object==");
+    }
   }
 }

@@ -1,11 +1,18 @@
-import 'package:equatable/equatable.dart';
-
-class SizeCloth extends Equatable {
+class SizeCloth {
   final String size;
   final double price;
   final int quantity;
-  const SizeCloth(this.size, this.price, this.quantity);
+  SizeCloth({required this.size, required this.price, required this.quantity});
 
-  @override
-  List<Object?> get props => [size, price, quantity];
+  factory SizeCloth.fromJson(Map<String, dynamic> parsedJson) => SizeCloth(
+        size: parsedJson['size'],
+        price: parsedJson['price'],
+        quantity: parsedJson['quantity'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'size': size,
+        'price': price,
+        'quantity': quantity,
+      };
 }

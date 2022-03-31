@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/modules/models/e_user.dart';
-import 'package:e_commerce_app/modules/repositories/firestore/base_collection.dart';
+import 'package:e_commerce_app/modules/repositories/provider/base_collection.dart';
 import 'package:e_commerce_app/modules/repositories/x_result.dart';
 
 class UserProvider extends BaseCollectionReference<EUser> {
