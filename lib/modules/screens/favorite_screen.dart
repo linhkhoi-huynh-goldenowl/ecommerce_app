@@ -8,25 +8,29 @@ import 'package:e_commerce_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/filter_favorite_bar.dart';
+import '../../widgets/filter_bar_widget.dart';
 import '../cubit/category/category_cubit.dart';
-import '../repositories/category_repository.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<CategoryCubit>(
-      create: (BuildContext context) =>
-          CategoryCubit(categoryRepository: CategoryRepository()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CategoryCubit>(
+          create: (BuildContext context) => CategoryCubit(),
+        ),
+        BlocProvider<FavoriteCubit>(
+          create: (BuildContext context) => FavoriteCubit(),
+        ),
+      ],
       child: _buildBody(context),
     );
   }
 
   Widget _buildBody(BuildContext context) {
     return BlocBuilder<FavoriteCubit, FavoriteState>(
-      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         switch (state.status) {
           case FavoriteStatus.failure:
@@ -42,9 +46,12 @@ class FavoriteScreen extends StatelessWidget {
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
+                      shadowColor: Colors.white,
+                      elevation: 5,
                       backgroundColor: const Color(0xffF9F9F9),
                       expandedHeight: 100.0,
                       pinned: true,
+                      stretch: true,
                       automaticallyImplyLeading: false,
                       leading: null,
                       actions: [_findButton(context)],
@@ -53,10 +60,27 @@ class FavoriteScreen extends StatelessWidget {
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverAppBarDelegate(
-                        child: const PreferredSize(
-                          preferredSize: Size.fromHeight(120.0),
-                          child: FilterFavoriteBar(),
-                        ),
+                        child: PreferredSize(
+                            preferredSize: const Size.fromHeight(110.0),
+                            child: BlocBuilder<FavoriteCubit, FavoriteState>(
+                                buildWhen: (previous, current) =>
+                                    previous.status != current.status,
+                                builder: (context, state) {
+                                  return FilterBarWidget(
+                                    chooseCategory: state.categoryName,
+                                    applyGrid:
+                                        BlocProvider.of<FavoriteCubit>(context)
+                                            .favoriteLoadGridLayout,
+                                    applyChoose: context
+                                        .read<FavoriteCubit>()
+                                        .favoriteSort,
+                                    chooseSort: state.sort,
+                                    isGridLayout: state.isGridLayout,
+                                    applyCategory:
+                                        BlocProvider.of<FavoriteCubit>(context)
+                                            .favoriteCategoryEvent,
+                                  );
+                                })),
                       ))
                 ];
               },
@@ -70,12 +94,8 @@ class FavoriteScreen extends StatelessWidget {
                           child: Text("No favorites"),
                         )
                       : state.isGridLayout
-                          ? _displayGridView(state.useListSub
-                              ? state.favoritesListSub
-                              : state.favorites)
-                          : _displayListView(state.useListSub
-                              ? state.favoritesListSub
-                              : state.favorites),
+                          ? _displayGridView(state.favorites)
+                          : _displayListView(state.favorites),
             ));
 
           default:
@@ -88,8 +108,8 @@ class FavoriteScreen extends StatelessWidget {
 
 GridView _displayGridView(List favorites) {
   return GridView.builder(
-    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-      maxCrossAxisExtent: 300,
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
       childAspectRatio: 0.6,
     ),
     itemBuilder: (BuildContext context, int index) {
@@ -119,19 +139,34 @@ Widget _findButton(BuildContext context) {
       icon: Image.asset('assets/images/icons/find.png'));
 }
 
-FlexibleSpaceBar _flexibleSpaceBar(BuildContext context, String categoryName,
+Widget _flexibleSpaceBar(BuildContext context, String categoryName,
     bool isSearch, String searchInput) {
-  return FlexibleSpaceBar(
-      centerTitle: true,
-      title: isSearch == false
-          ? Text(
-              categoryName,
-              style: ETextStyle.metropolis(weight: FontWeight.w600),
-            )
-          : SearchTextField(
-              initValue: searchInput,
-              func: (value) {
-                BlocProvider.of<FavoriteCubit>(context)
-                    .favoriteSearchEvent(value);
-              }));
+  return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+    var top = constraints.biggest.height;
+    return FlexibleSpaceBar(
+      titlePadding: EdgeInsets.only(
+          right: 40,
+          left: isSearch == false ? 15 : 40,
+          top: isSearch == false ? 0 : 5,
+          bottom: isSearch == false ? 11 : 5),
+      centerTitle: top > 71 && top < 91 ? true : false,
+      title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: 1,
+          child: isSearch == false
+              ? Text(
+                  "Favorites",
+                  textAlign: TextAlign.start,
+                  style: ETextStyle.metropolis(
+                      weight: FontWeight.w600, fontSize: 18),
+                )
+              : SearchTextField(
+                  initValue: searchInput,
+                  func: (value) {
+                    BlocProvider.of<FavoriteCubit>(context)
+                        .favoriteSearchEvent(value);
+                  })),
+    );
+  });
 }

@@ -18,7 +18,6 @@ class FavoriteCardList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 343,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
       child: Stack(
@@ -73,9 +72,10 @@ class FavoriteCardList extends StatelessWidget {
                           Row(
                             children: [
                               PriceText(
-                                  priceSale:
-                                      favoriteProduct.productItem.priceSale,
-                                  price: favoriteProduct.productItem.price),
+                                  salePercent:
+                                      favoriteProduct.productItem.salePercent,
+                                  price: favoriteProduct
+                                      .productItem.sizes[0].price),
                               const SizedBox(
                                 width: 55,
                               ),
@@ -97,13 +97,13 @@ class FavoriteCardList extends StatelessWidget {
               )
             ],
           ),
-          favoriteProduct.productItem.priceSale != null
+          favoriteProduct.productItem.salePercent != null
               ? Positioned(
                   top: 5,
                   left: 5,
                   child: ChipLabel(
                       title:
-                          '-${((1 - (favoriteProduct.productItem.priceSale! / favoriteProduct.productItem.price)) * 100).toStringAsFixed(0)}%',
+                          '-${favoriteProduct.productItem.salePercent?.toStringAsFixed(0)}%',
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
@@ -112,7 +112,7 @@ class FavoriteCardList extends StatelessWidget {
                   favoriteProduct.productItem.createdDate.year ==
                       DateTime.now().year)
               ? Positioned(
-                  top: favoriteProduct.productItem.priceSale == null ? 5 : 40,
+                  top: favoriteProduct.productItem.salePercent == null ? 5 : 40,
                   left: 5,
                   child: const ChipLabel(
                       title: 'NEW', backgroundColor: Color(0xff222222)),
@@ -124,7 +124,7 @@ class FavoriteCardList extends StatelessWidget {
               child: IconButton(
                 splashRadius: 15,
                 onPressed: () {
-                  context.read<FavoriteCubit>().addFavorite(FavoriteProduct(
+                  context.read<FavoriteCubit>().removeFavorite(FavoriteProduct(
                       favoriteProduct.productItem, favoriteProduct.size));
                 },
                 icon: const ImageIcon(

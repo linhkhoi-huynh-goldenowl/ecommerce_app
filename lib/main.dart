@@ -1,14 +1,16 @@
 import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'config/routes/router.dart';
-import 'modules/cubit/favorite/favorite_cubit.dart';
-import 'modules/repositories/auth_repository.dart';
-import 'modules/repositories/favorite_repository.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -17,24 +19,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-        create: (context) => AuthRepository(),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) =>
-                  AuthenticationCubit(authRepo: context.read<AuthRepository>()),
-            ),
-            BlocProvider(
-              create: (context) =>
-                  FavoriteCubit(favoriteRepository: FavoriteRepository()),
-            ),
-          ],
-          child: const MaterialApp(
-            debugShowCheckedModeBanner: false,
-            onGenerateRoute: AppRouter.generateRoute,
-            initialRoute: Routes.landing,
-          ),
-        ));
+    return BlocProvider(
+      create: (BuildContext context) => AuthenticationCubit(),
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: AppRouter.generateRoute,
+        initialRoute: Routes.landing,
+      ),
+    );
   }
 }

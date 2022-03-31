@@ -2,7 +2,9 @@ import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
 import 'package:e_commerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../modules/cubit/favorite/favorite_cubit.dart';
 import '../modules/models/favorite_product.dart';
 import 'button_circle.dart';
 import 'chip_label.dart';
@@ -16,8 +18,7 @@ class FavoriteCardGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      width: 162,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -30,7 +31,7 @@ class FavoriteCardGrid extends StatelessWidget {
               children: [
                 ImageProductWidget(
                     imagePath: favoriteProduct.productItem.image,
-                    width: double.maxFinite,
+                    width: 162,
                     height: 200,
                     radius: 20),
                 const SizedBox(
@@ -60,18 +61,18 @@ class FavoriteCardGrid extends StatelessWidget {
                   height: 3,
                 ),
                 PriceText(
-                    priceSale: favoriteProduct.productItem.priceSale,
-                    price: favoriteProduct.productItem.price)
+                    salePercent: favoriteProduct.productItem.salePercent,
+                    price: favoriteProduct.productItem.sizes[0].price)
               ],
             ),
           ),
-          favoriteProduct.productItem.priceSale != null
+          favoriteProduct.productItem.salePercent != null
               ? Positioned(
                   top: 5,
                   left: 5,
                   child: ChipLabel(
                       title:
-                          '-${((1 - (favoriteProduct.productItem.priceSale! / favoriteProduct.productItem.price)) * 100).toStringAsFixed(0)}%',
+                          '-${favoriteProduct.productItem.salePercent?.toStringAsFixed(0)}%',
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
@@ -80,12 +81,25 @@ class FavoriteCardGrid extends StatelessWidget {
                   favoriteProduct.productItem.createdDate.year ==
                       DateTime.now().year)
               ? Positioned(
-                  top: favoriteProduct.productItem.priceSale == null ? 5 : 40,
+                  top: favoriteProduct.productItem.salePercent == null ? 5 : 40,
                   left: 5,
                   child: const ChipLabel(
                       title: 'NEW', backgroundColor: Color(0xff222222)),
                 )
               : const SizedBox(),
+          Positioned(
+              top: 0,
+              right: -4,
+              child: IconButton(
+                splashRadius: 15,
+                onPressed: () {
+                  context.read<FavoriteCubit>().removeFavorite(FavoriteProduct(
+                      favoriteProduct.productItem, favoriteProduct.size));
+                },
+                icon: const ImageIcon(
+                    AssetImage("assets/images/icons/delete.png"),
+                    size: 14),
+              )),
           Positioned(
               top: 170,
               right: -23,

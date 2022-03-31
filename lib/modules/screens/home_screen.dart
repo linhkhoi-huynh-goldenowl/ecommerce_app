@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/category/category_cubit.dart';
-import '../repositories/category_repository.dart';
-import '../repositories/product_repository.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class HomeScreen extends ProductCoordinatorBase {
@@ -18,12 +16,10 @@ class HomeScreen extends ProductCoordinatorBase {
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [
       BlocProvider<CategoryCubit>(
-        create: (BuildContext context) =>
-            CategoryCubit(categoryRepository: CategoryRepository()),
+        create: (BuildContext context) => CategoryCubit(),
       ),
       BlocProvider<ProductCubit>(
-        create: (BuildContext context) =>
-            ProductCubit(productRepository: ProductRepository()),
+        create: (BuildContext context) => ProductCubit(),
       ),
     ], child: stackView(context));
   }

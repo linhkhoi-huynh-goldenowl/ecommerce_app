@@ -1,21 +1,20 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/repositories/category_repository.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
+
 import 'package:equatable/equatable.dart';
 
 part 'category_state.dart';
 
 class CategoryCubit extends Cubit<CategoryState> {
-  CategoryCubit({required this.categoryRepository})
-      : super(const CategoryState()) {
+  CategoryCubit() : super(const CategoryState()) {
     categoryLoaded();
   }
 
-  final CategoryRepository categoryRepository;
   void categoryLoaded() async {
     try {
       if (state.status == CategoryStatus.initial) {
         emit(state.copyWith(status: CategoryStatus.loading));
-        final categories = await categoryRepository.getCategories();
+        final categories = await Domain().category.getCategories();
         emit(state.copyWith(
             status: CategoryStatus.success, categories: categories));
       }
@@ -28,7 +27,7 @@ class CategoryCubit extends Cubit<CategoryState> {
     try {
       emit(state.copyWith(status: CategoryStatus.loading));
       final categories =
-          await categoryRepository.getCategoriesByName(searchInput);
+          await Domain().category.getCategoriesByName(searchInput);
       emit(state.copyWith(
           status: CategoryStatus.success,
           categories: categories,

@@ -2,16 +2,16 @@ import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class PriceText extends StatelessWidget {
-  const PriceText({Key? key, this.priceSale, required this.price})
+  const PriceText({Key? key, this.salePercent, required this.price})
       : super(key: key);
-  final double? priceSale;
+  final double? salePercent;
   final double price;
   @override
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(
         children: <TextSpan>[
-          priceSale != null
+          salePercent != null
               ? TextSpan(
                   text: '${price.toStringAsFixed(0)}\$',
                   style: ETextStyle.metropolis(
@@ -21,9 +21,9 @@ class PriceText extends StatelessWidget {
               : TextSpan(
                   text: '${price.toStringAsFixed(0)}\$',
                   style: ETextStyle.metropolis(fontSize: 14)),
-          priceSale != null
+          salePercent != null
               ? TextSpan(
-                  text: ' ${priceSale!.toStringAsFixed(0)}\$',
+                  text: ' ${(price * salePercent! / 100).toStringAsFixed(0)}\$',
                   style: ETextStyle.metropolis(
                       color: const Color(0xffDB3022), fontSize: 14))
               : const TextSpan(

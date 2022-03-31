@@ -19,11 +19,8 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider(
-        create: (context) => NavigationCubit(),
-      ),
-    ], child: _buildBody());
+    return BlocProvider(
+        create: (context) => NavigationCubit(), child: _buildBody());
   }
 
   Widget _buildBody() {

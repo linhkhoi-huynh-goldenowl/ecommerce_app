@@ -1,12 +1,12 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_app/widgets/filter_product_bar.dart';
 import 'package:e_commerce_app/widgets/search_text_field.dart';
 import 'package:e_commerce_app/widgets/shop_product_card.dart';
 import 'package:e_commerce_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/filter_bar_widget.dart';
 import '../../widgets/main_product_card.dart';
 
 class ShopCategoryScreen extends StatelessWidget {
@@ -30,6 +30,8 @@ class ShopCategoryScreen extends StatelessWidget {
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
+                      shadowColor: Colors.white,
+                      elevation: 5,
                       backgroundColor: const Color(0xffF9F9F9),
                       expandedHeight: 100.0,
                       pinned: true,
@@ -47,10 +49,27 @@ class ShopCategoryScreen extends StatelessWidget {
                   SliverPersistentHeader(
                       pinned: true,
                       delegate: SliverAppBarDelegate(
-                        child: const PreferredSize(
-                          preferredSize: Size.fromHeight(120.0),
-                          child: FilterProductBar(),
-                        ),
+                        child: PreferredSize(
+                            preferredSize: const Size.fromHeight(110.0),
+                            child: BlocBuilder<ProductCubit, ProductState>(
+                                buildWhen: (previous, current) =>
+                                    previous.status != current.status,
+                                builder: (context, state) {
+                                  return FilterBarWidget(
+                                    chooseCategory: state.categoryName,
+                                    applyGrid:
+                                        BlocProvider.of<ProductCubit>(context)
+                                            .productLoadGridLayout,
+                                    applyChoose: context
+                                        .read<ProductCubit>()
+                                        .productSort,
+                                    chooseSort: state.sort,
+                                    isGridLayout: state.isGridLayout,
+                                    applyCategory:
+                                        BlocProvider.of<ProductCubit>(context)
+                                            .productCategoryEvent,
+                                  );
+                                })),
                       ))
                 ];
               },
@@ -78,8 +97,8 @@ class ShopCategoryScreen extends StatelessWidget {
 
 GridView _displayGridView(List productItems) {
   return GridView.builder(
-    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-      maxCrossAxisExtent: 300,
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
       childAspectRatio: 0.6,
     ),
     itemBuilder: (BuildContext context, int index) {
@@ -119,19 +138,33 @@ Widget _findButton(BuildContext context) {
       icon: Image.asset('assets/images/icons/find.png'));
 }
 
-FlexibleSpaceBar _flexibleSpaceBar(BuildContext context, String categoryName,
+Widget _flexibleSpaceBar(BuildContext context, String categoryName,
     bool isSearch, String searchInput) {
-  return FlexibleSpaceBar(
-      centerTitle: true,
-      title: isSearch == false
-          ? Text(
-              categoryName,
-              style: ETextStyle.metropolis(weight: FontWeight.w600),
-            )
-          : SearchTextField(
-              initValue: searchInput,
-              func: (value) {
-                BlocProvider.of<ProductCubit>(context)
-                    .productSearchEvent(value);
-              }));
+  return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+    var top = constraints.biggest.height;
+    return FlexibleSpaceBar(
+      titlePadding: EdgeInsets.only(
+          right: 40,
+          left: isSearch == false ? 15 : 40,
+          top: isSearch == false ? 0 : 5,
+          bottom: isSearch == false ? 11 : 5),
+      centerTitle: top < 91 ? true : false,
+      title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: 1,
+          child: isSearch == false
+              ? Text(
+                  categoryName,
+                  style: ETextStyle.metropolis(
+                      weight: FontWeight.w600, fontSize: 18),
+                )
+              : SearchTextField(
+                  initValue: searchInput,
+                  func: (value) {
+                    BlocProvider.of<ProductCubit>(context)
+                        .productSearchEvent(value);
+                  })),
+    );
+  });
 }
