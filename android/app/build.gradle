@@ -43,8 +43,8 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.ecommerce_app"
-        minSdkVersion flutter.minSdkVersion
+        applicationId "com.goldenowl.e_commerce_app"
+        minSdkVersion 26
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -65,4 +65,9 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+rootProject.ext {
+  set('FlutterFire', [
+    FirebaseSDKVersion: '29.0.4'
+  ])
 }

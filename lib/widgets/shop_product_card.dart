@@ -1,6 +1,6 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
-import 'package:e_commerce_app/widgets/button_circle.dart';
+import 'package:e_commerce_app/dialogs/button_add_favorite.dart';
 import 'package:e_commerce_app/widgets/chip_label.dart';
 import 'package:e_commerce_app/widgets/image_product_widget.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
@@ -15,7 +15,6 @@ class ShopProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 343,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
       child: Stack(
@@ -57,8 +56,8 @@ class ShopProductCard extends StatelessWidget {
                               reviewStars: productItem.reviewStars,
                               numberReviews: productItem.numberReviews),
                           PriceText(
-                              priceSale: productItem.priceSale,
-                              price: productItem.price)
+                              salePercent: productItem.salePercent,
+                              price: productItem.sizes[0].price)
                         ],
                       ),
                     ],
@@ -70,20 +69,19 @@ class ShopProductCard extends StatelessWidget {
               )
             ],
           ),
-          productItem.priceSale != null
+          productItem.salePercent != null
               ? Positioned(
                   top: 5,
                   left: 5,
                   child: ChipLabel(
-                      title:
-                          '-${((1 - (productItem.priceSale! / productItem.price)) * 100).toStringAsFixed(0)}%',
+                      title: '-${productItem.salePercent?.toStringAsFixed(0)}%',
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
           (productItem.createdDate.month == DateTime.now().month &&
                   productItem.createdDate.year == DateTime.now().year)
               ? Positioned(
-                  top: productItem.priceSale == null ? 5 : 40,
+                  top: productItem.salePercent == null ? 5 : 40,
                   left: 5,
                   child: const ChipLabel(
                       title: 'NEW', backgroundColor: Color(0xff222222)),
@@ -92,13 +90,7 @@ class ShopProductCard extends StatelessWidget {
           Positioned(
               bottom: 5,
               right: -23,
-              child: ButtonCircle(
-                  func: () {},
-                  iconPath: "assets/images/icons/heart.png",
-                  iconSize: 16,
-                  iconColor: const Color(0xffDADADA),
-                  fillColor: Colors.white,
-                  padding: 12))
+              child: ButtonAddFavorite(product: productItem))
         ],
       ),
     );

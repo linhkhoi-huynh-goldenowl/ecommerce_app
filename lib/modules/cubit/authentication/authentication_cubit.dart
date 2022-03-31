@@ -1,35 +1,52 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/repositories/auth_repository.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/auth_repository.dart';
+import 'package:equatable/equatable.dart';
 
 part 'authentication_state.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   final AuthRepository authRepo;
 
-  AuthenticationCubit({required this.authRepo}) : super(AuthenticationState()) {
-    checkAuth();
-  }
+  AuthenticationCubit({required this.authRepo})
+      : super(const AuthenticationState());
 
-  void checkAuth() async {
+  void login(String email, String password) async {
     try {
-      final checkAuth = await authRepo.checkAuthentication();
-      if (checkAuth) {
-        emit(state.copyWith(status: LoginStatus.authenticated));
+      if (await authRepo.login(email, password)) {
+        emit(state.copyWith(status: AuthenticationStatus.authenticated));
       } else {
-        emit(state.copyWith(status: LoginStatus.unauthenticated));
+        emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
       }
     } on Exception {
-      emit(state.copyWith(status: LoginStatus.unauthenticated));
+      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
     }
   }
 
-  // // void showAuth() => emit(Unauthenticated());
-  // void navigateDashboard(AuthCredentials credentials) {
-  //   // emit(Authenticated());
-  // }
+  void signUp(String name, String email, String password) async {
+    try {
+      if (await authRepo.signUp(
+        name,
+        email,
+        password,
+      )) {
+        emit(state.copyWith(status: AuthenticationStatus.authenticated));
+      } else {
+        emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+      }
+
+      emit(state.copyWith(status: AuthenticationStatus.authenticated));
+    } on Exception {
+      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+    }
+  }
 
   void signOut() async {
-    await authRepo.signOut();
-    checkAuth();
+    try {
+      await authRepo.signOut();
+
+      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+    } on Exception {
+      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+    }
   }
 }

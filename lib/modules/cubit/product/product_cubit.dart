@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/repositories/product_repository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/product_item.dart';
+import '../../repositories/features/repository/product_repository.dart';
 
 part 'product_state.dart';
 
@@ -57,10 +57,13 @@ class ProductCubit extends Cubit<ProductState> {
 
   void productLoadGridLayout() async {
     try {
-      emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
+      emit(state.copyWith(
+          gridStatus: GridProductStatus.loadingGrid,
+          status: ProductStatus.loading));
       emit(state.copyWith(
           isGridLayout: !state.isGridLayout,
-          gridStatus: GridProductStatus.successGrid));
+          gridStatus: GridProductStatus.successGrid,
+          status: ProductStatus.success));
     } catch (_) {
       emit(state.copyWith(gridStatus: GridProductStatus.failureGrid));
     }
@@ -68,13 +71,16 @@ class ProductCubit extends Cubit<ProductState> {
 
   void productSearchEvent(String searchName) async {
     try {
-      emit(state.copyWith(searchStatus: SearchProductStatus.loadingSearch));
+      emit(state.copyWith(
+          searchStatus: SearchProductStatus.loadingSearch,
+          status: ProductStatus.loading));
       var products =
           await productRepository.getProductsByName(state.type, searchName);
       emit(state.copyWith(
           productList: products,
           searchStatus: SearchProductStatus.successSearch,
-          searchInput: searchName));
+          searchInput: searchName,
+          status: ProductStatus.success));
     } catch (_) {
       emit(state.copyWith(searchStatus: SearchProductStatus.failureSearch));
     }
@@ -90,6 +96,7 @@ class ProductCubit extends Cubit<ProductState> {
 
   void productCategoryEvent(String categoryName) async {
     try {
+      emit(state.copyWith(status: ProductStatus.loading));
       if (categoryName == "All products" ||
           categoryName == state.categoryName) {
         var products = await productRepository.getProductsByType(state.type);
@@ -97,7 +104,8 @@ class ProductCubit extends Cubit<ProductState> {
         emit(state.copyWith(
             categoryName: "All products",
             productList: products,
-            type: state.type));
+            type: state.type,
+            status: ProductStatus.success));
       } else {
         var products = await productRepository.getProductsByCategory(
             state.type, categoryName);
@@ -105,7 +113,8 @@ class ProductCubit extends Cubit<ProductState> {
         emit(state.copyWith(
             categoryName: categoryName,
             productList: products,
-            type: state.type));
+            type: state.type,
+            status: ProductStatus.success));
       }
     } catch (_) {
       emit(state.copyWith(status: ProductStatus.failure));

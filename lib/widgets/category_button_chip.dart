@@ -2,9 +2,14 @@ import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
 class CategoryButtonChip extends StatelessWidget {
-  const CategoryButtonChip({Key? key, required this.func, required this.title})
+  const CategoryButtonChip(
+      {Key? key,
+      required this.func,
+      required this.title,
+      required this.chooseCategory})
       : super(key: key);
   final VoidCallback func;
+  final String chooseCategory;
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -13,13 +18,17 @@ class CategoryButtonChip extends StatelessWidget {
       child: ElevatedButton(
         onPressed: func,
         style: ElevatedButton.styleFrom(
-          primary: const Color(0xff222222),
+          primary: chooseCategory == title
+              ? const Color(0xffffffff)
+              : const Color(0xff222222),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
         ),
         child: Text(title,
-            style: ETextStyle.metropolis(fontSize: 14, color: Colors.white)),
+            style: ETextStyle.metropolis(
+                fontSize: 14,
+                color: chooseCategory == title ? Colors.black : Colors.white)),
       ),
     );
   }
