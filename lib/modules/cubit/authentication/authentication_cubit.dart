@@ -74,6 +74,28 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     return false;
   }
 
+  Future<bool> loginWithGoogle() async {
+    try {
+      emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
+      final XResult<EUser> result = await Domain().auth.loginWithGoogle();
+      if (result.isSuccess) {
+        emit(state.copyWith(
+            status: AuthenticationStatus.authenticated,
+            eUser: result.data,
+            submitStatus: AuthSubmitStatus.success));
+      } else {
+        emit(state.copyWith(
+            status: AuthenticationStatus.unauthenticated,
+            messageError: result.error,
+            submitStatus: AuthSubmitStatus.error));
+      }
+      return true;
+    } on Exception {
+      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+    }
+    return false;
+  }
+
   void signOut(BuildContext context, VoidCallback navigateLogin) async {
     try {
       await Domain().auth.signOut();

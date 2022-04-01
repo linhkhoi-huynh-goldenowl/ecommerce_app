@@ -3,11 +3,12 @@ import 'package:e_commerce_app/modules/repositories/features/repository/auth_rep
 import 'package:e_commerce_app/modules/repositories/provider/user_provider.dart';
 import 'package:e_commerce_app/modules/repositories/x_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final UserProvider userProvider = UserProvider();
+  final UserProvider _userProvider = UserProvider();
   @override
   Future<XResult<EUser>> login(String email, String password) async {
     try {
@@ -15,7 +16,7 @@ class AuthRepositoryImpl implements AuthRepository {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       final XResult<EUser> result =
-          await userProvider.getUser(userCredential.user!.uid);
+          await _userProvider.getUser(userCredential.user!.uid);
       if (result.data != null) {
         pref.setString("userId", result.data?.id ?? "");
         pref.setBool("isLogin", true);
@@ -46,11 +47,10 @@ class AuthRepositoryImpl implements AuthRepository {
           name: name,
           dateOfBirth: null,
           shippingAddress: [],
-          password: password,
           notificationSale: false,
           notificationNewArrivals: false,
           notificationDelivery: false);
-      userProvider.createUser(eUser);
+      _userProvider.createUser(eUser);
       pref.setString("userId", _uid!);
       pref.setBool("isLogin", true);
       return XResult.success(eUser);
@@ -80,9 +80,50 @@ class AuthRepositoryImpl implements AuthRepository {
       if (id == null) {
         return XResult.error("Don't find id");
       } else {
-        final XResult<EUser> result = await userProvider.getUser(id);
+        final XResult<EUser> result = await _userProvider.getUser(id);
         return result;
       }
+    }
+  }
+
+  @override
+  Future<XResult<EUser>> loginWithGoogle() async {
+    try {
+      final pref = await SharedPreferences.getInstance();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final XResult<EUser> result =
+          await _userProvider.getUser(userCredential.user!.uid);
+
+      if (result.isSuccess) {
+        pref.setString("userId", result.data?.id ?? "");
+        pref.setBool("isLogin", true);
+        return result;
+      } else {
+        final eUser = EUser(
+            id: userCredential.user!.uid,
+            email: userCredential.user?.email ?? "",
+            name: userCredential.user!.displayName ?? "",
+            dateOfBirth: null,
+            shippingAddress: [],
+            notificationSale: false,
+            notificationNewArrivals: false,
+            notificationDelivery: false);
+        _userProvider.createUser(eUser);
+        pref.setString("userId", userCredential.user!.uid);
+        pref.setBool("isLogin", true);
+        return XResult.success(eUser);
+      }
+    } catch (_) {
+      return XResult.error("Something was not right");
     }
   }
 }

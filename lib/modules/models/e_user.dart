@@ -5,7 +5,6 @@ class EUser extends BaseModel {
   final String name;
   final DateTime? dateOfBirth;
   final List<String> shippingAddress;
-  final String password;
   final bool notificationSale;
   final bool notificationNewArrivals;
   final bool notificationDelivery;
@@ -15,7 +14,6 @@ class EUser extends BaseModel {
     required this.name,
     this.dateOfBirth,
     required this.shippingAddress,
-    required this.password,
     required this.notificationSale,
     required this.notificationNewArrivals,
     required this.notificationDelivery,
@@ -30,7 +28,6 @@ class EUser extends BaseModel {
             ? DateTime.parse(parsedJson['dateOfBirth'])
             : null,
         shippingAddress: parsedJson['shippingAddress'].cast<String>(),
-        password: parsedJson['password'],
         notificationDelivery: parsedJson['notificationDelivery'],
         notificationNewArrivals: parsedJson['notificationNewArrivals'],
         notificationSale: parsedJson['notificationSale'],
@@ -42,7 +39,6 @@ class EUser extends BaseModel {
         'name': name,
         'dateOfBirth': dateOfBirth?.toIso8601String(),
         'shippingAddress': shippingAddress,
-        'password': password,
         'notificationSale': notificationSale,
         'notificationNewArrivals': notificationNewArrivals,
         'notificationDelivery': notificationDelivery,
