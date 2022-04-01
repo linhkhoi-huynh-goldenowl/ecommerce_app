@@ -9,7 +9,7 @@ class ProductProvider extends BaseCollectionReference<ProductItem> {
                 ProductItem>(
             fromFirestore: (snapshot, options) =>
                 ProductItem.fromJson(snapshot.data() as Map<String, dynamic>),
-            toFirestore: (user, _) => user.toJson()));
+            toFirestore: (product, _) => product.toJson()));
 
   Future<void> createProduct(ProductItem productItem) async {
     await set(productItem);
@@ -17,6 +17,7 @@ class ProductProvider extends BaseCollectionReference<ProductItem> {
 
   Future<XResult<List<ProductItem>>> getAllProduct() async {
     final XResult<List<ProductItem>> res = await query();
+    print(res.data);
     return res;
   }
 

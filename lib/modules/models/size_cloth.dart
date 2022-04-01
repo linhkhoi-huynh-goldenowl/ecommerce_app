@@ -6,7 +6,7 @@ class SizeCloth {
 
   factory SizeCloth.fromJson(Map<String, dynamic> parsedJson) => SizeCloth(
         size: parsedJson['size'],
-        price: parsedJson['price'],
+        price: parsedJson['price'].toDouble(),
         quantity: parsedJson['quantity'],
       );
 

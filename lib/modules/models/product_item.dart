@@ -44,7 +44,10 @@ class ProductItem extends BaseModel {
         categoryName: parsedJson['categoryName'],
         color: parsedJson['color'],
         sizes: _sizes,
-        salePercent: parsedJson['salePercent']);
+        // ignore: prefer_null_aware_operators
+        salePercent: parsedJson['salePercent'] != null
+            ? parsedJson['salePercent'].toDouble()
+            : null);
   }
 
   Map<String, dynamic> toJson() {
