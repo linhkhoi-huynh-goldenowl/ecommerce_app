@@ -106,12 +106,6 @@ class ProfileScreen extends ProductCoordinatorBase {
                     subTitle: "Notification, password",
                     func: () {}),
                 ProfileInfoButton(
-                    title: "Upload all product",
-                    subTitle: "",
-                    func: () {
-                      Domain().product.uploadAllProducts();
-                    }),
-                ProfileInfoButton(
                     title: "Sign out",
                     subTitle: "Log out of app",
                     func: () {

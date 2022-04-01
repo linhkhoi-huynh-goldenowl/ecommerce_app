@@ -3,7 +3,6 @@ import 'package:e_commerce_app/modules/models/product_item.dart';
 
 abstract class ProductRepository {
   Future<List<ProductItem>> getProducts();
-  Future<void> uploadAllProducts();
 
   Future<List<ProductItem>> getProductsByType(TypeList typeList);
 
