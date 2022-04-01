@@ -17,7 +17,6 @@ class ProductProvider extends BaseCollectionReference<ProductItem> {
 
   Future<XResult<List<ProductItem>>> getAllProduct() async {
     final XResult<List<ProductItem>> res = await query();
-    print(res.data);
     return res;
   }
 

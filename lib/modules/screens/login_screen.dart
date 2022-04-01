@@ -1,4 +1,3 @@
-import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/login/login_cubit.dart';
 import 'package:e_commerce_app/widgets/button_intro.dart';

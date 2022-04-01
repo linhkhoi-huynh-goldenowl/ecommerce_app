@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/modules/models/e_user.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:e_commerce_app/modules/repositories/x_result.dart';
