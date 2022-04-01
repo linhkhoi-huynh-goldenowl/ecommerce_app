@@ -1,5 +1,4 @@
 import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
-import 'package:e_commerce_app/modules/screens/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         onGenerateRoute: AppRouter.generateRoute,
-        home: LandingScreen(),
+        initialRoute: Routes.landing,
       ),
     );
   }

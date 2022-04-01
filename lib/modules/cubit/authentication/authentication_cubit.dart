@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/modules/models/e_user.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:e_commerce_app/modules/repositories/x_result.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 
 part 'authentication_state.dart';
 
@@ -73,10 +75,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     return false;
   }
 
-  void signOut() async {
+  void signOut(BuildContext context, VoidCallback navigateLogin) async {
     try {
       await Domain().auth.signOut();
-
+      navigateLogin();
       emit(state.copyWith(
           status: AuthenticationStatus.unauthenticated, eUser: null));
     } on Exception {

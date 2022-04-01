@@ -35,6 +35,9 @@ class SignUpScreen extends StatelessWidget {
           if (state.submitStatus == AuthSubmitStatus.error) {
             _showSnackBar(context, state.messageError);
           }
+          if (state.status == AuthenticationStatus.authenticated) {
+            Navigator.of(context).pushNamed(Routes.dashboard);
+          }
         },
         child: Scaffold(
           appBar: AppBar(

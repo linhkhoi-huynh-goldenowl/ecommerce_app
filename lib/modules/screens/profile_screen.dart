@@ -8,8 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class ProfileScreen extends ProductCoordinatorBase {
-  const ProfileScreen({Key? key}) : super(key: key);
-
+  ProfileScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return stackView(context);
@@ -116,7 +115,8 @@ class ProfileScreen extends ProductCoordinatorBase {
                     title: "Sign out",
                     subTitle: "Log out of app",
                     func: () {
-                      BlocProvider.of<AuthenticationCubit>(context).signOut();
+                      BlocProvider.of<AuthenticationCubit>(context)
+                          .signOut(context, navigateLogin);
                     }),
               ],
             ),

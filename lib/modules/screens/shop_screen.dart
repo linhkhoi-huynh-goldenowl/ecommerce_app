@@ -12,7 +12,7 @@ import '../cubit/category/category_cubit.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class ShopScreen extends ProductCoordinatorBase {
-  const ShopScreen({Key? key}) : super(key: key);
+  ShopScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [

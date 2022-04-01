@@ -9,14 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/navigation/navigation_cubit.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
-
-  @override
-  _DashboardScreenState createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -139,15 +133,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             builder: (context, state) {
               switch (state.navbarItem) {
                 case NavbarItem.home:
-                  return const HomeScreen();
+                  return HomeScreen();
                 case NavbarItem.shop:
-                  return const ShopScreen();
+                  return ShopScreen();
                 case NavbarItem.bag:
                   return const BagScreen();
                 case NavbarItem.favorites:
                   return const FavoriteScreen();
                 case NavbarItem.profile:
-                  return const ProfileScreen();
+                  return ProfileScreen();
               }
             }),
       ),

@@ -32,6 +32,9 @@ class LoginScreen extends StatelessWidget {
           if (state.submitStatus == AuthSubmitStatus.error) {
             _showSnackBar(context, state.messageError);
           }
+          if (state.status == AuthenticationStatus.authenticated) {
+            Navigator.of(context).pushNamed(Routes.dashboard);
+          }
         },
         child: Scaffold(
           appBar: AppBar(
@@ -39,7 +42,7 @@ class LoginScreen extends StatelessWidget {
             elevation: 0,
             leading: IconButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(Routes.landing);
+                Navigator.of(context).pop();
               },
               icon: const Icon(
                 Icons.arrow_back_ios,
