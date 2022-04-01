@@ -9,7 +9,13 @@ class LandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+    return BlocConsumer<AuthenticationCubit, AuthenticationState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == AuthenticationStatus.authenticated) {
+          Navigator.of(context).pushNamed(Routes.dashboard);
+        }
+      },
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) => WillPopScope(
         onWillPop: () async => false,
