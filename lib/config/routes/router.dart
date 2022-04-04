@@ -1,9 +1,7 @@
 import 'package:e_commerce_app/modules/screens/home_screen.dart';
 import 'package:e_commerce_app/modules/screens/landing_page.dart';
 import 'package:e_commerce_app/modules/screens/dashboard_screen.dart';
-import 'package:e_commerce_app/modules/screens/profile_screen.dart';
 import 'package:e_commerce_app/modules/screens/shop_category_screen.dart';
-import 'package:e_commerce_app/modules/screens/shop_screen.dart';
 import 'package:flutter/material.dart';
 import '../../modules/screens/login_screen.dart';
 import '../../modules/screens/sign_up_screen.dart';
