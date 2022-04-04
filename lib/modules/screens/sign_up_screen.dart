@@ -154,8 +154,20 @@ class SignUpScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      SocialButton(func: () {}, name: "google"),
-                      SocialButton(func: () {}, name: "facebook")
+                      SocialButton(
+                          func: () {
+                            context
+                                .read<AuthenticationCubit>()
+                                .loginWithGoogle();
+                          },
+                          name: "google"),
+                      SocialButton(
+                          func: () {
+                            context
+                                .read<AuthenticationCubit>()
+                                .loginWithFacebook();
+                          },
+                          name: "facebook")
                     ],
                   )
                 ],

@@ -143,7 +143,13 @@ class LoginScreen extends StatelessWidget {
                                 .loginWithGoogle();
                           },
                           name: "google"),
-                      SocialButton(func: () {}, name: "facebook")
+                      SocialButton(
+                          func: () {
+                            context
+                                .read<AuthenticationCubit>()
+                                .loginWithFacebook();
+                          },
+                          name: "facebook")
                     ],
                   )
                 ],
