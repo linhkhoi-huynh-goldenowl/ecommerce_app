@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class SocialButton extends StatelessWidget {
   const SocialButton({Key? key, required this.func, required this.name})
       : super(key: key);
-  final Function func;
+  final VoidCallback func;
   final String name;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => func,
+      onTap: func,
       child: Container(
         decoration: BoxDecoration(boxShadow: [
           BoxShadow(

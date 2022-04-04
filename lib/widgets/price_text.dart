@@ -23,7 +23,8 @@ class PriceText extends StatelessWidget {
                   style: ETextStyle.metropolis(fontSize: 14)),
           salePercent != null
               ? TextSpan(
-                  text: ' ${(price * salePercent! / 100).toStringAsFixed(0)}\$',
+                  text:
+                      ' ${(price - (price * salePercent! / 100)).toStringAsFixed(0)}\$',
                   style: ETextStyle.metropolis(
                       color: const Color(0xffDB3022), fontSize: 14))
               : const TextSpan(

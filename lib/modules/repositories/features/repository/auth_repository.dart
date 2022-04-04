@@ -8,6 +8,8 @@ abstract class AuthRepository {
     String password,
   );
 
+  Future<XResult<EUser>> loginWithGoogle();
+
   Future<XResult<EUser>> signUp(
     String name,
     String email,
