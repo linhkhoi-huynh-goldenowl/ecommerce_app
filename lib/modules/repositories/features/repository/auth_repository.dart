@@ -9,6 +9,7 @@ abstract class AuthRepository {
   );
 
   Future<XResult<EUser>> loginWithGoogle();
+  Future<XResult<EUser>> loginWithFacebook();
 
   Future<XResult<EUser>> signUp(
     String name,
