@@ -15,27 +15,46 @@ class LoginScreen extends StatelessWidget {
 
   LoginScreen({Key? key}) : super(key: key);
 
+  void _showSnackBar(BuildContext context, String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 1),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  final FocusNode focusPass = FocusNode();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(Routes.landing);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
+    return BlocListener<AuthenticationCubit, AuthenticationState>(
+        listener: (context, state) {
+          if (state.submitStatus == AuthSubmitStatus.error) {
+            _showSnackBar(context, state.messageError);
+          }
+          if (state.status == AuthenticationStatus.authenticated) {
+            Navigator.of(context).pushNamed(Routes.dashboard);
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+              ),
+            ),
           ),
-        ),
-      ),
-      body: BlocProvider(
-        create: (context) => LoginCubit(),
-        child: _loginForm(),
-      ),
-    );
+          body: BlocProvider(
+            create: (context) => LoginCubit(),
+            child: _loginForm(),
+          ),
+        ));
   }
 
   Widget _loginForm() {
@@ -61,6 +80,8 @@ class LoginScreen extends StatelessWidget {
                 height: 80,
               ),
               TextFieldWidget(
+                  onEditComplete: () =>
+                      FocusScope.of(context).requestFocus(focusPass),
                   labelText: 'Email',
                   validatorText: 'Email must contain @',
                   isValid: state.isValidEmail,
@@ -71,6 +92,8 @@ class LoginScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFieldWidget(
+                  onEditComplete: () => focusPass.unfocus(),
+                  focusNode: focusPass,
                   labelText: 'Password',
                   validatorText: 'Password must more than 6',
                   isValid: state.isValidPassword,
@@ -82,19 +105,27 @@ class LoginScreen extends StatelessWidget {
                 child:
                     TextButtonIntro(func: () {}, text: "Forgot your password?"),
               ),
-              state.status == LoginStatus.typing
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ButtonIntro(
-                      func: () {
-                        if (_formKey.currentState!.validate()) {
-                          context
-                              .read<AuthenticationCubit>()
-                              .login(state.email, state.password);
-                        }
-                      },
-                      title: 'Login'),
+              BlocBuilder<AuthenticationCubit, AuthenticationState>(
+                  buildWhen: (previous, current) =>
+                      previous.submitStatus != current.submitStatus,
+                  builder: (context, stateAuth) {
+                    return stateAuth.submitStatus == AuthSubmitStatus.loading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ButtonIntro(
+                            func: () async {
+                              if (_formKey.currentState!.validate()) {
+                                final result = await context
+                                    .read<AuthenticationCubit>()
+                                    .login(state.email, state.password);
+                                if (result) {
+                                  _formKey.currentState!.reset();
+                                }
+                              }
+                            },
+                            title: 'Login');
+                  }),
               const SizedBox(
                 height: 150,
               ),

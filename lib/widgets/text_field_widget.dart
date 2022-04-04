@@ -8,13 +8,17 @@ class TextFieldWidget extends StatelessWidget {
       required this.validatorText,
       required this.isValid,
       required this.func,
-      required this.isPassword})
+      required this.isPassword,
+      this.focusNode,
+      this.onEditComplete})
       : super(key: key);
   final String labelText;
   final String validatorText;
   final bool isValid;
   final Function(String) func;
+  final VoidCallback? onEditComplete;
   final bool isPassword;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +36,8 @@ class TextFieldWidget extends StatelessWidget {
               ),
             ]),
         child: TextFormField(
+          onEditingComplete: onEditComplete,
+          focusNode: focusNode,
           obscureText: isPassword ? true : false,
           decoration: InputDecoration(
             suffix: isValid

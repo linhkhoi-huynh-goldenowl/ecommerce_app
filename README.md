@@ -41,6 +41,12 @@
   ```
   flutter packages pub run build_runner build
   ```
+4. Import Data
+ 
+- [Sheets from link](https://docs.google.com/spreadsheets/d/1NvG7PEUJgIit_eUVMg_4zFnc6OY9YeHGsSccGwiHt4Y/edit?usp=sharing)
+
+- Code for import data product in ecommerce_app/sheets_app_scripts/code.gs  
+ 
 
 # Code Conventions
 - [analysis_options.yaml](analysis_options.yaml)

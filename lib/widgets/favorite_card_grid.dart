@@ -2,7 +2,9 @@ import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
 import 'package:e_commerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../modules/cubit/favorite/favorite_cubit.dart';
 import '../modules/models/favorite_product.dart';
 import 'button_circle.dart';
 import 'chip_label.dart';
@@ -16,7 +18,7 @@ class FavoriteCardGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -86,8 +88,21 @@ class FavoriteCardGrid extends StatelessWidget {
                 )
               : const SizedBox(),
           Positioned(
+              top: 0,
+              right: -4,
+              child: IconButton(
+                splashRadius: 15,
+                onPressed: () {
+                  context.read<FavoriteCubit>().removeFavorite(FavoriteProduct(
+                      favoriteProduct.productItem, favoriteProduct.size));
+                },
+                icon: const ImageIcon(
+                    AssetImage("assets/images/icons/delete.png"),
+                    size: 14),
+              )),
+          Positioned(
               top: 170,
-              right: -10,
+              right: -23,
               child: ButtonCircle(
                   func: () {},
                   iconPath: "assets/images/icons/bag_favorite.png",

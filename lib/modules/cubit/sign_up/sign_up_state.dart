@@ -1,6 +1,6 @@
 part of 'sign_up_cubit.dart';
 
-enum SignUpStatus { initial, typing, typed }
+enum SignUpStatus { initial, typing, typed, submitting }
 
 class SignUpState extends Equatable {
   const SignUpState({

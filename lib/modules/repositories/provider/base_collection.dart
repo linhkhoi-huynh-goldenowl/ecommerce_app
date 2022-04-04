@@ -8,6 +8,7 @@ class BaseCollectionReference<T extends BaseModel> {
   BaseCollectionReference(this.ref);
   void log(dynamic value) => debugPrint('$value');
   final CollectionReference<T> ref;
+
   Future<XResult<T>> get(String id) async {
     try {
       final DocumentSnapshot<T> doc = await ref.doc(id).get();

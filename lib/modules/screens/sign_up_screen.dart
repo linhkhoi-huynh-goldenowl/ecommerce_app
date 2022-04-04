@@ -15,27 +15,49 @@ class SignUpScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
   SignUpScreen({Key? key}) : super(key: key);
+
+  void _showSnackBar(BuildContext context, String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 1),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  final FocusNode focusEmail = FocusNode();
+  final FocusNode focusPass = FocusNode();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
+    return BlocListener<AuthenticationCubit, AuthenticationState>(
+        listenWhen: (previous, current) =>
+            previous.submitStatus != current.submitStatus,
+        listener: (context, state) {
+          if (state.submitStatus == AuthSubmitStatus.error) {
+            _showSnackBar(context, state.messageError);
+          }
+          if (state.status == AuthenticationStatus.authenticated) {
+            Navigator.of(context).pushNamed(Routes.dashboard);
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+              ),
+            ),
           ),
-        ),
-      ),
-      body: BlocProvider(
-        create: (context) => SignUpCubit(),
-        child: _signUpForm(context),
-      ),
-    );
+          body: BlocProvider(
+            create: (context) => SignUpCubit(),
+            child: _signUpForm(context),
+          ),
+        ));
   }
 
   Widget _signUpForm(BuildContext context) {
@@ -56,6 +78,8 @@ class SignUpScreen extends StatelessWidget {
                 height: 60,
               ),
               TextFieldWidget(
+                onEditComplete: () =>
+                    FocusScope.of(context).requestFocus(focusEmail),
                 labelText: 'Name',
                 validatorText: 'Name must more than 3',
                 isValid: state.isValidName,
@@ -67,6 +91,9 @@ class SignUpScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFieldWidget(
+                focusNode: focusEmail,
+                onEditComplete: () =>
+                    FocusScope.of(context).requestFocus(focusPass),
                 labelText: 'Email',
                 validatorText: 'Email must contain @',
                 isValid: state.isValidEmail,
@@ -78,6 +105,8 @@ class SignUpScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFieldWidget(
+                focusNode: focusPass,
+                onEditComplete: () => focusPass.unfocus(),
                 labelText: 'Password',
                 validatorText: 'Password must more than 6',
                 isValid: state.isValidPassword,
@@ -92,17 +121,28 @@ class SignUpScreen extends StatelessWidget {
                         .pushReplacementNamed(Routes.logIn),
                     text: "Already have an account?"),
               ),
-              state.status == SignUpStatus.typing
-                  ? const CircularProgressIndicator()
-                  : ButtonIntro(
-                      func: () {
-                        if (_formKey.currentState!.validate()) {
-                          context
-                              .read<AuthenticationCubit>()
-                              .signUp(state.name, state.email, state.password);
-                        }
-                      },
-                      title: 'Sign Up'),
+              BlocBuilder<AuthenticationCubit, AuthenticationState>(
+                  buildWhen: (previous, current) =>
+                      previous.submitStatus != current.submitStatus,
+                  builder: (context, stateAuth) {
+                    return stateAuth.submitStatus == AuthSubmitStatus.loading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ButtonIntro(
+                            func: () async {
+                              if (_formKey.currentState!.validate()) {
+                                final result = await context
+                                    .read<AuthenticationCubit>()
+                                    .signUp(state.name, state.email,
+                                        state.password);
+                                if (result) {
+                                  _formKey.currentState!.reset();
+                                }
+                              }
+                            },
+                            title: 'Sign Up');
+                  }),
               const SizedBox(
                 height: 70,
               ),

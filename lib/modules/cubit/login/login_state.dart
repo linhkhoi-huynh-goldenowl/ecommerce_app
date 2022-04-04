@@ -1,6 +1,6 @@
 part of 'login_cubit.dart';
 
-enum LoginStatus { initial, typing, typed }
+enum LoginStatus { initial, typing, typed, submitting }
 
 class LoginState extends Equatable {
   const LoginState({
@@ -19,7 +19,6 @@ class LoginState extends Equatable {
   LoginState copyWith({
     LoginStatus? status,
     String? email,
-    String? name,
     String? password,
   }) {
     return LoginState(

@@ -1,7 +1,5 @@
 import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_app/modules/repositories/features/repository_impl/category_repository_impl.dart';
-import 'package:e_commerce_app/modules/repositories/features/repository_impl/product_repository_impl.dart';
 import 'package:e_commerce_app/utils/helpers/product_helpers.dart';
 import 'package:e_commerce_app/widgets/carousel.dart';
 import 'package:e_commerce_app/widgets/home_label_widget.dart';
@@ -13,17 +11,15 @@ import '../cubit/category/category_cubit.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class HomeScreen extends ProductCoordinatorBase {
-  const HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [
       BlocProvider<CategoryCubit>(
-        create: (BuildContext context) =>
-            CategoryCubit(categoryRepository: CategoryRepositoryImpl()),
+        create: (BuildContext context) => CategoryCubit(),
       ),
       BlocProvider<ProductCubit>(
-        create: (BuildContext context) =>
-            ProductCubit(productRepository: ProductRepositoryImpl()),
+        create: (BuildContext context) => ProductCubit(),
       ),
     ], child: stackView(context));
   }

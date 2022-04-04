@@ -20,7 +20,7 @@ class ButtonCircle extends StatelessWidget {
   Widget build(BuildContext context) {
     return RawMaterialButton(
       onPressed: func,
-      elevation: 1,
+      elevation: 5,
       fillColor: fillColor,
       child: ImageIcon(AssetImage(iconPath), size: iconSize, color: iconColor),
       padding: EdgeInsets.all(padding),

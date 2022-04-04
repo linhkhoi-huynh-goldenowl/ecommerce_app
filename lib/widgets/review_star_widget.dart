@@ -10,6 +10,7 @@ class ReviewStarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         reviewStars > 0
             ? const ImageIcon(

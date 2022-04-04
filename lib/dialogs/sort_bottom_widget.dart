@@ -58,7 +58,7 @@ void _showModal(BuildContext context, ChooseSort stateSort,
               style:
                   ETextStyle.metropolis(fontSize: 18, weight: FontWeight.w600)),
           const SizedBox(
-            height: 33,
+            height: 16,
           ),
           _sortSelection(
               context, ChooseSort.popular, stateSort, "Popular", applyChoose),

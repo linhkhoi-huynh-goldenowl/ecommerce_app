@@ -8,22 +8,26 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
   @override
   Future<List<FavoriteProduct>> addProductToFavorite(
       FavoriteProduct item) async {
-    if (_listFavorites.contains(item)) {
-      _listFavorites.removeWhere((element) =>
-          element.size == item.size && element.productItem == item.productItem);
-    } else {
-      _listFavorites.add(item);
+    _listFavorites.add(item);
+    return _listFavorites;
+  }
+
+  @override
+  Future<List<FavoriteProduct>> removeFavorite(FavoriteProduct item) async {
+    _listFavorites.removeWhere((element) =>
+        element.size == item.size && element.productItem == item.productItem);
+    if (_listFavorites
+        .where((element) => element.productItem == item.productItem)
+        .toList()
+        .isEmpty) {
+      _listProduct.removeWhere((element) => element == item.productItem);
     }
     return _listFavorites;
   }
 
   @override
   Future<List<ProductItem>> addProducts(ProductItem item) async {
-    if (_listProduct.contains(item)) {
-      _listProduct.remove(item);
-    } else {
-      _listProduct.add(item);
-    }
+    _listProduct.add(item);
     return _listProduct;
   }
 
