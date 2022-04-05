@@ -93,8 +93,7 @@ class FavoriteCardGrid extends StatelessWidget {
               child: IconButton(
                 splashRadius: 15,
                 onPressed: () {
-                  context.read<FavoriteCubit>().removeFavorite(FavoriteProduct(
-                      favoriteProduct.productItem, favoriteProduct.size));
+                  context.read<FavoriteCubit>().removeFavorite(favoriteProduct);
                 },
                 icon: const ImageIcon(
                     AssetImage("assets/images/icons/delete.png"),

@@ -10,26 +10,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final UserProvider _userProvider = UserProvider();
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: <String>[
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final _facebookAuth = FacebookAuth.instance;
 
   @override
   Future<XResult<EUser>> login(String email, String password) async {
     try {
-      final pref = await SharedPreferences.getInstance();
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       final XResult<EUser> result =
           await _userProvider.getUser(userCredential.user!.uid);
       if (result.data != null) {
-        pref.setString("userId", result.data?.id ?? "");
-        pref.setString("loginType", "email");
-        pref.setBool("isLogin", true);
+        _saveLocalStorage(result.data?.id ?? "", "email");
         return result;
       }
     } on FirebaseAuthException catch (e) {
@@ -45,7 +37,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<XResult<EUser>> signUp(
       String name, String email, String password) async {
-    final pref = await SharedPreferences.getInstance();
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -60,10 +51,9 @@ class AuthRepositoryImpl implements AuthRepository {
           notificationSale: false,
           notificationNewArrivals: false,
           notificationDelivery: false);
-      _userProvider.createUser(eUser);
-      pref.setString("userId", _uid!);
-      pref.setBool("isLogin", true);
-      pref.setString("loginType", "email");
+      _userProvider.setUser(eUser);
+
+      _saveLocalStorage(_uid!, "email");
       return XResult.success(eUser);
     } catch (_) {
       return XResult.error("Something was not right");
@@ -124,7 +114,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final XResult<EUser> result =
           await _userProvider.getUser(userCredential.user!.uid);
 
-      return await getLoginFromSocial(result, userCredential);
+      return await getLoginFromSocial(result, userCredential, "google");
     } catch (_) {
       return XResult.error("Something was not right");
     }
@@ -141,19 +131,16 @@ class AuthRepositoryImpl implements AuthRepository {
       final XResult<EUser> result =
           await _userProvider.getUser(userCredential.user!.uid);
 
-      return await getLoginFromSocial(result, userCredential);
+      return await getLoginFromSocial(result, userCredential, "facebook");
     } catch (_) {
       return XResult.error("Something was not right");
     }
   }
 
-  Future<XResult<EUser>> getLoginFromSocial(
-      XResult<EUser> result, UserCredential userCredential) async {
-    final pref = await SharedPreferences.getInstance();
+  Future<XResult<EUser>> getLoginFromSocial(XResult<EUser> result,
+      UserCredential userCredential, String typeLogin) async {
     if (result.isSuccess) {
-      pref.setString("userId", result.data?.id ?? "");
-      pref.setBool("isLogin", true);
-      pref.setString("loginType", "facebook");
+      _saveLocalStorage(result.data?.id ?? "", typeLogin);
       return result;
     } else {
       final eUser = EUser(
@@ -165,11 +152,17 @@ class AuthRepositoryImpl implements AuthRepository {
           notificationSale: false,
           notificationNewArrivals: false,
           notificationDelivery: false);
-      _userProvider.createUser(eUser);
-      pref.setString("userId", userCredential.user!.uid);
-      pref.setBool("isLogin", true);
-      pref.setString("loginType", "facebook");
+      _userProvider.setUser(eUser);
+      _saveLocalStorage(userCredential.user!.uid, typeLogin);
+
       return XResult.success(eUser);
     }
+  }
+
+  Future<void> _saveLocalStorage(String uid, String typeLogin) async {
+    final pref = await SharedPreferences.getInstance();
+    pref.setString("userId", uid);
+    pref.setBool("isLogin", true);
+    pref.setString("loginType", typeLogin);
   }
 }

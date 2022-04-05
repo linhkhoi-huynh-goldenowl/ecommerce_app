@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:e_commerce_app/modules/models/favorite_product.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../repositories/x_result.dart';
 import '../product/product_cubit.dart';
 
 part 'favorite_state.dart';
@@ -13,19 +16,19 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     fetchFavorite();
   }
 
+  StreamSubscription? favoriteSubscription;
+
   void addFavorite(FavoriteProduct favoriteProduct) async {
     try {
       emit(state.copyWith(status: FavoriteStatus.loading));
 
       var favorites =
           await Domain().favorite.addProductToFavorite(favoriteProduct);
-      var products =
-          await Domain().favorite.addProducts(favoriteProduct.productItem);
       emit(state.copyWith(
-          status: FavoriteStatus.success,
-          favorites: favorites,
-          size: " ",
-          products: products));
+        status: FavoriteStatus.success,
+        favorites: favorites,
+        size: " ",
+      ));
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));
     }
@@ -59,13 +62,23 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     try {
       if (state.status == FavoriteStatus.initial) {
         emit(state.copyWith(status: FavoriteStatus.loading));
-        final favorites = await Domain().favorite.getFavorites();
-        emit(state.copyWith(
-            status: FavoriteStatus.success, favorites: favorites));
+        final Stream<XResult<List<FavoriteProduct>>> favoritesStream =
+            Domain().favorite.getFavoritesStream();
+
+        favoriteSubscription = favoritesStream.listen((event) {
+          emit(state.copyWith(
+              status: FavoriteStatus.success, favorites: event.data));
+        });
       }
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));
     }
+  }
+
+  @override
+  Future<void> close() {
+    favoriteSubscription?.cancel();
+    return super.close();
   }
 
   void favoriteLoadGridLayout() async {

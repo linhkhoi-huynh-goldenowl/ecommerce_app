@@ -16,6 +16,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       final XResult<EUser> result = await Domain().auth.checkAuthentication();
       if (result.isSuccess) {
+        Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated, eUser: result.data));
       } else {
@@ -31,17 +32,19 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
       final XResult<EUser> result = await Domain().auth.login(email, password);
       if (result.data != null) {
+        Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,
             submitStatus: AuthSubmitStatus.success));
+        return true;
       } else {
         emit(state.copyWith(
             status: AuthenticationStatus.unauthenticated,
             messageError: result.error,
             submitStatus: AuthSubmitStatus.error));
+        return false;
       }
-      return true;
     } on Exception {
       emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
     }
@@ -57,6 +60,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
             password,
           );
       if (result.isSuccess) {
+        Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,
@@ -78,7 +82,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
       final XResult<EUser> result = await Domain().auth.loginWithGoogle();
+
       if (result.isSuccess) {
+        Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,
@@ -101,6 +107,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
       final XResult<EUser> result = await Domain().auth.loginWithFacebook();
       if (result.isSuccess) {
+        Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,

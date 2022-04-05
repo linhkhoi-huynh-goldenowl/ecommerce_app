@@ -1,6 +1,5 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/screens/bag_screen.dart';
-import 'package:e_commerce_app/modules/screens/home_screen.dart';
 import 'package:e_commerce_app/modules/screens/favorite_screen.dart';
 import 'package:e_commerce_app/modules/screens/profile_screen.dart';
 import 'package:e_commerce_app/modules/screens/shop_screen.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/navigation/navigation_cubit.dart';
+import 'home_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -20,10 +20,10 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildBody() {
     return WillPopScope(
       onWillPop: () async => false,
-      child: Scaffold(
-        bottomNavigationBar: BlocBuilder<NavigationCubit, NavigationState>(
-          builder: (context, state) {
-            return Container(
+      child: BlocBuilder<NavigationCubit, NavigationState>(
+        builder: (context, state) {
+          return Scaffold(
+            bottomNavigationBar: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(13),
@@ -125,25 +125,19 @@ class DashboardScreen extends StatelessWidget {
                   },
                 ),
               ),
-            );
-          },
-        ),
-        body: BlocBuilder<NavigationCubit, NavigationState>(
-            buildWhen: (previous, current) => previous.index != current.index,
-            builder: (context, state) {
-              switch (state.navbarItem) {
-                case NavbarItem.home:
-                  return HomeScreen();
-                case NavbarItem.shop:
-                  return ShopScreen();
-                case NavbarItem.bag:
-                  return const BagScreen();
-                case NavbarItem.favorites:
-                  return const FavoriteScreen();
-                case NavbarItem.profile:
-                  return ProfileScreen();
-              }
-            }),
+            ),
+            body: IndexedStack(
+              children: <Widget>[
+                HomeScreen(),
+                ShopScreen(),
+                const BagScreen(),
+                const FavoriteScreen(),
+                ProfileScreen()
+              ],
+              index: state.index,
+            ),
+          );
+        },
       ),
     );
   }

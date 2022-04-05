@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors_in_immutables
 
+import 'package:e_commerce_app/modules/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../config/routes/router.dart';
@@ -26,6 +27,10 @@ abstract class ProductCoordinatorBase extends StatelessWidget {
       case Routes.shopCategoryScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const ShopCategoryScreen());
+
+      case Routes.settingScreen:
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const SettingScreen());
 
       default:
         return MaterialPageRoute(

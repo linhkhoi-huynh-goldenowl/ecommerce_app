@@ -22,25 +22,22 @@ class ButtonAddFavorite extends StatelessWidget {
 }
 
 Widget _buildBody(BuildContext context, ProductItem product) {
-  return BlocProvider(
-      create: (BuildContext context) => FavoriteCubit(),
-      child:
-          BlocBuilder<FavoriteCubit, FavoriteState>(builder: (context, state) {
-        return ButtonCircle(
-            func: () => _showModal(
-                context,
-                product,
-                context.read<FavoriteCubit>().chooseSize,
-                state.size,
-                context.read<FavoriteCubit>().addFavorite),
-            iconPath: "assets/images/icons/heart.png",
-            iconSize: 16,
-            iconColor: const Color(0xffDADADA),
-            fillColor: Domain().favorite.checkContainProduct(product)
-                ? const Color(0xffDB3022)
-                : Colors.white,
-            padding: 12);
-      }));
+  return BlocBuilder<FavoriteCubit, FavoriteState>(builder: (context, state) {
+    return ButtonCircle(
+        func: () => _showModal(
+            context,
+            product,
+            context.read<FavoriteCubit>().chooseSize,
+            state.size,
+            context.read<FavoriteCubit>().addFavorite),
+        iconPath: "assets/images/icons/heart.png",
+        iconSize: 16,
+        iconColor: const Color(0xffDADADA),
+        fillColor: Domain().favorite.checkContainTitle(product.title)
+            ? const Color(0xffDB3022)
+            : Colors.white,
+        padding: 12);
+  });
 }
 
 void _showModal(
@@ -133,7 +130,8 @@ void _showModal(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ButtonIntro(
                         func: () {
-                          addFavorite(FavoriteProduct(product, state.size));
+                          addFavorite(FavoriteProduct(
+                              productItem: product, size: state.size));
                           Navigator.pop(context);
                         },
                         title: "ADD TO FAVORITE"),
