@@ -3,6 +3,7 @@ import 'package:e_commerce_app/modules/models/base_model.dart';
 class EUser extends BaseModel {
   final String email;
   final String name;
+  final String? imageUrl;
   final DateTime? dateOfBirth;
   final List<String> shippingAddress;
   final bool notificationSale;
@@ -12,6 +13,7 @@ class EUser extends BaseModel {
     String? id,
     required this.email,
     required this.name,
+    this.imageUrl,
     this.dateOfBirth,
     required this.shippingAddress,
     required this.notificationSale,
@@ -24,6 +26,7 @@ class EUser extends BaseModel {
         id: id ?? parsedJson['id'],
         email: parsedJson['email'],
         name: parsedJson['name'],
+        imageUrl: parsedJson['imageUrl'],
         dateOfBirth: parsedJson['dateOfBirth'] != null
             ? DateTime.parse(parsedJson['dateOfBirth'])
             : null,
@@ -37,6 +40,7 @@ class EUser extends BaseModel {
         'id': id,
         'email': email,
         'name': name,
+        'imageUrl': imageUrl,
         'dateOfBirth': dateOfBirth?.toIso8601String(),
         'shippingAddress': shippingAddress,
         'notificationSale': notificationSale,

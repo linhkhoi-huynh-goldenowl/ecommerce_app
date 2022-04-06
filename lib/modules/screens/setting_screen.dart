@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/dialogs/avatar_change_image.dart';
 import 'package:e_commerce_app/dialogs/button_change_password.dart';
 import 'package:e_commerce_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -68,6 +69,29 @@ class SettingScreen extends StatelessWidget {
                               fontSize: 34, weight: FontWeight.w700),
                         ),
                       ),
+                      const SizedBox(
+                        height: 23,
+                      ),
+                      BlocBuilder<ProfileCubit, ProfileState>(
+                          buildWhen: (previous, current) =>
+                              previous.imageStatus != current.imageStatus,
+                          builder: (context, state) {
+                            return AvatarChangeImage(
+                                imgUser: state.imageUrl,
+                                imgUrl: state.imageChangeUrl,
+                                funcGallery: () {
+                                  context
+                                      .read<ProfileCubit>()
+                                      .getImageFromGallery();
+                                },
+                                funcCamera: () {
+                                  context
+                                      .read<ProfileCubit>()
+                                      .getImageFromCamera();
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop(showDialog);
+                                });
+                          }),
                       const SizedBox(
                         height: 23,
                       ),

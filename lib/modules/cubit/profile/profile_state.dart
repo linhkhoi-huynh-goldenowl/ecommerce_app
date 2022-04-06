@@ -4,12 +4,14 @@ enum ProfileStatus { initial, loading, success, failure }
 
 enum SaveStatus { initial, loading, success, failure }
 enum SavePassStatus { initial, loading, success, failure }
+enum ImageStatus { initial, loading, success, failure }
 
 class ProfileState extends Equatable {
   ProfileState(
       {this.id = "",
       this.email = "",
       this.name = "",
+      this.imageUrl = "",
       required this.dateOfBirth,
       this.shippingAddress = const <String>[],
       this.notificationSale = false,
@@ -22,7 +24,9 @@ class ProfileState extends Equatable {
       this.newPasswordConfirm = "",
       this.loginType = "",
       this.savePassStatus = SavePassStatus.initial,
-      this.savePassMessage = ""});
+      this.savePassMessage = "",
+      this.imageChangeUrl = "",
+      this.imageStatus = ImageStatus.initial});
 
   bool get isValidName => name.length > 3;
   bool get isValidDateOfBirth => dateOfBirth.isBefore(DateTime.now());
@@ -30,6 +34,7 @@ class ProfileState extends Equatable {
   final String id;
   final String email;
   final String name;
+  final String imageUrl;
   final DateTime dateOfBirth;
   final List<String> shippingAddress;
   final bool notificationSale;
@@ -50,10 +55,13 @@ class ProfileState extends Equatable {
   final SavePassStatus savePassStatus;
   final String savePassMessage;
   final String loginType;
+  final String imageChangeUrl;
+  final ImageStatus imageStatus;
   ProfileState copyWith(
       {String? id,
       String? email,
       String? name,
+      String? imageUrl,
       DateTime? dateOfBirth,
       List<String>? shippingAddress,
       bool? notificationSale,
@@ -66,7 +74,9 @@ class ProfileState extends Equatable {
       String? newPasswordConfirm,
       String? loginType,
       SavePassStatus? savePassStatus,
-      String? savePassMessage}) {
+      String? savePassMessage,
+      String? imageChangeUrl,
+      ImageStatus? imageStatus}) {
     return ProfileState(
         id: id ?? this.id,
         email: email ?? this.email,
@@ -84,7 +94,10 @@ class ProfileState extends Equatable {
         newPasswordConfirm: newPasswordConfirm ?? this.newPasswordConfirm,
         loginType: loginType ?? this.loginType,
         savePassStatus: savePassStatus ?? this.savePassStatus,
-        savePassMessage: savePassMessage ?? this.savePassMessage);
+        savePassMessage: savePassMessage ?? this.savePassMessage,
+        imageUrl: imageUrl ?? this.imageUrl,
+        imageChangeUrl: imageChangeUrl ?? this.imageChangeUrl,
+        imageStatus: imageStatus ?? this.imageStatus);
   }
 
   @override
@@ -92,6 +105,7 @@ class ProfileState extends Equatable {
         id,
         email,
         name,
+        imageUrl,
         dateOfBirth,
         shippingAddress,
         notificationSale,
@@ -105,6 +119,8 @@ class ProfileState extends Equatable {
         newPasswordConfirm,
         loginType,
         savePassStatus,
-        savePassMessage
+        savePassMessage,
+        imageChangeUrl,
+        imageStatus
       ];
 }

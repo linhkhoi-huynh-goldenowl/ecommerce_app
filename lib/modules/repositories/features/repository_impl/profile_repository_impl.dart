@@ -3,6 +3,7 @@ import 'package:e_commerce_app/modules/repositories/features/repository/profile_
 import 'package:e_commerce_app/modules/repositories/provider/user_provider.dart';
 import 'package:e_commerce_app/modules/repositories/x_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileRepositoryImpl extends ProfileRepository {
   final UserProvider _userProvider = UserProvider();
@@ -48,5 +49,23 @@ class ProfileRepositoryImpl extends ProfileRepository {
     } catch (_) {
       return XResult.error("Something was not right");
     }
+  }
+
+  @override
+  Future<String> handleImageFromCamera() async {
+    final picker = ImagePicker();
+    final XFile? pickedImage =
+        await picker.pickImage(source: ImageSource.camera);
+
+    return pickedImage!.path;
+  }
+
+  @override
+  Future<String> handleImageFromGallery() async {
+    final picker = ImagePicker();
+    final XFile? pickedImage =
+        await picker.pickImage(source: ImageSource.gallery);
+    // final pickedImageFile = File(pickedImage!.path);
+    return pickedImage!.path;
   }
 }

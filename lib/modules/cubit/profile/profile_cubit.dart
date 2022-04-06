@@ -1,12 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:e_commerce_app/modules/models/e_user.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
+import 'package:e_commerce_app/utils/services/firebase_storage.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../repositories/x_result.dart';
-
+import 'package:path/path.dart' as p;
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -34,6 +34,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           saveStatus: SaveStatus.initial,
           savePassStatus: SavePassStatus.initial,
           name: profile.name,
+          imageUrl: profile.imageUrl,
           email: profile.email,
           dateOfBirth: profile.dateOfBirth,
           notificationDelivery: profile.notificationDelivery,
@@ -49,20 +50,49 @@ class ProfileCubit extends Cubit<ProfileState> {
     try {
       emit(state.copyWith(
           status: ProfileStatus.loading, saveStatus: SaveStatus.loading));
-      final user = EUser(
-          id: state.id,
-          email: state.email,
-          name: state.name,
-          dateOfBirth: state.dateOfBirth,
-          shippingAddress: state.shippingAddress,
-          notificationSale: state.notificationSale,
-          notificationNewArrivals: state.notificationNewArrivals,
-          notificationDelivery: state.notificationDelivery);
+      if (state.imageChangeUrl != "") {
+        XResult result = await FirebaseStorageService().uploadToFirebase(
+            state.imageChangeUrl,
+            "${state.email}-${DateTime.now().toIso8601String()}${p.extension(state.imageChangeUrl)}");
+        if (result.isSuccess) {
+          final user = EUser(
+              id: state.id,
+              email: state.email,
+              name: state.name,
+              imageUrl: result.data,
+              dateOfBirth: state.dateOfBirth,
+              shippingAddress: state.shippingAddress,
+              notificationSale: state.notificationSale,
+              notificationNewArrivals: state.notificationNewArrivals,
+              notificationDelivery: state.notificationDelivery);
 
-      await Domain().profile.saveProfile(user);
-      emit(state.copyWith(
-          status: ProfileStatus.success, saveStatus: SaveStatus.success));
-      profileLoaded();
+          await Domain().profile.saveProfile(user);
+          emit(state.copyWith(
+              status: ProfileStatus.success,
+              saveStatus: SaveStatus.success,
+              imageChangeUrl: ""));
+          profileLoaded();
+        } else {
+          emit(state.copyWith(
+              status: ProfileStatus.failure, saveStatus: SaveStatus.failure));
+        }
+      } else {
+        final user = EUser(
+            id: state.id,
+            email: state.email,
+            name: state.name,
+            imageUrl: state.imageUrl,
+            dateOfBirth: state.dateOfBirth,
+            shippingAddress: state.shippingAddress,
+            notificationSale: state.notificationSale,
+            notificationNewArrivals: state.notificationNewArrivals,
+            notificationDelivery: state.notificationDelivery);
+
+        await Domain().profile.saveProfile(user);
+        emit(state.copyWith(
+            status: ProfileStatus.success, saveStatus: SaveStatus.success));
+        profileLoaded();
+      }
     } catch (_) {
       emit(state.copyWith(
           status: ProfileStatus.failure, saveStatus: SaveStatus.failure));
@@ -150,6 +180,28 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
     } on Exception {
       emit(state.copyWith(savePassStatus: SavePassStatus.failure));
+    }
+  }
+
+  void getImageFromGallery() async {
+    try {
+      emit(state.copyWith(imageStatus: ImageStatus.loading));
+      final imageUrl = await Domain().profile.handleImageFromGallery();
+      emit(state.copyWith(
+          imageStatus: ImageStatus.success, imageChangeUrl: imageUrl));
+    } catch (_) {
+      emit(state.copyWith(imageStatus: ImageStatus.failure));
+    }
+  }
+
+  void getImageFromCamera() async {
+    try {
+      emit(state.copyWith(imageStatus: ImageStatus.loading));
+      final imageUrl = await Domain().profile.handleImageFromCamera();
+      emit(state.copyWith(
+          imageStatus: ImageStatus.success, imageChangeUrl: imageUrl));
+    } catch (_) {
+      emit(state.copyWith(imageStatus: ImageStatus.failure));
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
 import 'package:e_commerce_app/modules/cubit/profile/profile_cubit.dart';
@@ -47,14 +48,41 @@ class ProfileScreen extends ProductCoordinatorBase {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  height: 60,
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        backgroundImage:
-                            AssetImage("assets/images/carousel2.jpg"),
-                        radius: 34,
-                      ),
+                      state.imageUrl != ""
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  CachedNetworkImageProvider(state.imageUrl),
+                              radius: 34,
+                            )
+                          : const CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(
+                                  "https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg"),
+                              radius: 44,
+                            ),
+                      // CachedNetworkImage(
+                      //   width: 100,
+                      //   imageUrl:
+                      //       "https://st.gamevui.com/images/image/2019/03/20/pikachu-200.jpg",
+                      //   imageBuilder: (context, imageProvider) => Container(
+                      //     decoration: BoxDecoration(
+                      //       image: DecorationImage(
+                      //           image: imageProvider,
+                      //           fit: BoxFit.cover,
+                      //           colorFilter: const ColorFilter.mode(
+                      //               Colors.red, BlendMode.colorBurn)),
+                      //     ),
+                      //   ),
+                      //   placeholder: (context, url) =>
+                      //       const CircularProgressIndicator(),
+                      //   errorWidget: (context, url, error) =>
+                      //       const Icon(Icons.error),
+                      // ),
+                      // const ECacheNetworkImage(
+                      //   imageUrl:
+                      //       "https://st.gamevui.com/images/image/2019/03/20/pikachu-200.jpg",
+                      // ),
                       const SizedBox(
                         width: 16,
                       ),
