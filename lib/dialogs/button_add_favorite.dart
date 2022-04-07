@@ -1,11 +1,12 @@
-import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/choose_size/choose_size_cubit.dart';
 import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_app/modules/models/favorite_product.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
+import 'package:e_commerce_app/utils/helpers/show_snackbar.dart';
 import 'package:e_commerce_app/widgets/button_choose_size.dart';
 import 'package:e_commerce_app/widgets/button_intro.dart';
+import 'package:e_commerce_app/widgets/label_tile_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -58,86 +59,70 @@ void _showModal(
         return BlocProvider(
             create: (BuildContext context) => ChooseSizeCubit(),
             child: BlocBuilder<ChooseSizeCubit, ChooseSizeState>(
+                buildWhen: (previous, current) => previous.size != current.size,
                 builder: (context, state) {
-              return Column(
-                children: [
-                  const SizedBox(
-                    height: 14,
-                  ),
-                  Image.asset(
-                    "assets/images/icons/rectangle.png",
-                    scale: 3,
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  const Text(
-                    "Select Size",
-                    style: TextStyle(
-                        color: Color(0xff222222),
-                        fontFamily: "Metropolis",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(
-                    height: 33,
-                  ),
-                  Wrap(
-                      runSpacing: 20,
-                      spacing: 20,
-                      children: product.sizes
-                          .map((e) => ButtonChooseSize(
-                              func: () {
-                                chooseSize(e.size);
-                                context
-                                    .read<ChooseSizeCubit>()
-                                    .chooseSize(e.size);
-                              },
-                              title: e.size,
-                              chooseSize: state.size))
-                          .toList()),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  InkWell(
-                      onTap: () {},
-                      child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border.symmetric(
-                                  horizontal: BorderSide(
-                                      color: Color(0xff9B9B9B), width: 0.4))),
-                          width: double.maxFinite,
-                          padding: const EdgeInsets.only(
-                              left: 16, bottom: 16, top: 16, right: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Size Info",
-                                style: ETextStyle.metropolis(),
-                              ),
-                              const ImageIcon(
-                                AssetImage(
-                                    "assets/images/icons/next_right.png"),
-                                size: 8,
-                              )
-                            ],
-                          ))),
-                  const SizedBox(
-                    height: 28,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ButtonIntro(
-                        func: () {
-                          addFavorite(FavoriteProduct(
-                              productItem: product, size: state.size));
-                          Navigator.pop(context);
-                        },
-                        title: "ADD TO FAVORITE"),
-                  )
-                ],
-              );
-            }));
+                  return Column(
+                    children: [
+                      const SizedBox(
+                        height: 14,
+                      ),
+                      Image.asset(
+                        "assets/images/icons/rectangle.png",
+                        scale: 3,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      const Text(
+                        "Select Size",
+                        style: TextStyle(
+                            color: Color(0xff222222),
+                            fontFamily: "Metropolis",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(
+                        height: 33,
+                      ),
+                      Wrap(
+                          runSpacing: 20,
+                          spacing: 20,
+                          children: product.colors[0].sizes
+                              .map((e) => ButtonChooseSize(
+                                  func: () {
+                                    chooseSize(e.size);
+                                    context
+                                        .read<ChooseSizeCubit>()
+                                        .chooseSize(e.size);
+                                  },
+                                  title: e.size,
+                                  chooseSize: state.size))
+                              .toList()),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      LabelTileListWidget(
+                          title: "Size info", func: () {}, haveBorderTop: true),
+                      const SizedBox(
+                        height: 28,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ButtonIntro(
+                            func: () {
+                              if (state.size != "") {
+                                addFavorite(FavoriteProduct(
+                                    productItem: product, size: state.size));
+                                Navigator.pop(context);
+                              } else {
+                                AppSnackBar.showSnackBar(
+                                    context, "Please choose size");
+                              }
+                            },
+                            title: "ADD TO FAVORITE"),
+                      )
+                    ],
+                  );
+                }));
       });
 }

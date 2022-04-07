@@ -1,49 +1,50 @@
 import 'package:e_commerce_app/modules/models/base_model.dart';
-import 'package:e_commerce_app/modules/models/size_cloth.dart';
+import 'package:e_commerce_app/modules/models/color_cloth.dart';
 
 class ProductItem extends BaseModel {
   final String title;
   final String brandName;
-  final String image;
+  final List<String> images;
   final DateTime createdDate;
   final double? salePercent;
   final bool isPopular;
   final int numberReviews;
   final int reviewStars;
   final String categoryName;
-  final String color;
-  final List<SizeCloth> sizes;
+  final String description;
+  final List<ColorCloth> colors;
   ProductItem(
       {String? id,
       required this.brandName,
-      required this.image,
+      required this.images,
       required this.numberReviews,
       required this.reviewStars,
       required this.title,
       required this.createdDate,
       required this.isPopular,
       required this.categoryName,
-      required this.color,
-      required this.sizes,
+      required this.colors,
+      required this.description,
       this.salePercent})
       : super(id: id);
 
   factory ProductItem.fromJson(Map<String, dynamic> parsedJson, {String? id}) {
-    var sizeObjJson = parsedJson['sizes'] as List;
-    List<SizeCloth> _sizes =
-        sizeObjJson.map((sizeJson) => SizeCloth.fromJson(sizeJson)).toList();
+    var colorsObjJson = parsedJson['colors'] as List;
+    List<ColorCloth> _colors = colorsObjJson
+        .map((colorJson) => ColorCloth.fromJson(colorJson))
+        .toList();
     return ProductItem(
         id: id ?? parsedJson['id'],
         title: parsedJson['title'],
         brandName: parsedJson['brandName'],
-        image: parsedJson['image'],
+        images: parsedJson['images'].cast<String>(),
+        description: parsedJson['description'],
         numberReviews: parsedJson['numberReviews'],
         reviewStars: parsedJson['reviewStars'],
         createdDate: DateTime.parse(parsedJson['createdDate']),
         isPopular: parsedJson['isPopular'],
         categoryName: parsedJson['categoryName'],
-        color: parsedJson['color'],
-        sizes: _sizes,
+        colors: _colors,
         // ignore: prefer_null_aware_operators
         salePercent: parsedJson['salePercent'] != null
             ? parsedJson['salePercent'].toDouble()
@@ -51,21 +52,21 @@ class ProductItem extends BaseModel {
   }
 
   Map<String, dynamic> toJson() {
-    List<Map<String, dynamic>> sizesList =
-        sizes.map((i) => i.toJson()).toList();
+    List<Map<String, dynamic>> colorsList =
+        colors.map((i) => i.toJson()).toList();
     return {
       'id': id,
       'title': title,
       'brandName': brandName,
       'createdDate': createdDate.toIso8601String(),
       'isPopular': isPopular,
-      'image': image,
+      'images': images,
       'numberReviews': numberReviews,
       'reviewStars': reviewStars,
       'categoryName': categoryName,
-      'color': color,
-      'sizes': sizesList,
-      'salePercent': salePercent
+      'colors': colorsList,
+      'salePercent': salePercent,
+      'description': description
     };
   }
 }

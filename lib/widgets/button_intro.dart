@@ -20,7 +20,7 @@ class ButtonIntro extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
-          elevation: 15.0,
+          elevation: 5,
         ),
         onPressed: func,
         child: Text(title,

@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_app/modules/models/favorite_product.dart';
@@ -9,6 +10,8 @@ import 'package:e_commerce_app/widgets/price_text.dart';
 import 'package:e_commerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../utils/services/navigator_services.dart';
 
 class FavoriteCardList extends StatelessWidget {
   const FavoriteCardList({Key? key, required this.favoriteProduct})
@@ -25,7 +28,12 @@ class FavoriteCardList extends StatelessWidget {
           Column(
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(NavigationService.navigatorKey.currentContext ??
+                          context)
+                      .pushNamed(Routes.productDetailsScreen,
+                          arguments: favoriteProduct.productItem);
+                },
                 child: Container(
                   height: 104,
                   decoration: BoxDecoration(
@@ -35,7 +43,7 @@ class FavoriteCardList extends StatelessWidget {
                   child: Row(
                     children: [
                       ImageProductWidget(
-                          imagePath: favoriteProduct.productItem.image,
+                          imagePath: favoriteProduct.productItem.images[0],
                           width: 104,
                           height: 104,
                           radius: 20),
@@ -64,7 +72,8 @@ class FavoriteCardList extends StatelessWidget {
                             height: 5,
                           ),
                           ColorSizeWidget(
-                              color: favoriteProduct.productItem.color,
+                              color:
+                                  favoriteProduct.productItem.colors[0].color,
                               size: favoriteProduct.size),
                           const SizedBox(
                             height: 12,
@@ -72,18 +81,22 @@ class FavoriteCardList extends StatelessWidget {
                           Row(
                             children: [
                               PriceText(
-                                  salePercent:
-                                      favoriteProduct.productItem.salePercent,
-                                  price: favoriteProduct
-                                      .productItem.sizes[0].price),
+                                salePercent:
+                                    favoriteProduct.productItem.salePercent,
+                                price: favoriteProduct
+                                    .productItem.colors[0].sizes[0].price,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                               const SizedBox(
                                 width: 55,
                               ),
                               ReviewStarWidget(
                                   reviewStars:
                                       favoriteProduct.productItem.reviewStars,
-                                  numberReviews: favoriteProduct
-                                      .productItem.numberReviews),
+                                  numberReviews:
+                                      favoriteProduct.productItem.numberReviews,
+                                  size: 13),
                             ],
                           )
                         ],
@@ -132,7 +145,7 @@ class FavoriteCardList extends StatelessWidget {
               )),
           Positioned(
               bottom: 5,
-              right: -23,
+              right: 0,
               child: ButtonCircle(
                   func: () {},
                   iconPath: "assets/images/icons/bag_favorite.png",

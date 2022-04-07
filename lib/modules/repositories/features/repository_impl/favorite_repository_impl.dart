@@ -82,16 +82,16 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
   @override
   Future<List<FavoriteProduct>> getFavoritesByLowest() async {
     var favorites = _listFavorites;
-    favorites.sort((a, b) =>
-        a.productItem.sizes[0].price.compareTo(b.productItem.sizes[0].price));
+    favorites.sort((a, b) => a.productItem.colors[0].sizes[0].price
+        .compareTo(b.productItem.colors[0].sizes[0].price));
     return favorites;
   }
 
   @override
   Future<List<FavoriteProduct>> getFavoritesByHighest() async {
     var favorites = _listFavorites;
-    favorites.sort((b, a) =>
-        a.productItem.sizes[0].price.compareTo(b.productItem.sizes[0].price));
+    favorites.sort((b, a) => a.productItem.colors[0].sizes[0].price
+        .compareTo(b.productItem.colors[0].sizes[0].price));
     return favorites;
   }
 

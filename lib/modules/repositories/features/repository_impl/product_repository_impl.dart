@@ -62,14 +62,16 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<List<ProductItem>> getProductsByLowest(TypeList typeList) async {
     var productList = await getProductsByType(typeList);
-    productList.sort((a, b) => a.sizes[0].price.compareTo(b.sizes[0].price));
+    productList.sort((a, b) =>
+        a.colors[0].sizes[0].price.compareTo(b.colors[0].sizes[0].price));
     return productList;
   }
 
   @override
   Future<List<ProductItem>> getProductsByHighest(TypeList typeList) async {
     var productList = await getProductsByType(typeList);
-    productList.sort((b, a) => a.sizes[0].price.compareTo(b.sizes[0].price));
+    productList.sort((b, a) =>
+        a.colors[0].sizes[0].price.compareTo(b.colors[0].sizes[0].price));
     return productList;
   }
 

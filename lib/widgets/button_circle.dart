@@ -18,13 +18,17 @@ class ButtonCircle extends StatelessWidget {
   final double padding;
   @override
   Widget build(BuildContext context) {
-    return RawMaterialButton(
-      onPressed: func,
-      elevation: 5,
-      fillColor: fillColor,
-      child: ImageIcon(AssetImage(iconPath), size: iconSize, color: iconColor),
-      padding: EdgeInsets.all(padding),
-      shape: const CircleBorder(),
+    return SizedBox(
+      width: 40,
+      child: RawMaterialButton(
+        onPressed: func,
+        elevation: 5,
+        fillColor: fillColor,
+        child:
+            ImageIcon(AssetImage(iconPath), size: iconSize, color: iconColor),
+        padding: EdgeInsets.all(padding),
+        shape: const CircleBorder(),
+      ),
     );
   }
 }

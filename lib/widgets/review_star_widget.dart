@@ -3,76 +3,80 @@ import 'package:flutter/material.dart';
 
 class ReviewStarWidget extends StatelessWidget {
   const ReviewStarWidget(
-      {Key? key, required this.reviewStars, required this.numberReviews})
+      {Key? key,
+      required this.reviewStars,
+      required this.numberReviews,
+      required this.size})
       : super(key: key);
   final int reviewStars;
   final int numberReviews;
+  final double size;
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         reviewStars > 0
-            ? const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xffFFBA49),
-                size: 13,
+            ? ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xffFFBA49),
+                size: size,
               )
-            : const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xff9B9B9B),
-                size: 13,
+            : ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xff9B9B9B),
+                size: size,
               ),
         reviewStars > 1
-            ? const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xffFFBA49),
-                size: 13,
+            ? ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xffFFBA49),
+                size: size,
               )
-            : const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xff9B9B9B),
-                size: 13,
+            : ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xff9B9B9B),
+                size: size,
               ),
         reviewStars > 2
-            ? const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xffFFBA49),
-                size: 13,
+            ? ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xffFFBA49),
+                size: size,
               )
-            : const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xff9B9B9B),
-                size: 13,
+            : ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xff9B9B9B),
+                size: size,
               ),
         reviewStars > 3
-            ? const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xffFFBA49),
-                size: 13,
+            ? ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xffFFBA49),
+                size: size,
               )
-            : const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xff9B9B9B),
-                size: 13,
+            : ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xff9B9B9B),
+                size: size,
               ),
         reviewStars > 4
-            ? const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xffFFBA49),
-                size: 13,
+            ? ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xffFFBA49),
+                size: size,
               )
-            : const ImageIcon(
-                AssetImage("assets/images/icons/star_fill.png"),
-                color: Color(0xff9B9B9B),
-                size: 13,
+            : ImageIcon(
+                const AssetImage("assets/images/icons/star_fill.png"),
+                color: const Color(0xff9B9B9B),
+                size: size,
               ),
         const SizedBox(
-          height: 30,
+          width: 3,
         ),
         Text("($numberReviews)",
             style: ETextStyle.metropolis(
-                color: const Color(0xff9B9B9B), fontSize: 13))
+                color: const Color(0xff9B9B9B), fontSize: size))
       ],
     );
   }

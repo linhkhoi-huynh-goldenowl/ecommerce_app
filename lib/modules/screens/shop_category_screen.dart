@@ -102,9 +102,7 @@ GridView _displayGridView(List productItems) {
       childAspectRatio: 0.6,
     ),
     itemBuilder: (BuildContext context, int index) {
-      return MainProductCard(
-        product: productItems[index],
-      );
+      return MainProductCard(product: productItems[index]);
     },
     itemCount: productItems.length,
   );

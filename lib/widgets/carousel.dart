@@ -2,14 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
 
-class CarouselWidget extends StatefulWidget {
-  const CarouselWidget({Key? key}) : super(key: key);
+class CarouselWidget extends StatelessWidget {
+  CarouselWidget({Key? key}) : super(key: key);
 
-  @override
-  _CarouselWidgetState createState() => _CarouselWidgetState();
-}
-
-class _CarouselWidgetState extends State<CarouselWidget> {
   final imgList = <String, String>{
     "Street clothes": 'assets/images/carousel1.jpg',
     "Sleep clothes": 'assets/images/carousel2.jpg',
