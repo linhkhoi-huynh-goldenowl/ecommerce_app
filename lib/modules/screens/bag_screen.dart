@@ -16,64 +16,75 @@ class BagScreen extends StatelessWidget {
     return BlocBuilder<CartCubit, CartState>(
         buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {
-          return Scaffold(
-            appBar: PreferredSize(
-                preferredSize:
-                    const Size.fromHeight(140.0), // here the desired height
-                child: AppBar(
-                  automaticallyImplyLeading: false,
-                  actions: [_findButton()],
-                  flexibleSpace: _flexibleSpaceBar(),
+          return GestureDetector(
+            onTap: () {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus &&
+                  currentFocus.focusedChild != null) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              }
+            },
+            child: Scaffold(
+              appBar: PreferredSize(
+                  preferredSize:
+                      const Size.fromHeight(140.0), // here the desired height
+                  child: AppBar(
+                    automaticallyImplyLeading: false,
+                    actions: [_findButton()],
+                    flexibleSpace: _flexibleSpaceBar(),
+                    elevation: 0,
+                    backgroundColor: const Color(0xffF9F9F9),
+                  )),
+              body: ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return CartCardWidget(
+                      cartModel: state.carts[index],
+                      addToCart: context.read<CartCubit>().addToCart,
+                      removeByOneCart:
+                          context.read<CartCubit>().removeCartByOne,
+                      addToFavorite: context.read<FavoriteCubit>().addFavorite,
+                      removeCart: context.read<CartCubit>().removeCart,
+                    );
+                  },
+                  itemCount: state.carts.length),
+              bottomNavigationBar: BottomAppBar(
                   elevation: 0,
-                  backgroundColor: const Color(0xffF9F9F9),
-                )),
-            body: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return CartCardWidget(
-                    cartModel: state.carts[index],
-                    addToCart: context.read<CartCubit>().addToCart,
-                    removeByOneCart: context.read<CartCubit>().removeCartByOne,
-                    addToFavorite: context.read<FavoriteCubit>().addFavorite,
-                    removeCart: context.read<CartCubit>().removeCart,
-                  );
-                },
-                itemCount: state.carts.length),
-            bottomNavigationBar: BottomAppBar(
-                elevation: 0,
-                color: const Color(0xffF9F9F9),
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const PromoCodeField(),
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Total amount:",
-                              style: ETextStyle.metropolis(
-                                  color: const Color(0xff9B9B9B), fontSize: 14),
-                            ),
-                            Text(
-                              "${state.totalPrice.toStringAsFixed(0)}\$",
-                              style: ETextStyle.metropolis(
-                                weight: FontWeight.w600,
-                                color: const Color(0xff222222),
+                  color: const Color(0xffF9F9F9),
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const PromoCodeField(),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Total amount:",
+                                style: ETextStyle.metropolis(
+                                    color: const Color(0xff9B9B9B),
+                                    fontSize: 14),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        ButtonIntro(func: () {}, title: "CHECK OUT")
-                      ],
-                    ))),
+                              Text(
+                                "${state.totalPrice.toStringAsFixed(0)}\$",
+                                style: ETextStyle.metropolis(
+                                  weight: FontWeight.w600,
+                                  color: const Color(0xff222222),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          ButtonIntro(func: () {}, title: "CHECK OUT")
+                        ],
+                      ))),
+            ),
           );
         });
   }

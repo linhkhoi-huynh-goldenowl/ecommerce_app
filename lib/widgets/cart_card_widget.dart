@@ -112,6 +112,12 @@ class CartCardWidget extends StatelessWidget {
               top: 12,
               right: 15,
               child: PopupMenuButton<int>(
+                offset: const Offset(-20, -30),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
                 onSelected: (int value) {
                   if (value == 1) {
                     addToFavorite(FavoriteProduct(
@@ -125,7 +131,7 @@ class CartCardWidget extends StatelessWidget {
                 },
                 child: const ImageIcon(
                     AssetImage("assets/images/icons/details.png"),
-                    size: 14),
+                    size: 18),
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                   PopupMenuItem<int>(
                     value: 1,
@@ -134,6 +140,7 @@ class CartCardWidget extends StatelessWidget {
                           style: ETextStyle.metropolis(fontSize: 11)),
                     ),
                   ),
+                  const PopupMenuDivider(),
                   PopupMenuItem<int>(
                     value: 2,
                     child: Center(
