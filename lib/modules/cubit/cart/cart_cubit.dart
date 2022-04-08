@@ -8,17 +8,16 @@ part 'cart_state.dart';
 
 class CartCubit extends Cubit<CartState> {
   CartCubit() : super(const CartState()) {
-    fetchFavorite();
+    fetchCart();
   }
 
   void addToCart(CartModel cartModel) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
       var carts = await Domain().cart.addProductToCart(cartModel);
+      var total = Domain().cart.getTotalPrice();
       emit(state.copyWith(
-        status: CartStatus.success,
-        carts: carts,
-      ));
+          status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
     }
@@ -29,11 +28,9 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(status: CartStatus.loading));
 
       var carts = await Domain().cart.removeCart(cartModel);
-
+      var total = Domain().cart.getTotalPrice();
       emit(state.copyWith(
-        status: CartStatus.success,
-        carts: carts,
-      ));
+          status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
     }
@@ -44,17 +41,15 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(status: CartStatus.loading));
 
       var carts = await Domain().cart.removeCartByOne(cartModel);
-
+      var total = Domain().cart.getTotalPrice();
       emit(state.copyWith(
-        status: CartStatus.success,
-        carts: carts,
-      ));
+          status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
     }
   }
 
-  void fetchFavorite() async {
+  void fetchCart() async {
     try {
       // emit(state.copyWith(status: FavoriteStatus.loading));
       // final Stream<XResult<List<FavoriteProduct>>> favoritesStream =
@@ -66,8 +61,9 @@ class CartCubit extends Cubit<CartState> {
       // });
       emit(state.copyWith(status: CartStatus.loading));
       final carts = await Domain().cart.getCarts();
-
-      emit(state.copyWith(status: CartStatus.success, carts: carts));
+      var total = Domain().cart.getTotalPrice();
+      emit(state.copyWith(
+          status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
     }

@@ -1,6 +1,7 @@
 import 'package:e_commerce_app/modules/models/cart_model.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/cart_repository.dart';
 import 'package:e_commerce_app/modules/repositories/provider/cart_provider.dart';
+import 'package:e_commerce_app/utils/helpers/product_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../x_result.dart';
@@ -18,26 +19,11 @@ class CartRepositoryImpl extends CartRepository {
     if (indexCart < 0) {
       XResult<CartModel> result = await _cartProvider.setProductToCart(item);
       _listCarts.add(result.data!);
-
-      print("=========================");
-      print("Number in cart: ${_listCarts.length}");
-      print("Last title: ${item.productItem.title}");
-      print("Last size: ${item.size}");
-      print("Last quantity: ${item.quantity}");
-      print("Last color: ${item.color}");
-      print("=========================");
     } else {
       final cartItem = _listCarts[indexCart];
       cartItem.quantity += 1;
       XResult<CartModel> result =
           await _cartProvider.setProductToCart(cartItem);
-      print("=========================");
-      print("Number in cart: ${_listCarts.length}");
-      print("Last title: ${item.productItem.title}");
-      print("Last size: ${item.size}");
-      print("Last quantity: ${cartItem.quantity}");
-      print("Last color: ${item.color}");
-      print("=========================");
       _listCarts[indexCart] = result.data!;
     }
 
@@ -74,20 +60,36 @@ class CartRepositoryImpl extends CartRepository {
   Future<List<CartModel>> removeCart(CartModel item) async {
     await _cartProvider.removeCart(item);
     _listCarts.removeWhere((element) =>
-        element.size == item.size && element.productItem == item.productItem);
+        element.size == item.size &&
+        element.productItem.title == item.productItem.title &&
+        element.color == item.color);
 
-    if (_listCarts
-        .where((element) => element.productItem == item.productItem)
-        .toList()
-        .isEmpty) {}
     return _listCarts;
   }
 
   @override
   Future<List<CartModel>> removeCartByOne(CartModel item) async {
-    item.quantity -= 1;
-    XResult<CartModel> result = await _cartProvider.setProductToCart(item);
-    _listCarts[_listCarts.indexOf(item)] = result.data!;
+    if (item.quantity < 2) {
+      return await removeCart(item);
+    } else {
+      item.quantity -= 1;
+      XResult<CartModel> result = await _cartProvider.setProductToCart(item);
+      _listCarts[_listCarts.indexOf(item)] = result.data!;
+    }
+
     return _listCarts;
+  }
+
+  @override
+  double getTotalPrice() {
+    double total = 0;
+
+    for (var item in _listCarts) {
+      double price = ProductHelper.getPriceWithSaleItem(
+          item.productItem, item.color, item.size);
+
+      total += (item.quantity * price);
+    }
+    return total;
   }
 }
