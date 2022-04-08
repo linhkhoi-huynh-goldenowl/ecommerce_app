@@ -14,8 +14,11 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
     final userId = pref.getString("userId");
     item.userId = userId;
     item.id = "$userId-${item.productItem.id}- ${item.size}";
-    XResult<FavoriteProduct> result = await _favoriteProvider.addFavorite(item);
-    _listFavorites.add(result.data!);
+    if (checkNotContainInList(item)) {
+      XResult<FavoriteProduct> result =
+          await _favoriteProvider.addFavorite(item);
+      _listFavorites.add(result.data!);
+    }
     return _listFavorites;
   }
 
@@ -38,6 +41,16 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
         .where((element) => element.productItem.title == title)
         .toList()
         .isNotEmpty;
+  }
+
+  @override
+  bool checkNotContainInList(FavoriteProduct item) {
+    return _listFavorites
+        .where((element) =>
+            element.productItem.title == item.productItem.title &&
+            element.size == item.size)
+        .toList()
+        .isEmpty;
   }
 
   @override

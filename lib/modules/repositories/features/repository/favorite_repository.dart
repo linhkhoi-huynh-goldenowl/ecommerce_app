@@ -6,6 +6,7 @@ abstract class FavoriteRepository {
   Future<List<FavoriteProduct>> addProductToFavorite(FavoriteProduct item);
   Future<List<FavoriteProduct>> removeFavorite(FavoriteProduct item);
   bool checkContainTitle(String title);
+  bool checkNotContainInList(FavoriteProduct item);
   Future<List<FavoriteProduct>> getFavorites();
   Stream<XResult<List<FavoriteProduct>>> getFavoritesStream();
   Future<List<FavoriteProduct>> getFavoritesByPopular();

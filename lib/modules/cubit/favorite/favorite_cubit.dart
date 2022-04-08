@@ -26,7 +26,6 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       emit(state.copyWith(
         status: FavoriteStatus.success,
         favorites: favorites,
-        size: " ",
       ));
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));
@@ -42,16 +41,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       emit(state.copyWith(
         status: FavoriteStatus.success,
         favorites: favorites,
-        size: " ",
       ));
-    } catch (_) {
-      emit(state.copyWith(status: FavoriteStatus.failure));
-    }
-  }
-
-  void chooseSize(String size) async {
-    try {
-      emit(state.copyWith(size: size));
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));
     }
@@ -115,10 +105,9 @@ class FavoriteCubit extends Cubit<FavoriteState> {
 
   void favoriteOpenSearchBarEvent() async {
     try {
-      // emit(state.copyWith(status: FavoriteStatus.loading));
-      emit(state.copyWith(isSearch: !state.isSearch
-          // status: FavoriteStatus.success
-          ));
+      emit(state.copyWith(status: FavoriteStatus.loading));
+      emit(state.copyWith(
+          isSearch: !state.isSearch, status: FavoriteStatus.success));
     } catch (_) {
       emit(state.copyWith(status: FavoriteStatus.failure));
     }

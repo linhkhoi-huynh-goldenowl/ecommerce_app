@@ -24,6 +24,7 @@ class FavoriteScreen extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     return BlocBuilder<FavoriteCubit, FavoriteState>(
+      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         switch (state.status) {
           case FavoriteStatus.failure:

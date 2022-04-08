@@ -22,6 +22,7 @@ class DashboardScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async => false,
       child: BlocBuilder<NavigationCubit, NavigationState>(
+        buildWhen: (previous, current) => previous.index != current.index,
         builder: (context, state) {
           return Scaffold(
             bottomNavigationBar: Container(

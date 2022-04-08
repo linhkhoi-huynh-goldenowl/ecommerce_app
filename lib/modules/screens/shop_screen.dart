@@ -70,46 +70,50 @@ Widget _buildBody() {
                           delegate: SliverAppBarDelegate(
                               child: PreferredSize(
                                   preferredSize: const Size.fromHeight(118.0),
-                                  child:
-                                      BlocBuilder<ProductCubit, ProductState>(
-                                          builder: (context, state) {
-                                    return Container(
-                                      color: const Color(0xffF9F9F9),
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                  child: BlocBuilder<ProductCubit,
+                                          ProductState>(
+                                      buildWhen: (previous, current) =>
+                                          previous.status != current.status,
+                                      builder: (context, state) {
+                                        return Container(
+                                          color: const Color(0xffF9F9F9),
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 10),
-                                              child: ButtonIntro(
-                                                  func: () {
-                                                    BlocProvider.of<
-                                                                ProductCubit>(
-                                                            context)
-                                                        .productCategoryEvent(
-                                                            "All products");
-                                                    Navigator.of(context)
-                                                        .pushNamed(Routes
-                                                            .shopCategoryScreen);
-                                                  },
-                                                  title: "VIEW ALL ITEMS"),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(16),
-                                              child: Text(
-                                                "Choose category",
-                                                style: ETextStyle.metropolis(
-                                                    color:
-                                                        const Color(0xff9B9B9B),
-                                                    fontSize: 14),
-                                              ),
-                                            ),
-                                          ]),
-                                    );
-                                  })))),
+                                                  child: ButtonIntro(
+                                                      func: () {
+                                                        BlocProvider.of<
+                                                                    ProductCubit>(
+                                                                context)
+                                                            .productCategoryEvent(
+                                                                "All products");
+                                                        Navigator.of(context)
+                                                            .pushNamed(Routes
+                                                                .shopCategoryScreen);
+                                                      },
+                                                      title: "VIEW ALL ITEMS"),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(16),
+                                                  child: Text(
+                                                    "Choose category",
+                                                    style:
+                                                        ETextStyle.metropolis(
+                                                            color: const Color(
+                                                                0xff9B9B9B),
+                                                            fontSize: 14),
+                                                  ),
+                                                ),
+                                              ]),
+                                        );
+                                      })))),
                     ];
                   },
                   body: state.categories.isEmpty

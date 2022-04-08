@@ -50,6 +50,7 @@ class LoginScreen extends StatelessWidget {
 
   Widget _loginForm() {
     return BlocBuilder<LoginCubit, LoginState>(
+      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return Form(
           key: _formKey,

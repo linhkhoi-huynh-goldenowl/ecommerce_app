@@ -1,7 +1,9 @@
+import 'package:e_commerce_app/modules/repositories/features/repository/cart_repository.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/category_repository.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/favorite_repository.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/product_repository.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/profile_repository.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository_impl/cart_repository_impl.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/category_repository_impl.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/favorite_repository_impl.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/product_repository_impl.dart';
@@ -18,6 +20,7 @@ class Domain {
     product = ProductRepositoryImpl();
     category = CategoryRepositoryImpl();
     profile = ProfileRepositoryImpl();
+    cart = CartRepositoryImpl();
   }
   factory Domain() {
     _internal ??= Domain._();
@@ -28,4 +31,5 @@ class Domain {
   late final ProductRepository product;
   late final CategoryRepository category;
   late final ProfileRepository profile;
+  late final CartRepository cart;
 }

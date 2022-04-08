@@ -52,6 +52,7 @@ class SignUpScreen extends StatelessWidget {
 
   Widget _signUpForm(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
+      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return Form(
           key: _formKey,
