@@ -43,8 +43,7 @@ class ReviewRepositoryImpl extends ReviewRepository {
       ReviewModel item, String userId) async {
     item.like.add(userId);
 
-    XResult<ReviewModel> result =
-        await _reviewProvider.addReviewToProduct(item);
+    await _reviewProvider.addReviewToProduct(item);
     final indexList =
         _listReviews.indexWhere((element) => element.id == item.id);
     _listReviews[indexList] == item;
