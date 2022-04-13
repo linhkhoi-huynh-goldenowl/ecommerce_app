@@ -28,65 +28,72 @@ class ProductRatingScreen extends StatelessWidget {
                   );
                 case ReviewStatus.success:
                   return Scaffold(
-                    appBar: AppBar(
-                      elevation: 0,
-                      backgroundColor: const Color(0xffF9F9F9),
-                      leading: _leadingButton(context),
-                    ),
                     body: Stack(
                       children: [
-                        ListView(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16, top: 34),
-                              child: Text(
-                                "Rating&Reviews",
-                                style: ETextStyle.metropolis(
-                                    fontSize: 34, weight: FontWeight.w700),
+                        NestedScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          headerSliverBuilder:
+                              (BuildContext context, bool innerBoxIsScrolled) {
+                            return <Widget>[
+                              SliverAppBar(
+                                  shadowColor: Colors.white,
+                                  elevation: 5,
+                                  backgroundColor: const Color(0xffF9F9F9),
+                                  expandedHeight: 120.0,
+                                  pinned: true,
+                                  stretch: true,
+                                  leading: _leadingButton(context),
+                                  flexibleSpace: _flexibleSpaceBar(context)),
+                            ];
+                          },
+                          body: ListView(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16, right: 32, top: 34),
+                                child: ReviewChart(
+                                    totalReviews: state.totalReviews,
+                                    avgReviews: state.avgReviews,
+                                    reviewCount: state.reviewCount,
+                                    reviewPercent: state.reviewPercent),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 32, top: 44),
-                              child: ReviewChart(
-                                  totalReviews: state.totalReviews,
-                                  avgReviews: state.avgReviews,
-                                  reviewCount: state.reviewCount,
-                                  reviewPercent: state.reviewPercent),
-                            ),
-                            _reviewBar(
-                                state.totalReviews,
-                                state.withPhoto,
-                                context
-                                    .read<ReviewCubit>()
-                                    .changeWithImageSelect),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const ClampingScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                return BlocBuilder<ReviewCubit, ReviewState>(
-                                  buildWhen: (previous, current) =>
-                                      previous.likeStatus != current.likeStatus,
-                                  builder: (context, stateLike) {
-                                    bool wasLike = ReviewHelper.checkLike(
-                                        state.reviews[index].like,
-                                        stateLike.userId);
-                                    return _reviewComment(
-                                      state.reviews[index],
-                                      wasLike,
-                                      () => context
-                                          .read<ReviewCubit>()
-                                          .likeReview(stateLike.reviews[index]),
-                                    );
-                                  },
-                                );
-                              },
-                              itemCount: state.reviews.length,
-                            )
-                          ],
+                              _reviewBar(
+                                  state.totalReviews,
+                                  state.withPhoto,
+                                  context
+                                      .read<ReviewCubit>()
+                                      .changeWithImageSelect),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const ClampingScrollPhysics(),
+                                padding: const EdgeInsets.only(bottom: 100),
+                                itemBuilder: (context, index) {
+                                  return BlocBuilder<ReviewCubit, ReviewState>(
+                                    buildWhen: (previous, current) =>
+                                        previous.likeStatus !=
+                                        current.likeStatus,
+                                    builder: (context, stateLike) {
+                                      bool wasLike = ReviewHelper.checkLike(
+                                          state.reviews[index].like,
+                                          stateLike.userId);
+                                      return _reviewComment(
+                                        state.reviews[index],
+                                        wasLike,
+                                        () => context
+                                            .read<ReviewCubit>()
+                                            .likeReview(
+                                                stateLike.reviews[index]),
+                                      );
+                                    },
+                                  );
+                                },
+                                itemCount: state.reviews.length,
+                              )
+                            ],
+                          ),
                         ),
                         Positioned(
                             bottom: 0,
@@ -138,6 +145,30 @@ class ProductRatingScreen extends StatelessWidget {
               }
             }));
   }
+}
+
+Widget _flexibleSpaceBar(
+  BuildContext context,
+) {
+  return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+    var top = constraints.biggest.height;
+    return FlexibleSpaceBar(
+      titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
+      centerTitle: top > 71 && top < 91 ? true : false,
+      title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: 1,
+          child: Text(
+            top > 71 && top < 91 ? "Rating and reviews" : "Rating&Reviews",
+            textAlign: TextAlign.start,
+            style: ETextStyle.metropolis(
+                weight:
+                    top > 71 && top < 91 ? FontWeight.w600 : FontWeight.w700,
+                fontSize: top > 71 && top < 91 ? 18 : 27),
+          )),
+    );
+  });
 }
 
 Widget _reviewButton() {
@@ -207,7 +238,7 @@ Widget _reviewBar(int numReviews, bool withImage, VoidCallback func) {
 Widget _reviewComment(
     ReviewModel reviewModel, bool wasLike, VoidCallback func) {
   return Container(
-    padding: const EdgeInsets.all(16),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
     child: Stack(
       children: [
         Container(
