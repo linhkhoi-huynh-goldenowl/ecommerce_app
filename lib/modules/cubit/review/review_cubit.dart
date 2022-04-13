@@ -65,12 +65,13 @@ class ReviewCubit extends Cubit<ReviewState> {
 
   void likeReview(ReviewModel reviewModel) async {
     try {
-      emit(state.copyWith(status: ReviewStatus.loading));
+      emit(state.copyWith(likeStatus: LikeReviewStatus.loading));
       final reviews =
           await Domain().review.addLikeToReview(reviewModel, state.userId);
-      emit(state.copyWith(status: ReviewStatus.success, reviews: reviews));
+      emit(state.copyWith(
+          likeStatus: LikeReviewStatus.success, reviews: reviews));
     } catch (_) {
-      emit(state.copyWith(status: ReviewStatus.failure));
+      emit(state.copyWith(likeStatus: LikeReviewStatus.failure));
     }
   }
 }

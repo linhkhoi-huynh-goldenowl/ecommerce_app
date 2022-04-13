@@ -61,15 +61,21 @@ class ProductRatingScreen extends StatelessWidget {
                           shrinkWrap: true,
                           physics: const ClampingScrollPhysics(),
                           itemBuilder: (context, index) {
-                            bool wasLike = ReviewHelper.checkLike(
-                                state.reviews[index].like, state.userId);
-
-                            return _reviewComment(
-                              state.reviews[index],
-                              wasLike,
-                              () => context
-                                  .read<ReviewCubit>()
-                                  .likeReview(state.reviews[index]),
+                            return BlocBuilder<ReviewCubit, ReviewState>(
+                              buildWhen: (previous, current) =>
+                                  previous.likeStatus != current.likeStatus,
+                              builder: (context, stateLike) {
+                                bool wasLike = ReviewHelper.checkLike(
+                                    state.reviews[index].like,
+                                    stateLike.userId);
+                                return _reviewComment(
+                                  state.reviews[index],
+                                  wasLike,
+                                  () => context
+                                      .read<ReviewCubit>()
+                                      .likeReview(stateLike.reviews[index]),
+                                );
+                              },
                             );
                           },
                           itemCount: state.reviews.length,
@@ -242,7 +248,7 @@ Widget _reviewComment(
 
 Widget _likeButton(bool wasLike, VoidCallback func) {
   return InkWell(
-    onTap: wasLike ? () {} : func,
+    onTap: func,
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [

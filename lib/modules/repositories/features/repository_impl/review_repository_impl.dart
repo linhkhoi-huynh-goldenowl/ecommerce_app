@@ -41,7 +41,12 @@ class ReviewRepositoryImpl extends ReviewRepository {
   @override
   Future<List<ReviewModel>> addLikeToReview(
       ReviewModel item, String userId) async {
-    item.like.add(userId);
+    final indexLikeUser = item.like.indexWhere((element) => element == userId);
+    if (indexLikeUser < 0) {
+      item.like.add(userId);
+    } else {
+      item.like.removeAt(indexLikeUser);
+    }
 
     await _reviewProvider.addReviewToProduct(item);
     final indexList =

@@ -1,6 +1,7 @@
 part of 'review_cubit.dart';
 
 enum ReviewStatus { initial, loading, success, failure }
+enum LikeReviewStatus { initial, loading, success, failure }
 
 class ReviewState extends Equatable {
   const ReviewState(
@@ -11,7 +12,8 @@ class ReviewState extends Equatable {
       this.avgReviews = 0,
       this.reviewCount = const <int>[],
       this.reviewPercent = const <double>[],
-      this.userId = ""});
+      this.userId = "",
+      this.likeStatus = LikeReviewStatus.initial});
   final ReviewStatus status;
   final List<ReviewModel> reviews;
   final String userId;
@@ -20,6 +22,7 @@ class ReviewState extends Equatable {
   final double avgReviews;
   final List<double> reviewPercent;
   final List<int> reviewCount;
+  final LikeReviewStatus likeStatus;
   ReviewState copyWith(
       {ReviewStatus? status,
       List<ReviewModel>? reviews,
@@ -28,7 +31,8 @@ class ReviewState extends Equatable {
       double? avgReviews,
       List<int>? reviewCount,
       List<double>? reviewPercent,
-      String? userId}) {
+      String? userId,
+      LikeReviewStatus? likeStatus}) {
     return ReviewState(
         reviews: reviews ?? this.reviews,
         status: status ?? this.status,
@@ -37,7 +41,8 @@ class ReviewState extends Equatable {
         totalReviews: totalReviews ?? this.totalReviews,
         reviewCount: reviewCount ?? this.reviewCount,
         reviewPercent: reviewPercent ?? this.reviewPercent,
-        userId: userId ?? this.userId);
+        userId: userId ?? this.userId,
+        likeStatus: likeStatus ?? this.likeStatus);
   }
 
   @override
@@ -49,6 +54,7 @@ class ReviewState extends Equatable {
         avgReviews,
         reviewCount,
         reviewPercent,
-        userId
+        userId,
+        likeStatus
       ];
 }
