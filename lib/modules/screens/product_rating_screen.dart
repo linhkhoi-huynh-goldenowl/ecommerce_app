@@ -33,53 +33,93 @@ class ProductRatingScreen extends StatelessWidget {
                       backgroundColor: const Color(0xffF9F9F9),
                       leading: _leadingButton(context),
                     ),
-                    body: ListView(
+                    body: Stack(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, top: 34),
-                          child: Text(
-                            "Rating&Reviews",
-                            style: ETextStyle.metropolis(
-                                fontSize: 34, weight: FontWeight.w700),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 32, top: 44),
-                          child: ReviewChart(
-                              totalReviews: state.totalReviews,
-                              avgReviews: state.avgReviews,
-                              reviewCount: state.reviewCount,
-                              reviewPercent: state.reviewPercent),
-                        ),
-                        _reviewBar(state.totalReviews, state.withPhoto,
-                            context.read<ReviewCubit>().changeWithImageSelect),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return BlocBuilder<ReviewCubit, ReviewState>(
-                              buildWhen: (previous, current) =>
-                                  previous.likeStatus != current.likeStatus,
-                              builder: (context, stateLike) {
-                                bool wasLike = ReviewHelper.checkLike(
-                                    state.reviews[index].like,
-                                    stateLike.userId);
-                                return _reviewComment(
-                                  state.reviews[index],
-                                  wasLike,
-                                  () => context
-                                      .read<ReviewCubit>()
-                                      .likeReview(stateLike.reviews[index]),
+                        ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16, top: 34),
+                              child: Text(
+                                "Rating&Reviews",
+                                style: ETextStyle.metropolis(
+                                    fontSize: 34, weight: FontWeight.w700),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, right: 32, top: 44),
+                              child: ReviewChart(
+                                  totalReviews: state.totalReviews,
+                                  avgReviews: state.avgReviews,
+                                  reviewCount: state.reviewCount,
+                                  reviewPercent: state.reviewPercent),
+                            ),
+                            _reviewBar(
+                                state.totalReviews,
+                                state.withPhoto,
+                                context
+                                    .read<ReviewCubit>()
+                                    .changeWithImageSelect),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return BlocBuilder<ReviewCubit, ReviewState>(
+                                  buildWhen: (previous, current) =>
+                                      previous.likeStatus != current.likeStatus,
+                                  builder: (context, stateLike) {
+                                    bool wasLike = ReviewHelper.checkLike(
+                                        state.reviews[index].like,
+                                        stateLike.userId);
+                                    return _reviewComment(
+                                      state.reviews[index],
+                                      wasLike,
+                                      () => context
+                                          .read<ReviewCubit>()
+                                          .likeReview(stateLike.reviews[index]),
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                          itemCount: state.reviews.length,
-                        )
+                              itemCount: state.reviews.length,
+                            )
+                          ],
+                        ),
+                        Positioned(
+                            bottom: 0,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 100,
+                              decoration: BoxDecoration(boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.7),
+                                  spreadRadius: 15,
+                                  blurRadius: 17,
+                                  offset: const Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ]),
+                            )),
+                        Positioned(
+                            bottom: 0,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 50,
+                              decoration: BoxDecoration(boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.9),
+                                  spreadRadius: 15,
+                                  blurRadius: 17,
+                                  offset: const Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ]),
+                            )),
+                        Positioned(
+                            right: 16, bottom: 32, child: _reviewButton())
                       ],
                     ),
                   );
@@ -98,6 +138,28 @@ class ProductRatingScreen extends StatelessWidget {
               }
             }));
   }
+}
+
+Widget _reviewButton() {
+  return ElevatedButton.icon(
+    icon: const ImageIcon(
+      AssetImage("assets/images/icons/write.png"),
+      color: Colors.white,
+      size: 11,
+    ),
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+      primary: const Color(0xffDB3022),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25),
+      ),
+      elevation: 5,
+    ),
+    onPressed: () {},
+    label: Text("Write a review",
+        style: ETextStyle.metropolis(
+            fontSize: 11, color: const Color(0xffFFFFFF))),
+  );
 }
 
 Widget _leadingButton(BuildContext context) {
