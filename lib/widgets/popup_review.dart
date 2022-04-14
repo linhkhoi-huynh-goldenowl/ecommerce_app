@@ -168,7 +168,7 @@ class PopupReview extends StatelessWidget {
                           if (index != state.imageLocalPaths.length) {
                             return _imageReview(state.imageLocalPaths[index],
                                 context.read<ReviewCubit>().removeImage);
-                          } else {
+                          } else if (state.imageLocalPaths.length < 5) {
                             return _addImageButton(context, () {
                               context.read<ReviewCubit>().getImageFromGallery();
                               Navigator.of(context, rootNavigator: true)
@@ -178,6 +178,8 @@ class PopupReview extends StatelessWidget {
                               Navigator.of(context, rootNavigator: true)
                                   .pop(showDialog);
                             });
+                          } else {
+                            return const SizedBox();
                           }
                         },
                         itemCount: state.imageLocalPaths.length + 1,
@@ -220,7 +222,8 @@ Widget _contentReview(Function(String) func, String initial) {
 
 Widget _addImageButton(
     BuildContext context, VoidCallback funcGallery, VoidCallback funcCamera) {
-  return SizedBox(
+  return Container(
+    color: Colors.white,
     width: 104,
     height: 104,
     child: Column(

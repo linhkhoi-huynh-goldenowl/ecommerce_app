@@ -149,6 +149,12 @@ class ReviewCubit extends Cubit<ReviewState> {
     );
   }
 
+  @override
+  Future<void> close() async {
+    await Domain().review.clearImage();
+    return super.close();
+  }
+
   void getImageFromGallery() async {
     try {
       emit(state.copyWith(imageStatus: ImageStatus.loading));
