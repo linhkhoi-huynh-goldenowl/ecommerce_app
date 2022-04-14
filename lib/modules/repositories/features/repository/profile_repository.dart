@@ -6,8 +6,7 @@ abstract class ProfileRepository {
   Future<void> setCurrentUser(EUser user);
   Future<EUser> getProfile();
   Future<bool> saveProfile(EUser eUser);
-  Future<String> handleImageFromGallery();
-  Future<String> handleImageFromCamera();
+
   Future<XResult> changePassword(
       String email, String oldPass, String newPassword);
 }

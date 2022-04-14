@@ -83,6 +83,8 @@ class SettingScreen extends StatelessWidget {
                                   context
                                       .read<ProfileCubit>()
                                       .getImageFromGallery();
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop(showDialog);
                                 },
                                 funcCamera: () {
                                   context

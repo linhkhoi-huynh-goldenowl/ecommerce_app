@@ -31,7 +31,7 @@ Widget _reviewInfo(int totalReviews, double avgReviews) {
   return Column(
     children: [
       Text(
-        avgReviews.toStringAsFixed(1),
+        avgReviews.isNaN ? "0" : avgReviews.toStringAsFixed(1),
         style: ETextStyle.metropolis(fontSize: 44, weight: FontWeight.w600),
       ),
       const SizedBox(

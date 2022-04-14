@@ -8,9 +8,11 @@ import '../../x_result.dart';
 
 class ReviewRepositoryImpl extends ReviewRepository {
   List<ReviewModel> _listReviews = [];
+  final List<String> _listImage = [];
   final ReviewProvider _reviewProvider = ReviewProvider();
   @override
-  Future<List<ReviewModel>> addReviewToProduct(ReviewModel item) async {
+  Future<XResult<List<ReviewModel>>> addReviewToProduct(
+      ReviewModel item) async {
     final account = await Domain().profile.getProfile();
     item.accountAvatar = account.imageUrl;
     item.accountName = account.name;
@@ -19,9 +21,12 @@ class ReviewRepositoryImpl extends ReviewRepository {
 
     XResult<ReviewModel> result =
         await _reviewProvider.addReviewToProduct(item);
-    _listReviews.add(result.data!);
-
-    return _listReviews;
+    if (result.isSuccess) {
+      _listReviews.add(result.data!);
+      return XResult.success(_listReviews);
+    } else {
+      return XResult.error(result.error);
+    }
   }
 
   @override
@@ -29,6 +34,9 @@ class ReviewRepositoryImpl extends ReviewRepository {
     XResult<List<ReviewModel>> result =
         await _reviewProvider.getReviewByProduct(productId);
     _listReviews = result.data ?? [];
+    _listReviews.sort(
+      (a, b) => b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
+    );
     return _listReviews;
   }
 
@@ -54,5 +62,28 @@ class ReviewRepositoryImpl extends ReviewRepository {
     _listReviews[indexList] == item;
 
     return _listReviews;
+  }
+
+  @override
+  Future<List<String>> addImageToList(String path) async {
+    _listImage.add(path);
+    return _listImage;
+  }
+
+  @override
+  Future<List<String>> getImage() async {
+    return _listImage;
+  }
+
+  @override
+  Future<List<String>> removeImageToList(String path) async {
+    _listImage.removeWhere((element) => element == path);
+    return _listImage;
+  }
+
+  @override
+  Future<List<String>> clearImage() async {
+    _listImage.clear();
+    return _listImage;
   }
 }

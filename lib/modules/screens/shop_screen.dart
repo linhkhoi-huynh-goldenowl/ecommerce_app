@@ -20,8 +20,7 @@ class ShopScreen extends ProductCoordinatorBase {
         create: (BuildContext context) => CategoryCubit(),
       ),
       BlocProvider<ProductCubit>(
-        create: (BuildContext context) => ProductCubit(),
-      ),
+          create: (BuildContext context) => ProductCubit()),
     ], child: stackView(context));
   }
 

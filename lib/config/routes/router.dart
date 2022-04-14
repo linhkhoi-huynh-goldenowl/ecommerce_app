@@ -49,10 +49,13 @@ class AppRouter {
             settings: settings,
             builder: (BuildContext context) => const SettingScreen());
       case Routes.productRatingScreen:
-        final productId = settings.arguments as String;
+        final argumentProduct = settings.arguments as Map;
+        final String productId = argumentProduct['productId'];
+        final BuildContext contextParent = argumentProduct['context'];
         return MaterialPageRoute(
             settings: settings,
             builder: (BuildContext context) => ProductRatingScreen(
+                  contextParent: contextParent,
                   productId: productId,
                 ));
       case Routes.productDetailsScreen:

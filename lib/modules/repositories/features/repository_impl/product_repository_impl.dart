@@ -5,11 +5,11 @@ import 'package:e_commerce_app/modules/repositories/provider/product_provider.da
 import 'package:e_commerce_app/modules/repositories/x_result.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  final ProductProvider productProvider = ProductProvider();
+  final ProductProvider _productProvider = ProductProvider();
   @override
   Future<List<ProductItem>> getProducts() async {
     final XResult<List<ProductItem>> result =
-        await productProvider.getAllProduct();
+        await _productProvider.getAllProduct();
     return result.data ?? <ProductItem>[];
   }
 
@@ -94,5 +94,23 @@ class ProductRepositoryImpl implements ProductRepository {
             .toLowerCase()
             .contains(categoryName.toLowerCase()))
         .toList();
+  }
+
+  @override
+  Future<ProductItem?> getProductById(String id) async {
+    XResult<ProductItem> result = await _productProvider.getProduct(id);
+    return result.data;
+  }
+
+  @override
+  Future<ProductItem?> updateProduct(ProductItem productItem) async {
+    XResult<ProductItem> result =
+        await _productProvider.updateProduct(productItem);
+    return result.data;
+  }
+
+  @override
+  Stream<XResult<List<ProductItem>>> getProductsStream() {
+    return _productProvider.snapshotsAll();
   }
 }
