@@ -53,7 +53,7 @@ class ProductRatingScreen extends StatelessWidget {
                                 pinned: true,
                                 stretch: true,
                                 leading: _leadingButton(context),
-                                flexibleSpace: _flexibleSpaceBar(context)),
+                                flexibleSpace: _flexibleSpaceBar()),
                           ];
                         },
                         body: ListView(
@@ -158,9 +158,7 @@ class ProductRatingScreen extends StatelessWidget {
   }
 }
 
-Widget _flexibleSpaceBar(
-  BuildContext context,
-) {
+Widget _flexibleSpaceBar() {
   return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
     var top = constraints.biggest.height;

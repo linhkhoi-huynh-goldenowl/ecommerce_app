@@ -18,27 +18,38 @@ class BagScreen extends StatelessWidget {
         buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {
           return Scaffold(
-            appBar: PreferredSize(
-                preferredSize:
-                    const Size.fromHeight(140.0), // here the desired height
-                child: AppBar(
-                  automaticallyImplyLeading: false,
-                  actions: [_findButton()],
-                  flexibleSpace: _flexibleSpaceBar(),
-                  elevation: 0,
-                  backgroundColor: const Color(0xffF9F9F9),
-                )),
-            body: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return CartCardWidget(
-                    cartModel: state.carts[index],
-                    addToCart: context.read<CartCubit>().addToCart,
-                    removeByOneCart: context.read<CartCubit>().removeCartByOne,
-                    addToFavorite: context.read<FavoriteCubit>().addFavorite,
-                    removeCart: context.read<CartCubit>().removeCart,
-                  );
-                },
-                itemCount: state.carts.length),
+            body: NestedScrollView(
+              physics: const BouncingScrollPhysics(),
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                      shadowColor: Colors.white,
+                      elevation: 5,
+                      backgroundColor: const Color(0xffF9F9F9),
+                      expandedHeight: 110.0,
+                      pinned: true,
+                      stretch: true,
+                      automaticallyImplyLeading: false,
+                      flexibleSpace: _flexibleSpaceBar(),
+                      actions: [_findButton()]),
+                ];
+              },
+              body: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    return CartCardWidget(
+                      cartModel: state.carts[index],
+                      addToCart: context.read<CartCubit>().addToCart,
+                      removeByOneCart:
+                          context.read<CartCubit>().removeCartByOne,
+                      addToFavorite: context.read<FavoriteCubit>().addFavorite,
+                      removeCart: context.read<CartCubit>().removeCart,
+                    );
+                  },
+                  itemCount: state.carts.length),
+            ),
             bottomNavigationBar: BottomAppBar(
                 elevation: 0,
                 color: const Color(0xffF9F9F9),
@@ -104,11 +115,25 @@ Widget _findButton() {
 }
 
 Widget _flexibleSpaceBar() {
-  return FlexibleSpaceBar(
-    titlePadding: const EdgeInsets.only(left: 16, bottom: 24),
-    title: Text(
-      "My Bag",
-      style: ETextStyle.metropolis(fontSize: 34, weight: FontWeight.w700),
-    ),
-  );
+  return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+    var top = constraints.biggest.height;
+    return FlexibleSpaceBar(
+      titlePadding: EdgeInsets.only(
+          left: top > 71 && top < 91 ? 0 : 16,
+          bottom: top > 71 && top < 91 ? 12 : 0),
+      centerTitle: top > 71 && top < 91 ? true : false,
+      title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: 1,
+          child: Text(
+            "My Bag",
+            textAlign: TextAlign.start,
+            style: ETextStyle.metropolis(
+                weight:
+                    top > 71 && top < 91 ? FontWeight.w600 : FontWeight.w700,
+                fontSize: top > 71 && top < 91 ? 22 : 27),
+          )),
+    );
+  });
 }

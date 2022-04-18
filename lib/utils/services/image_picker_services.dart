@@ -22,9 +22,9 @@ class ImagePickerService {
   static Future<String> handleImageFromGallery(BuildContext context) async {
     final picker = ImagePicker();
     XFile? pickedImage;
-    var status = await Permission.camera.request();
+    var status = await Permission.storage.request();
     if (status.isDenied || status.isPermanentlyDenied) {
-      SettingDialog.permissionCamera(context);
+      SettingDialog.permissionGallery(context);
     } else {
       pickedImage = await picker.pickImage(source: ImageSource.gallery);
     }
