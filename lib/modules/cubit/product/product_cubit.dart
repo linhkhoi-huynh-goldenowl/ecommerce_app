@@ -84,7 +84,9 @@ class ProductCubit extends Cubit<ProductState> {
 
   void productOpenSearchBarEvent() async {
     try {
-      emit(state.copyWith(isSearch: !state.isSearch));
+      emit(state.copyWith(status: ProductStatus.loading));
+      emit(state.copyWith(
+          isSearch: !state.isSearch, status: ProductStatus.success));
     } catch (_) {
       emit(state.copyWith(status: ProductStatus.failure));
     }

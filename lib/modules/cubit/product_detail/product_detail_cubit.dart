@@ -13,7 +13,11 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
   }
   final String category;
   void chooseSize(String size) async {
-    emit(state.copyWith(size: size));
+    emit(state.copyWith(size: size, sizeStatus: SizeStatus.selected));
+  }
+
+  void setUnselectSize() async {
+    emit(state.copyWith(sizeStatus: SizeStatus.unselected));
   }
 
   void chooseColor(String color) async {

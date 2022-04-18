@@ -1,11 +1,15 @@
 import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/dialogs/bottom_sheet_app.dart';
+import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
-import 'package:e_commerce_app/dialogs/button_add_favorite.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:e_commerce_app/utils/services/navigator_services.dart';
+import 'package:e_commerce_app/widgets/button_circle.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
 import 'package:e_commerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'chip_label.dart';
 import 'image_product_widget.dart';
@@ -88,10 +92,24 @@ class MainProductCard extends StatelessWidget {
                 )
               : const SizedBox(),
           Positioned(
-            top: 170,
-            right: 0,
-            child: ButtonAddFavorite(product: product),
-          )
+              top: 170,
+              right: 0,
+              child: BlocBuilder<FavoriteCubit, FavoriteState>(
+                  buildWhen: (previous, current) =>
+                      previous.status != current.status,
+                  builder: (context, state) {
+                    return ButtonCircle(
+                        func: () => BottomSheetApp.showModalFavorite(
+                            context, product, product.colors[0].sizes),
+                        iconPath: "assets/images/icons/heart.png",
+                        iconSize: 16,
+                        iconColor: const Color(0xffDADADA),
+                        fillColor:
+                            Domain().favorite.checkContainTitle(product.title)
+                                ? const Color(0xffDB3022)
+                                : Colors.white,
+                        padding: 12);
+                  }))
         ],
       ),
     );

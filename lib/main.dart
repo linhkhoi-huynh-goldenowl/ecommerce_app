@@ -1,4 +1,5 @@
 import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_app/modules/cubit/cart/cart_cubit.dart';
 import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_app/utils/services/navigator_services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,7 +27,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<AuthenticationCubit>(
               create: (BuildContext context) => AuthenticationCubit()),
           BlocProvider<FavoriteCubit>(
-              create: (BuildContext context) => FavoriteCubit())
+              create: (BuildContext context) => FavoriteCubit()),
+          BlocProvider<CartCubit>(
+              create: (BuildContext context) => CartCubit()),
         ],
         child: MaterialApp(
           navigatorKey: NavigationService.navigatorKey,

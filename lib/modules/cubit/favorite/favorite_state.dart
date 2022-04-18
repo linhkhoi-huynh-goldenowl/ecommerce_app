@@ -25,7 +25,6 @@ class FavoriteState extends Equatable {
       this.isGridLayout = false,
       this.favorites = const <FavoriteProduct>[],
       this.status = FavoriteStatus.initial,
-      this.size = "",
       this.products = const <ProductItem>[]});
   final List<FavoriteProduct> favorites;
   final List<ProductItem> products;
@@ -38,7 +37,6 @@ class FavoriteState extends Equatable {
   final bool isSearch;
 
   final String categoryName;
-  final String size;
 
   FavoriteState copyWith({
     FavoriteStatus? status,
@@ -50,7 +48,6 @@ class FavoriteState extends Equatable {
     String? categoryName,
     GridFavoriteStatus? gridStatus,
     SearchFavoriteStatus? searchStatus,
-    String? size,
     List<ProductItem>? products,
   }) {
     return FavoriteState(
@@ -63,7 +60,6 @@ class FavoriteState extends Equatable {
         categoryName: categoryName ?? this.categoryName,
         gridStatus: gridStatus ?? this.gridStatus,
         searchStatus: searchStatus ?? this.searchStatus,
-        size: size ?? this.size,
         products: products ?? this.products);
   }
 
@@ -78,7 +74,6 @@ class FavoriteState extends Equatable {
         categoryName,
         gridStatus,
         searchStatus,
-        size,
         products
       ];
 }
