@@ -1,16 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_app/modules/cubit/profile/profile_cubit.dart';
 import 'package:e_commerce_app/widgets/profile_info_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../config/routes/router.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class ProfileScreen extends ProductCoordinatorBase {
   ProfileScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return stackView(context);
+    return BlocProvider<ProfileCubit>(
+        create: (BuildContext context) => ProfileCubit(),
+        child: stackView(context));
   }
 
   @override
@@ -19,7 +24,7 @@ class ProfileScreen extends ProductCoordinatorBase {
   }
 
   Widget _buildBody() {
-    return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+    return BlocBuilder<ProfileCubit, ProfileState>(
         buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {
           return Scaffold(
@@ -43,14 +48,41 @@ class ProfileScreen extends ProductCoordinatorBase {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  height: 60,
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        backgroundImage:
-                            AssetImage("assets/images/carousel2.jpg"),
-                        radius: 34,
-                      ),
+                      state.imageUrl != ""
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  CachedNetworkImageProvider(state.imageUrl),
+                              radius: 34,
+                            )
+                          : const CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(
+                                  "https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg"),
+                              radius: 44,
+                            ),
+                      // CachedNetworkImage(
+                      //   width: 100,
+                      //   imageUrl:
+                      //       "https://st.gamevui.com/images/image/2019/03/20/pikachu-200.jpg",
+                      //   imageBuilder: (context, imageProvider) => Container(
+                      //     decoration: BoxDecoration(
+                      //       image: DecorationImage(
+                      //           image: imageProvider,
+                      //           fit: BoxFit.cover,
+                      //           colorFilter: const ColorFilter.mode(
+                      //               Colors.red, BlendMode.colorBurn)),
+                      //     ),
+                      //   ),
+                      //   placeholder: (context, url) =>
+                      //       const CircularProgressIndicator(),
+                      //   errorWidget: (context, url, error) =>
+                      //       const Icon(Icons.error),
+                      // ),
+                      // const ECacheNetworkImage(
+                      //   imageUrl:
+                      //       "https://st.gamevui.com/images/image/2019/03/20/pikachu-200.jpg",
+                      // ),
                       const SizedBox(
                         width: 16,
                       ),
@@ -60,13 +92,13 @@ class ProfileScreen extends ProductCoordinatorBase {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 5),
                             child: Text(
-                              state.eUser!.name,
+                              state.name,
                               style: ETextStyle.metropolis(
                                   weight: FontWeight.w600, fontSize: 18),
                             ),
                           ),
                           Text(
-                            state.eUser!.email,
+                            state.email,
                             style: ETextStyle.metropolis(
                                 weight: FontWeight.w600,
                                 fontSize: 14,
@@ -103,7 +135,9 @@ class ProfileScreen extends ProductCoordinatorBase {
                 ProfileInfoButton(
                     title: "Settings",
                     subTitle: "Notification, password",
-                    func: () {}),
+                    func: () {
+                      Navigator.of(context).pushNamed(Routes.settingScreen);
+                    }),
                 ProfileInfoButton(
                     title: "Sign out",
                     subTitle: "Log out of app",

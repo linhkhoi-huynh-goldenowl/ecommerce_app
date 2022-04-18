@@ -16,15 +16,8 @@ class FavoriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<CategoryCubit>(
-          create: (BuildContext context) => CategoryCubit(),
-        ),
-        BlocProvider<FavoriteCubit>(
-          create: (BuildContext context) => FavoriteCubit(),
-        ),
-      ],
+    return BlocProvider<CategoryCubit>(
+      create: (BuildContext context) => CategoryCubit(),
       child: _buildBody(context),
     );
   }

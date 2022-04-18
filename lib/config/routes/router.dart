@@ -1,6 +1,7 @@
 import 'package:e_commerce_app/modules/screens/home_screen.dart';
 import 'package:e_commerce_app/modules/screens/landing_page.dart';
 import 'package:e_commerce_app/modules/screens/dashboard_screen.dart';
+import 'package:e_commerce_app/modules/screens/setting_screen.dart';
 import 'package:e_commerce_app/modules/screens/shop_category_screen.dart';
 import 'package:flutter/material.dart';
 import '../../modules/screens/login_screen.dart';
@@ -13,6 +14,7 @@ class Routes {
   static const String logIn = '/LoginScreen';
   static const String signUp = '/SignUpScreen';
   static const String shopCategoryScreen = '/ShopCategoryScreen';
+  static const String settingScreen = '/SettingScreen';
 }
 
 class AppRouter {
@@ -47,6 +49,12 @@ class AppRouter {
             builder: (_) {
               return const ShopCategoryScreen();
             });
+
+      case Routes.settingScreen:
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (BuildContext context) => const SettingScreen());
+
       default:
         return MaterialPageRoute(
             builder: (_) => const Scaffold(

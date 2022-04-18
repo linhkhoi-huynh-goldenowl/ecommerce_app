@@ -12,6 +12,7 @@ import 'base_screens/product_coordinator_base.dart';
 
 class HomeScreen extends ProductCoordinatorBase {
   HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [

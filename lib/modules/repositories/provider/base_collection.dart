@@ -26,6 +26,20 @@ class BaseCollectionReference<T extends BaseModel> {
     return ref.doc(id).snapshots();
   }
 
+  Stream<XResult<List<T>>> snapshotsAll() {
+    return ref
+        .snapshots()
+        .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
+  }
+
+  _onSuccessWithQuerySnapshot(QuerySnapshot snapshot) {
+    List<QueryDocumentSnapshot<T>> results =
+        snapshot.docs as List<QueryDocumentSnapshot<T>>;
+    List<T> data = List.generate(
+        results.length, (index) => results.elementAt(index).data());
+    return XResult<List<T>>.success(data);
+  }
+
   Future<XResult<T>> add(T item) async {
     try {
       final DocumentReference<T> doc =
@@ -62,6 +76,19 @@ class BaseCollectionReference<T extends BaseModel> {
     try {
       final QuerySnapshot<T> query =
           await ref.get().timeout(const Duration(seconds: 5));
+      final docs = query.docs.map((e) => e.data()).toList();
+      return XResult.success(docs);
+    } catch (e) {
+      return XResult.exception(e);
+    }
+  }
+
+  Future<XResult<List<T>>> queryWhereId(String param, String variable) async {
+    try {
+      final QuerySnapshot<T> query = await ref
+          .where(param, isEqualTo: variable)
+          .get()
+          .timeout(const Duration(seconds: 5));
       final docs = query.docs.map((e) => e.data()).toList();
       return XResult.success(docs);
     } catch (e) {
