@@ -11,22 +11,26 @@ class FilterBarWidget extends StatelessWidget {
   const FilterBarWidget(
       {Key? key,
       required this.chooseSort,
-      required this.applyChoose,
       required this.isGridLayout,
-      required this.applyCategory,
       required this.applyGrid,
-      required this.chooseCategory})
+      required this.chooseCategory,
+      required this.applySort,
+      required this.isVisible,
+      required this.showCategory})
       : super(key: key);
   final ChooseSort chooseSort;
-  final Function(ChooseSort) applyChoose;
-  final Function(String) applyCategory;
+  final Function(
+      {String? categoryName,
+      ChooseSort? chooseSort,
+      String? searchName}) applySort;
+  final bool isVisible;
   final Function applyGrid;
   final bool isGridLayout;
   final String chooseCategory;
+  final Function showCategory;
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
       decoration: const BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -39,17 +43,24 @@ class FilterBarWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
       child: Column(
         children: [
-          _sortCategory(applyCategory, chooseCategory),
-          _sortFilter(context, chooseSort, applyChoose, isGridLayout, applyGrid)
+          _sortCategory(applySort, chooseCategory, isVisible),
+          _sortFilter(context, chooseSort, applySort, isGridLayout, applyGrid,
+              showCategory)
         ],
       ),
     );
   }
 }
 
-Widget _sortCategory(Function(String) applyCategory, String chooseCategory) {
-  return SizedBox(
-      height: 50,
+Widget _sortCategory(
+    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
+        applySort,
+    String chooseCategory,
+    bool isVisible) {
+  return AnimatedContainer(
+      curve: Curves.decelerate,
+      height: isVisible ? 50 : 0,
+      duration: const Duration(milliseconds: 500),
       child: BlocBuilder<CategoryCubit, CategoryState>(
         buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {
@@ -60,7 +71,12 @@ Widget _sortCategory(Function(String) applyCategory, String chooseCategory) {
                 return CategoryButtonChip(
                   chooseCategory: chooseCategory,
                   func: () {
-                    applyCategory(state.categories[i]);
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus &&
+                        currentFocus.focusedChild != null) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }
+                    applySort(categoryName: state.categories[i]);
                   },
                   title: state.categories[i],
                 );
@@ -69,8 +85,14 @@ Widget _sortCategory(Function(String) applyCategory, String chooseCategory) {
       ));
 }
 
-Widget _sortFilter(BuildContext context, ChooseSort chooseSort,
-    Function(ChooseSort) applyChoose, bool isGridLayout, Function applyGrid) {
+Widget _sortFilter(
+    BuildContext context,
+    ChooseSort chooseSort,
+    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
+        applySort,
+    bool isGridLayout,
+    Function applyGrid,
+    Function showCategory) {
   return Container(
       color: const Color(0xffF9F9F9),
       child: Row(
@@ -80,18 +102,25 @@ Widget _sortFilter(BuildContext context, ChooseSort chooseSort,
               style: TextButton.styleFrom(
                   primary: const Color(0xff222222),
                   textStyle: ETextStyle.metropolis(fontSize: 11)),
-              onPressed: () {},
+              onPressed: () {
+                showCategory();
+              },
               icon:
                   const ImageIcon(AssetImage("assets/images/icons/filter.png")),
               label: const Text(
                 "Filter",
               )),
           SortBottomWidget(
-            applyChoose: applyChoose,
+            applySort: applySort,
             chooseSort: chooseSort,
           ),
           IconButton(
               onPressed: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus &&
+                    currentFocus.focusedChild != null) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
                 applyGrid();
               },
               icon: ImageIcon(AssetImage(isGridLayout

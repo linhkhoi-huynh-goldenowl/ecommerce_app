@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 
 class SortBottomWidget extends StatelessWidget {
   const SortBottomWidget(
-      {Key? key, required this.chooseSort, required this.applyChoose})
+      {Key? key, required this.chooseSort, required this.applySort})
       : super(key: key);
   final ChooseSort chooseSort;
-  final Function(ChooseSort) applyChoose;
+  final Function(
+      {String? categoryName,
+      ChooseSort? chooseSort,
+      String? searchName}) applySort;
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
@@ -15,7 +18,12 @@ class SortBottomWidget extends StatelessWidget {
             primary: const Color(0xff222222),
             textStyle: ETextStyle.metropolis(fontSize: 11)),
         onPressed: () {
-          _showModal(context, chooseSort, applyChoose);
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus &&
+              currentFocus.focusedChild != null) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          }
+          _showModal(context, chooseSort, applySort);
         },
         icon: const ImageIcon(AssetImage("assets/images/icons/range.png")),
         label: Text(
@@ -32,8 +40,11 @@ class SortBottomWidget extends StatelessWidget {
   }
 }
 
-void _showModal(BuildContext context, ChooseSort stateSort,
-    Function(ChooseSort) applyChoose) {
+void _showModal(
+    BuildContext context,
+    ChooseSort stateSort,
+    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
+        applySort) {
   showModalBottomSheet<void>(
     constraints: const BoxConstraints(maxHeight: 375),
     shape: const RoundedRectangleBorder(
@@ -61,26 +72,31 @@ void _showModal(BuildContext context, ChooseSort stateSort,
             height: 16,
           ),
           _sortSelection(
-              context, ChooseSort.popular, stateSort, "Popular", applyChoose),
+              context, ChooseSort.popular, stateSort, "Popular", applySort),
           _sortSelection(
-              context, ChooseSort.newest, stateSort, "Newest", applyChoose),
+              context, ChooseSort.newest, stateSort, "Newest", applySort),
           _sortSelection(context, ChooseSort.review, stateSort,
-              "Customer review", applyChoose),
+              "Customer review", applySort),
           _sortSelection(context, ChooseSort.priceLowest, stateSort,
-              "Price: lowest to high", applyChoose),
+              "Price: lowest to high", applySort),
           _sortSelection(context, ChooseSort.priceHighest, stateSort,
-              "Price: highest to low", applyChoose),
+              "Price: highest to low", applySort),
         ],
       );
     },
   );
 }
 
-Widget _sortSelection(BuildContext context, ChooseSort chooseSort,
-    ChooseSort stateSort, String title, Function(ChooseSort) applyChoose) {
+Widget _sortSelection(
+    BuildContext context,
+    ChooseSort chooseSort,
+    ChooseSort stateSort,
+    String title,
+    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
+        applySort) {
   return InkWell(
     onTap: () {
-      applyChoose(chooseSort);
+      applySort(chooseSort: chooseSort);
       Navigator.pop(context);
     },
     child: Container(

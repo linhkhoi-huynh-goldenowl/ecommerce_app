@@ -90,8 +90,9 @@ Widget _buildBody() {
                                                         BlocProvider.of<
                                                                     ProductCubit>(
                                                                 context)
-                                                            .productCategoryEvent(
-                                                                "All products");
+                                                            .productSort(
+                                                                categoryName:
+                                                                    "");
                                                         Navigator.of(context)
                                                             .pushNamed(Routes
                                                                 .shopCategoryScreen);
@@ -125,8 +126,8 @@ Widget _buildBody() {
                               title: state.categories[index],
                               func: () {
                                 BlocProvider.of<ProductCubit>(context)
-                                    .productCategoryEvent(
-                                        state.categories[index]);
+                                    .productSort(
+                                        categoryName: state.categories[index]);
                                 Navigator.of(context)
                                     .pushNamed(Routes.shopCategoryScreen);
                               },

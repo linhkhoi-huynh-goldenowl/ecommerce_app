@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_app/modules/models/favorite_product.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/favorite_repository.dart';
 import 'package:e_commerce_app/modules/repositories/provider/favorite_provider.dart';
@@ -69,48 +70,55 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
   }
 
   @override
-  Future<List<FavoriteProduct>> getFavoritesByPopular() async {
-    final listFavorites = await getFavorites();
+  Future<List<FavoriteProduct>> getFavoritesByPopular(
+      List<FavoriteProduct> favorites) async {
+    final listFavorites = favorites;
     return listFavorites
         .where((element) => element.productItem.isPopular)
         .toList();
   }
 
   @override
-  Future<List<FavoriteProduct>> getFavoritesByNewest() async {
-    var favorites = _listFavorites;
-    favorites.sort((b, a) =>
+  Future<List<FavoriteProduct>> getFavoritesByNewest(
+      List<FavoriteProduct> favorites) async {
+    var favoritesList = favorites;
+    favoritesList.sort((b, a) =>
         a.productItem.createdDate.compareTo(b.productItem.createdDate));
-    return favorites;
+    return favoritesList;
   }
 
   @override
-  Future<List<FavoriteProduct>> getFavoritesByReview() async {
-    var favorites = _listFavorites;
-    favorites.sort((b, a) =>
+  Future<List<FavoriteProduct>> getFavoritesByReview(
+      List<FavoriteProduct> favorites) async {
+    var favoritesList = favorites;
+    favoritesList.sort((b, a) =>
         a.productItem.reviewStars.compareTo(b.productItem.reviewStars));
-    return favorites;
+    return favoritesList;
   }
 
   @override
-  Future<List<FavoriteProduct>> getFavoritesByLowest() async {
-    var favorites = _listFavorites;
+  Future<List<FavoriteProduct>> getFavoritesByLowest(
+      List<FavoriteProduct> favorites) async {
+    var favoritesList = favorites;
     favorites.sort((a, b) => a.productItem.colors[0].sizes[0].price
         .compareTo(b.productItem.colors[0].sizes[0].price));
-    return favorites;
+    return favoritesList;
   }
 
   @override
-  Future<List<FavoriteProduct>> getFavoritesByHighest() async {
-    var favorites = _listFavorites;
-    favorites.sort((b, a) => a.productItem.colors[0].sizes[0].price
+  Future<List<FavoriteProduct>> getFavoritesByHighest(
+      List<FavoriteProduct> favorites) async {
+    var favoritesList = favorites;
+    favoritesList.sort((b, a) => a.productItem.colors[0].sizes[0].price
         .compareTo(b.productItem.colors[0].sizes[0].price));
-    return favorites;
+    return favoritesList;
   }
 
   @override
-  Future<List<FavoriteProduct>> getFavoritesByName(String searchName) async {
-    return _listFavorites
+  Future<List<FavoriteProduct>> getFavoritesByName(
+      List<FavoriteProduct> favorites, String searchName) async {
+    var favoriteList = favorites;
+    return favoriteList
         .where((element) => element.productItem.title
             .toLowerCase()
             .contains(searchName.toLowerCase()))
@@ -119,11 +127,42 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
 
   @override
   Future<List<FavoriteProduct>> getFavoritesByCategory(
-      String categoryName) async {
-    return _listFavorites
+      List<FavoriteProduct> favorites, String categoryName) async {
+    var favoriteList = favorites;
+    return favoriteList
         .where((element) => element.productItem.categoryName
             .toLowerCase()
             .contains(categoryName.toLowerCase()))
         .toList();
+  }
+
+  @override
+  Future<List<FavoriteProduct>> getFavoritesFilter(
+      {String searchName = "",
+      ChooseSort chooseSort = ChooseSort.newest,
+      String categoryName = ""}) async {
+    var favorites = _listFavorites;
+    favorites = await getFavoritesByName(favorites, searchName);
+    favorites = await getFavoritesByCategory(favorites, categoryName);
+    switch (chooseSort) {
+      case ChooseSort.popular:
+        favorites = await getFavoritesByPopular(favorites);
+        break;
+      case ChooseSort.newest:
+        favorites = await getFavoritesByNewest(favorites);
+        break;
+
+      case ChooseSort.review:
+        favorites = await getFavoritesByReview(favorites);
+        break;
+      case ChooseSort.priceLowest:
+        favorites = await getFavoritesByLowest(favorites);
+        break;
+      case ChooseSort.priceHighest:
+        favorites = await getFavoritesByHighest(favorites);
+        break;
+    }
+
+    return favorites;
   }
 }

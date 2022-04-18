@@ -38,7 +38,7 @@ class ButtonChangePassword extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 12),
                     child: Form(
                       key: _formKey,
-                      child: ListView(
+                      child: Column(
                         children: [
                           const SizedBox(
                             height: 14,
@@ -50,94 +50,108 @@ class ButtonChangePassword extends StatelessWidget {
                           const SizedBox(
                             height: 16,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "Password Change",
-                              style: ETextStyle.metropolis(fontSize: 18),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 18,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextFieldWidget(
-                              labelText: "Old Password",
-                              validatorText: "",
-                              isValid: state.isValidOldPassword,
-                              func: (value) => context
-                                  .read<ProfileCubit>()
-                                  .settingOldPasswordChanged(value),
-                              isPassword: true,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 14,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: TextButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Forgot Password?",
-                                    style: ETextStyle.metropolis(
-                                        color: const Color(0xff9B9B9B)),
-                                  )),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 18,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextFieldWidget(
-                              labelText: "New Password",
-                              validatorText: "Password must than 6 character",
-                              isValid: state.isValidNewPassword,
-                              func: (value) => context
-                                  .read<ProfileCubit>()
-                                  .settingNewPasswordChanged(value),
-                              isPassword: true,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextFieldWidget(
-                              labelText: "Repeat New Password",
-                              validatorText:
-                                  "Repeat password must equal new password",
-                              isValid: state.isValidConfirmPassword,
-                              func: (value) => context
-                                  .read<ProfileCubit>()
-                                  .settingConfirmNewPasswordChanged(value),
-                              isPassword: true,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 32,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: ButtonIntro(
-                                func: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    context.read<ProfileCubit>().changePassword(
-                                        state.email,
-                                        state.oldPassword,
-                                        state.newPasswordConfirm);
-                                  }
-                                },
-                                title: "SAVE PASSWORD"),
-                          ),
-                          const SizedBox(
-                            height: 32,
-                          ),
+                          Expanded(
+                              child: ListView(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  "Password Change",
+                                  style: ETextStyle.metropolis(fontSize: 18),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 18,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: TextFieldWidget(
+                                  labelText: "Old Password",
+                                  validatorText: "",
+                                  isValid: state.isValidOldPassword,
+                                  func: (value) => context
+                                      .read<ProfileCubit>()
+                                      .settingOldPasswordChanged(value),
+                                  isPassword: true,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 14,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: TextButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        "Forgot Password?",
+                                        style: ETextStyle.metropolis(
+                                            color: const Color(0xff9B9B9B)),
+                                      )),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 18,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: TextFieldWidget(
+                                  labelText: "New Password",
+                                  validatorText:
+                                      "Password must than 6 character",
+                                  isValid: state.isValidNewPassword,
+                                  func: (value) => context
+                                      .read<ProfileCubit>()
+                                      .settingNewPasswordChanged(value),
+                                  isPassword: true,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 24,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: TextFieldWidget(
+                                  labelText: "Repeat New Password",
+                                  validatorText:
+                                      "Repeat password must equal new password",
+                                  isValid: state.isValidConfirmPassword,
+                                  func: (value) => context
+                                      .read<ProfileCubit>()
+                                      .settingConfirmNewPasswordChanged(value),
+                                  isPassword: true,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 32,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: ButtonIntro(
+                                    func: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        context
+                                            .read<ProfileCubit>()
+                                            .changePassword(
+                                                state.email,
+                                                state.oldPassword,
+                                                state.newPasswordConfirm);
+                                      }
+                                    },
+                                    title: "SAVE PASSWORD"),
+                              ),
+                              const SizedBox(
+                                height: 32,
+                              ),
+                            ],
+                          ))
                         ],
                       ),
                     ),

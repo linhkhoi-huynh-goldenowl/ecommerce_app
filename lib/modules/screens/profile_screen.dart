@@ -61,28 +61,6 @@ class ProfileScreen extends ProductCoordinatorBase {
                                   "https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg"),
                               radius: 44,
                             ),
-                      // CachedNetworkImage(
-                      //   width: 100,
-                      //   imageUrl:
-                      //       "https://st.gamevui.com/images/image/2019/03/20/pikachu-200.jpg",
-                      //   imageBuilder: (context, imageProvider) => Container(
-                      //     decoration: BoxDecoration(
-                      //       image: DecorationImage(
-                      //           image: imageProvider,
-                      //           fit: BoxFit.cover,
-                      //           colorFilter: const ColorFilter.mode(
-                      //               Colors.red, BlendMode.colorBurn)),
-                      //     ),
-                      //   ),
-                      //   placeholder: (context, url) =>
-                      //       const CircularProgressIndicator(),
-                      //   errorWidget: (context, url, error) =>
-                      //       const Icon(Icons.error),
-                      // ),
-                      // const ECacheNetworkImage(
-                      //   imageUrl:
-                      //       "https://st.gamevui.com/images/image/2019/03/20/pikachu-200.jpg",
-                      // ),
                       const SizedBox(
                         width: 16,
                       ),

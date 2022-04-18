@@ -33,64 +33,93 @@ class FavoriteScreen extends StatelessWidget {
             );
 
           case FavoriteStatus.success:
-            return Scaffold(
-                body: NestedScrollView(
-              physics: const BouncingScrollPhysics(),
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
-                      shadowColor: Colors.white,
-                      elevation: 5,
-                      backgroundColor: const Color(0xffF9F9F9),
-                      expandedHeight: 100.0,
-                      pinned: true,
-                      stretch: true,
-                      automaticallyImplyLeading: false,
-                      leading: null,
-                      actions: [_findButton(context)],
-                      flexibleSpace: _flexibleSpaceBar(context, "Favorites",
-                          state.isSearch, state.searchInput)),
-                  SliverPersistentHeader(
-                      pinned: true,
-                      delegate: SliverAppBarDelegate(
-                        child: PreferredSize(
-                            preferredSize: const Size.fromHeight(110.0),
-                            child: BlocBuilder<FavoriteCubit, FavoriteState>(
-                                buildWhen: (previous, current) =>
-                                    previous.status != current.status,
-                                builder: (context, state) {
-                                  return FilterBarWidget(
-                                    chooseCategory: state.categoryName,
-                                    applyGrid:
-                                        BlocProvider.of<FavoriteCubit>(context)
-                                            .favoriteLoadGridLayout,
-                                    applyChoose: context
-                                        .read<FavoriteCubit>()
-                                        .favoriteSort,
-                                    chooseSort: state.sort,
-                                    isGridLayout: state.isGridLayout,
-                                    applyCategory:
-                                        BlocProvider.of<FavoriteCubit>(context)
-                                            .favoriteCategoryEvent,
-                                  );
-                                })),
-                      ))
-                ];
+            return GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus &&
+                    currentFocus.focusedChild != null) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
               },
-              body: state.searchStatus == SearchProductStatus.loadingSearch ||
-                      state.gridStatus == GridProductStatus.loadingGrid
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : state.favorites.isEmpty
-                      ? const Center(
-                          child: Text("No favorites"),
-                        )
-                      : state.isGridLayout
-                          ? _displayGridView(state.favorites)
-                          : _displayListView(state.favorites),
-            ));
+              child: Scaffold(
+                  body: NestedScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return <Widget>[
+                          SliverAppBar(
+                              shadowColor: Colors.white,
+                              elevation: 5,
+                              backgroundColor: const Color(0xffF9F9F9),
+                              expandedHeight: 100.0,
+                              pinned: true,
+                              stretch: true,
+                              automaticallyImplyLeading: false,
+                              leading: null,
+                              actions: [_findButton(context)],
+                              flexibleSpace:
+                                  BlocBuilder<FavoriteCubit, FavoriteState>(
+                                      buildWhen: (previous, current) =>
+                                          previous.gridStatus !=
+                                          current.gridStatus,
+                                      builder: (context, state) {
+                                        return _flexibleSpaceBar(
+                                            context,
+                                            "Favorites",
+                                            state.isSearch,
+                                            state.searchInput);
+                                      })),
+                          SliverPersistentHeader(
+                              pinned: true,
+                              delegate: SliverAppBarDelegate(
+                                child: PreferredSize(
+                                    preferredSize: const Size.fromHeight(100.0),
+                                    child: BlocBuilder<FavoriteCubit,
+                                            FavoriteState>(
+                                        buildWhen: (previous, current) =>
+                                            previous.gridStatus !=
+                                            current.gridStatus,
+                                        builder: (context, state) {
+                                          return FilterBarWidget(
+                                            isVisible: state.isShowCategoryBar,
+                                            showCategory: BlocProvider.of<
+                                                    FavoriteCubit>(context)
+                                                .favoriteOpenCategoryBarEvent,
+                                            chooseCategory: state.categoryName,
+                                            applyGrid:
+                                                BlocProvider.of<FavoriteCubit>(
+                                                        context)
+                                                    .favoriteLoadGridLayout,
+                                            applySort: context
+                                                .read<FavoriteCubit>()
+                                                .favoriteSort,
+                                            chooseSort: state.sort,
+                                            isGridLayout: state.isGridLayout,
+                                          );
+                                        })),
+                              ))
+                        ];
+                      },
+                      body: BlocBuilder<FavoriteCubit, FavoriteState>(
+                          buildWhen: (previous, current) =>
+                              previous.gridStatus != current.gridStatus,
+                          builder: (context, state) {
+                            return state.searchStatus ==
+                                        SearchProductStatus.loadingSearch ||
+                                    state.gridStatus ==
+                                        GridProductStatus.loadingGrid
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : state.favorites.isEmpty
+                                    ? const Center(
+                                        child: Text("No favorites"),
+                                      )
+                                    : state.isGridLayout
+                                        ? _displayGridView(state.favorites)
+                                        : _displayListView(state.favorites);
+                          }))),
+            );
 
           default:
             return const Center(child: CircularProgressIndicator());
@@ -159,7 +188,7 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
                   initValue: searchInput,
                   func: (value) {
                     BlocProvider.of<FavoriteCubit>(context)
-                        .favoriteSearchEvent(value);
+                        .favoriteSort(searchName: value);
                   })),
     );
   });

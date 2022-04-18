@@ -18,14 +18,15 @@ class FavoriteState extends Equatable {
   const FavoriteState(
       {this.gridStatus = GridFavoriteStatus.initialGrid,
       this.searchStatus = SearchFavoriteStatus.initialSearch,
-      this.categoryName = "Favorites",
+      this.categoryName = "",
       this.searchInput = "",
       this.isSearch = false,
       this.sort = ChooseSort.newest,
       this.isGridLayout = false,
       this.favorites = const <FavoriteProduct>[],
       this.status = FavoriteStatus.initial,
-      this.products = const <ProductItem>[]});
+      this.products = const <ProductItem>[],
+      this.isShowCategoryBar = true});
   final List<FavoriteProduct> favorites;
   final List<ProductItem> products;
   final FavoriteStatus status;
@@ -35,21 +36,21 @@ class FavoriteState extends Equatable {
   final ChooseSort sort;
   final String searchInput;
   final bool isSearch;
-
+  final bool isShowCategoryBar;
   final String categoryName;
 
-  FavoriteState copyWith({
-    FavoriteStatus? status,
-    List<FavoriteProduct>? favorites,
-    bool? isGridLayout,
-    ChooseSort? sort,
-    bool? isSearch,
-    String? searchInput,
-    String? categoryName,
-    GridFavoriteStatus? gridStatus,
-    SearchFavoriteStatus? searchStatus,
-    List<ProductItem>? products,
-  }) {
+  FavoriteState copyWith(
+      {FavoriteStatus? status,
+      List<FavoriteProduct>? favorites,
+      bool? isGridLayout,
+      ChooseSort? sort,
+      bool? isSearch,
+      String? searchInput,
+      String? categoryName,
+      GridFavoriteStatus? gridStatus,
+      SearchFavoriteStatus? searchStatus,
+      List<ProductItem>? products,
+      bool? isShowCategoryBar}) {
     return FavoriteState(
         status: status ?? this.status,
         favorites: favorites ?? this.favorites,
@@ -60,7 +61,8 @@ class FavoriteState extends Equatable {
         categoryName: categoryName ?? this.categoryName,
         gridStatus: gridStatus ?? this.gridStatus,
         searchStatus: searchStatus ?? this.searchStatus,
-        products: products ?? this.products);
+        products: products ?? this.products,
+        isShowCategoryBar: isShowCategoryBar ?? this.isShowCategoryBar);
   }
 
   @override
@@ -74,6 +76,7 @@ class FavoriteState extends Equatable {
         categoryName,
         gridStatus,
         searchStatus,
-        products
+        products,
+        isShowCategoryBar
       ];
 }

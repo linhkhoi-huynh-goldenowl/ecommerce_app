@@ -50,7 +50,9 @@ class HomeScreen extends ProductCoordinatorBase {
                         title: "Sale",
                         subTitle: "Super summer sale",
                         func: () {
-                          context.read<ProductCubit>().productSaleLoaded();
+                          context
+                              .read<ProductCubit>()
+                              .productSort(typeList: TypeList.sale);
                           Navigator.of(context)
                               .pushNamed(Routes.shopCategoryScreen);
                         }),
@@ -74,7 +76,9 @@ class HomeScreen extends ProductCoordinatorBase {
                         title: "New",
                         subTitle: "You've never seen it before!",
                         func: () {
-                          context.read<ProductCubit>().productNewLoaded();
+                          context
+                              .read<ProductCubit>()
+                              .productSort(typeList: TypeList.newest);
                           Navigator.of(context)
                               .pushNamed(Routes.shopCategoryScreen);
                         }),

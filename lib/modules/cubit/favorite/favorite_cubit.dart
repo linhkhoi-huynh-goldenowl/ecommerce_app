@@ -87,82 +87,61 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     }
   }
 
-  void favoriteSearchEvent(String searchName) async {
-    try {
-      emit(state.copyWith(
-          searchStatus: SearchFavoriteStatus.loadingSearch,
-          status: FavoriteStatus.loading));
-      var favorites = await Domain().favorite.getFavoritesByName(searchName);
-      emit(state.copyWith(
-          searchStatus: SearchFavoriteStatus.successSearch,
-          status: FavoriteStatus.success,
-          favorites: favorites,
-          searchInput: searchName));
-    } catch (_) {
-      emit(state.copyWith(searchStatus: SearchFavoriteStatus.failureSearch));
-    }
-  }
-
   void favoriteOpenSearchBarEvent() async {
     try {
-      emit(state.copyWith(status: FavoriteStatus.loading));
+      emit(state.copyWith(gridStatus: GridFavoriteStatus.loadingGrid));
       emit(state.copyWith(
-          isSearch: !state.isSearch, status: FavoriteStatus.success));
+          isSearch: !state.isSearch,
+          gridStatus: GridFavoriteStatus.successGrid));
     } catch (_) {
-      emit(state.copyWith(status: FavoriteStatus.failure));
+      emit(state.copyWith(gridStatus: GridFavoriteStatus.failureGrid));
     }
   }
 
-  void favoriteCategoryEvent(String categoryName) async {
+  void favoriteOpenCategoryBarEvent() async {
     try {
-      emit(state.copyWith(status: FavoriteStatus.loading));
-      if (categoryName == "favorites" || categoryName == state.categoryName) {
-        var favorites = await Domain().favorite.getFavorites();
+      emit(state.copyWith(gridStatus: GridFavoriteStatus.loadingGrid));
+      emit(state.copyWith(
+          isShowCategoryBar: !state.isShowCategoryBar,
+          gridStatus: GridFavoriteStatus.successGrid));
+    } catch (_) {
+      emit(state.copyWith(gridStatus: GridFavoriteStatus.failureGrid));
+    }
+  }
+
+  void favoriteSort(
+      {String? searchName,
+      ChooseSort? chooseSort,
+      String? categoryName}) async {
+    try {
+      emit(state.copyWith(gridStatus: GridFavoriteStatus.loadingGrid));
+
+      if (categoryName == state.categoryName) {
+        var favorites = await Domain().favorite.getFavoritesFilter(
+            searchName: searchName ?? state.searchInput,
+            chooseSort: chooseSort ?? state.sort);
+
         emit(state.copyWith(
-            categoryName: "All products",
+            sort: chooseSort ?? state.sort,
+            categoryName: "",
+            searchInput: searchName ?? state.searchInput,
             favorites: favorites,
-            status: FavoriteStatus.success));
+            gridStatus: GridFavoriteStatus.successGrid));
       } else {
-        var favorites =
-            await Domain().favorite.getFavoritesByCategory(categoryName);
+        var favorites = await Domain().favorite.getFavoritesFilter(
+            searchName: searchName ?? state.searchInput,
+            categoryName: categoryName ?? state.categoryName,
+            chooseSort: chooseSort ?? state.sort);
+
         emit(state.copyWith(
+            sort: chooseSort ?? state.sort,
+            categoryName: categoryName ?? state.categoryName,
+            searchInput: searchName ?? state.searchInput,
             favorites: favorites,
-            categoryName: categoryName,
-            status: FavoriteStatus.success));
+            gridStatus: GridFavoriteStatus.successGrid));
       }
     } catch (_) {
-      emit(state.copyWith(status: FavoriteStatus.failure));
-    }
-  }
-
-  void favoriteSort(ChooseSort chooseSort) async {
-    try {
-      var favorites = state.favorites;
-      emit(state.copyWith(status: FavoriteStatus.loading));
-      switch (chooseSort) {
-        case ChooseSort.popular:
-          favorites = await Domain().favorite.getFavoritesByPopular();
-          break;
-        case ChooseSort.newest:
-          favorites = await Domain().favorite.getFavoritesByNewest();
-          break;
-
-        case ChooseSort.review:
-          favorites = await Domain().favorite.getFavoritesByReview();
-          break;
-        case ChooseSort.priceLowest:
-          favorites = await Domain().favorite.getFavoritesByLowest();
-          break;
-        case ChooseSort.priceHighest:
-          favorites = await Domain().favorite.getFavoritesByHighest();
-          break;
-      }
-      emit(state.copyWith(
-          sort: chooseSort,
-          favorites: favorites,
-          status: FavoriteStatus.success));
-    } catch (_) {
-      emit(state.copyWith(status: FavoriteStatus.failure));
+      emit(state.copyWith(gridStatus: GridFavoriteStatus.failureGrid));
     }
   }
 }
