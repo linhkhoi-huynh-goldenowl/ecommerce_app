@@ -9,9 +9,13 @@ class ProductDetailState extends Equatable {
       this.color = "",
       this.relatedList = const <ProductItem>[],
       this.relatedStatus = RelatedStatus.initial,
-      this.sizeStatus = SizeStatus.initial});
+      this.sizeStatus = SizeStatus.initial,
+      this.reviewStars = 0,
+      this.numReview = 0});
   final String size;
   final String color;
+  final int reviewStars;
+  final int numReview;
   final RelatedStatus relatedStatus;
   final List<ProductItem> relatedList;
   final SizeStatus sizeStatus;
@@ -20,16 +24,27 @@ class ProductDetailState extends Equatable {
       String? color,
       List<ProductItem>? relatedList,
       RelatedStatus? relatedStatus,
-      SizeStatus? sizeStatus}) {
+      SizeStatus? sizeStatus,
+      int? reviewStars,
+      int? numReview}) {
     return ProductDetailState(
         size: size ?? this.size,
         color: color ?? this.color,
         relatedList: relatedList ?? this.relatedList,
         relatedStatus: relatedStatus ?? this.relatedStatus,
-        sizeStatus: sizeStatus ?? this.sizeStatus);
+        sizeStatus: sizeStatus ?? this.sizeStatus,
+        numReview: numReview ?? this.numReview,
+        reviewStars: reviewStars ?? this.reviewStars);
   }
 
   @override
-  List<Object> get props =>
-      [color, size, relatedList, relatedStatus, sizeStatus];
+  List<Object> get props => [
+        color,
+        size,
+        relatedList,
+        relatedStatus,
+        sizeStatus,
+        reviewStars,
+        numReview
+      ];
 }

@@ -33,8 +33,9 @@ class ProductDetailsScreen extends StatelessWidget {
             buildWhen: (previous, current) =>
                 previous.color != current.color ||
                 previous.size != current.size ||
-                previous.relatedStatus != current.relatedStatus,
-            builder: (context, state) {
+                previous.relatedStatus != current.relatedStatus ||
+                previous.numReview != current.numReview,
+            builder: (contextDetail, state) {
               return Scaffold(
                 bottomNavigationBar: BottomAppBar(
                     child: Padding(
@@ -44,7 +45,7 @@ class ProductDetailsScreen extends StatelessWidget {
                             func: () {
                               if (state.color != "") {
                                 BottomSheetApp.showModalCart(
-                                    context,
+                                    contextDetail,
                                     productItem,
                                     productItem
                                         .colors[ProductHelper.getIndexOfColor(
@@ -52,7 +53,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                         .sizes);
                               } else {
                                 AppSnackBar.showSnackBar(
-                                    context, "Please choose color");
+                                    contextDetail, "Please choose color");
                               }
                             },
                             title: "ADD TO CART"))),
@@ -75,14 +76,14 @@ class ProductDetailsScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _dropdownSize(
-                              context,
+                              contextDetail,
                               state.size,
                               productItem
                                   .colors[ProductHelper.getIndexOfColor(
                                       state.color, productItem.colors)]
                                   .sizes),
                           _dropdownColor(
-                              context, state.color, productItem.colors),
+                              contextDetail, state.color, productItem.colors),
                           _favoriteButton(
                               productItem,
                               productItem
@@ -127,12 +128,19 @@ class ProductDetailsScreen extends StatelessWidget {
                         padding:
                             const EdgeInsets.only(left: 16, top: 10, bottom: 6),
                         child: InkWell(
-                          onTap: () => Navigator.of(context).pushNamed(
+                          onTap: () => Navigator.of(contextDetail).pushNamed(
                               Routes.productRatingScreen,
-                              arguments: productItem.id),
+                              arguments: {
+                                'productId': productItem.id,
+                                'context': contextDetail
+                              }),
                           child: ReviewStarWidget(
-                              reviewStars: productItem.reviewStars,
-                              numberReviews: productItem.numberReviews,
+                              reviewStars: state.reviewStars > 0
+                                  ? state.reviewStars
+                                  : productItem.reviewStars,
+                              numberReviews: state.numReview > 0
+                                  ? state.numReview
+                                  : productItem.numberReviews,
                               size: 16),
                         )),
                     Padding(

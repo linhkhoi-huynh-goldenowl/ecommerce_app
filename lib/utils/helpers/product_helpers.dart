@@ -3,7 +3,7 @@ import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/models/size_cloth.dart';
 
 class ProductHelper {
-  List getNewsProducts(List products) {
+  static List getNewsProducts(List products) {
     return products
         .where((element) =>
             (element.createdDate.month == DateTime.now().month &&
@@ -11,7 +11,7 @@ class ProductHelper {
         .toList();
   }
 
-  List getSaleProducts(List products) {
+  static List getSaleProducts(List products) {
     return products.where((element) => element.salePercent != null).toList();
   }
 

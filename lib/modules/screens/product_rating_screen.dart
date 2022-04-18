@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_app/modules/cubit/review/review_cubit.dart';
 import 'package:e_commerce_app/modules/models/review_model.dart';
 import 'package:e_commerce_app/utils/helpers/review_helpers.dart';
@@ -9,141 +10,151 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/star_bar.dart';
+import '../cubit/product_detail/product_detail_cubit.dart';
 
 class ProductRatingScreen extends StatelessWidget {
-  const ProductRatingScreen({Key? key, required this.productId})
+  const ProductRatingScreen(
+      {Key? key, required this.productId, required this.contextParent})
       : super(key: key);
   final String productId;
+  final BuildContext contextParent;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ReviewCubit>(
-        create: (BuildContext context) => ReviewCubit(productId: productId),
-        child: BlocBuilder<ReviewCubit, ReviewState>(
-            buildWhen: (previous, current) => previous.status != current.status,
-            builder: (context, state) {
-              switch (state.status) {
-                case ReviewStatus.loading:
-                  return const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  );
-                case ReviewStatus.success:
-                  return Scaffold(
-                    body: Stack(
-                      children: [
-                        NestedScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          headerSliverBuilder:
-                              (BuildContext context, bool innerBoxIsScrolled) {
-                            return <Widget>[
-                              SliverAppBar(
-                                  shadowColor: Colors.white,
-                                  elevation: 5,
-                                  backgroundColor: const Color(0xffF9F9F9),
-                                  expandedHeight: 120.0,
-                                  pinned: true,
-                                  stretch: true,
-                                  leading: _leadingButton(context),
-                                  flexibleSpace: _flexibleSpaceBar(context)),
-                            ];
-                          },
-                          body: ListView(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16, right: 32, top: 34),
-                                child: ReviewChart(
-                                    totalReviews: state.totalReviews,
-                                    avgReviews: state.avgReviews,
-                                    reviewCount: state.reviewCount,
-                                    reviewPercent: state.reviewPercent),
-                              ),
-                              _reviewBar(
-                                  state.totalReviews,
-                                  state.withPhoto,
-                                  context
-                                      .read<ReviewCubit>()
-                                      .changeWithImageSelect),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const ClampingScrollPhysics(),
-                                padding: const EdgeInsets.only(bottom: 100),
-                                itemBuilder: (context, index) {
-                                  return BlocBuilder<ReviewCubit, ReviewState>(
-                                    buildWhen: (previous, current) =>
-                                        previous.likeStatus !=
-                                        current.likeStatus,
-                                    builder: (context, stateLike) {
-                                      bool wasLike = ReviewHelper.checkLike(
-                                          state.reviews[index].like,
-                                          stateLike.userId);
-                                      return _reviewComment(
-                                        state.reviews[index],
-                                        wasLike,
-                                        () => context
-                                            .read<ReviewCubit>()
-                                            .likeReview(
-                                                stateLike.reviews[index]),
-                                      );
-                                    },
-                                  );
-                                },
-                                itemCount: state.reviews.length,
-                              )
-                            ],
-                          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ReviewCubit>(
+            create: (BuildContext context) =>
+                ReviewCubit(productId: productId)),
+        BlocProvider.value(
+            value: BlocProvider.of<ProductDetailCubit>(contextParent))
+      ],
+      child: BlocBuilder<ReviewCubit, ReviewState>(
+          buildWhen: (previous, current) => previous.status != current.status,
+          builder: (context, state) {
+            switch (state.status) {
+              case ReviewStatus.loading:
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              case ReviewStatus.success:
+                return Scaffold(
+                  body: Stack(
+                    children: [
+                      NestedScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        headerSliverBuilder:
+                            (BuildContext context, bool innerBoxIsScrolled) {
+                          return <Widget>[
+                            SliverAppBar(
+                                shadowColor: Colors.white,
+                                elevation: 5,
+                                backgroundColor: const Color(0xffF9F9F9),
+                                expandedHeight: 120.0,
+                                pinned: true,
+                                stretch: true,
+                                leading: _leadingButton(context),
+                                flexibleSpace: _flexibleSpaceBar(context)),
+                          ];
+                        },
+                        body: ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, right: 32, top: 34),
+                              child: ReviewChart(
+                                  totalReviews: state.totalReviews,
+                                  avgReviews: state.avgReviews,
+                                  reviewCount: state.reviewCount,
+                                  reviewPercent: state.reviewPercent),
+                            ),
+                            _reviewBar(
+                                state.totalReviews,
+                                state.withPhoto,
+                                context
+                                    .read<ReviewCubit>()
+                                    .changeWithImageSelect),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              padding: const EdgeInsets.only(bottom: 100),
+                              itemBuilder: (context, index) {
+                                return BlocBuilder<ReviewCubit, ReviewState>(
+                                  buildWhen: (previous, current) =>
+                                      previous.likeStatus != current.likeStatus,
+                                  builder: (context, stateLike) {
+                                    bool wasLike = ReviewHelper.checkLike(
+                                        state.reviews[index].like,
+                                        stateLike.userId);
+                                    return _reviewComment(
+                                      state.reviews[index],
+                                      wasLike,
+                                      () => context
+                                          .read<ReviewCubit>()
+                                          .likeReview(stateLike.reviews[index]),
+                                    );
+                                  },
+                                );
+                              },
+                              itemCount: state.reviews.length,
+                            )
+                          ],
                         ),
-                        Positioned(
-                            bottom: 0,
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 100,
-                              decoration: BoxDecoration(boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.7),
-                                  spreadRadius: 15,
-                                  blurRadius: 17,
-                                  offset: const Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ]),
-                            )),
-                        Positioned(
-                            bottom: 0,
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              decoration: BoxDecoration(boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.9),
-                                  spreadRadius: 15,
-                                  blurRadius: 17,
-                                  offset: const Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ]),
-                            )),
-                        Positioned(
-                            right: 16, bottom: 32, child: _reviewButton())
-                      ],
-                    ),
-                  );
-                case ReviewStatus.failure:
-                  return const Scaffold(
-                    body: Center(
-                      child: Text("Failure"),
-                    ),
-                  );
-                case ReviewStatus.initial:
-                  return const Scaffold(
-                    body: Center(
-                      child: Text("No reviews"),
-                    ),
-                  );
-              }
-            }));
+                      ),
+                      Positioned(
+                          bottom: 0,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 100,
+                            decoration: BoxDecoration(boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.7),
+                                spreadRadius: 15,
+                                blurRadius: 17,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ]),
+                          )),
+                      Positioned(
+                          bottom: 0,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 50,
+                            decoration: BoxDecoration(boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.9),
+                                spreadRadius: 15,
+                                blurRadius: 17,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ]),
+                          )),
+                      Positioned(
+                          right: 16,
+                          bottom: 32,
+                          child: _reviewButton(context, productId))
+                    ],
+                  ),
+                );
+              case ReviewStatus.failure:
+                return const Scaffold(
+                  body: Center(
+                    child: Text("Failure"),
+                  ),
+                );
+              case ReviewStatus.initial:
+                return const Scaffold(
+                  body: Center(
+                    child: Text("No reviews"),
+                  ),
+                );
+            }
+          }),
+    );
   }
 }
 
@@ -171,7 +182,7 @@ Widget _flexibleSpaceBar(
   });
 }
 
-Widget _reviewButton() {
+Widget _reviewButton(BuildContext context, String productId) {
   return ElevatedButton.icon(
     icon: const ImageIcon(
       AssetImage("assets/images/icons/write.png"),
@@ -186,7 +197,9 @@ Widget _reviewButton() {
       ),
       elevation: 5,
     ),
-    onPressed: () {},
+    onPressed: () {
+      BottomSheetApp.showModalReview(context, productId);
+    },
     label: Text("Write a review",
         style: ETextStyle.metropolis(
             fontSize: 11, color: const Color(0xffFFFFFF))),

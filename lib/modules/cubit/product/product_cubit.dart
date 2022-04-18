@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/product_item.dart';
+import '../../repositories/x_result.dart';
 
 part 'product_state.dart';
 
@@ -10,18 +13,34 @@ class ProductCubit extends Cubit<ProductState> {
   ProductCubit() : super(const ProductState()) {
     productLoaded();
   }
-
+  StreamSubscription? productSubscription;
   void productLoaded() async {
     try {
       emit(state.copyWith(status: ProductStatus.loading));
-      final products = await Domain().product.getProducts();
-      emit(state.copyWith(
-          status: ProductStatus.success,
-          productList: products,
-          type: TypeList.all));
+      final Stream<XResult<List<ProductItem>>> productsStream =
+          Domain().product.getProductsStream();
+
+      productSubscription = productsStream.listen((event) {
+        emit(state.copyWith(
+            status: ProductStatus.success,
+            productList: event.data,
+            type: TypeList.all));
+      });
+      // emit(state.copyWith(status: ProductStatus.loading));
+      // final products = await Domain().product.getProducts();
+      // emit(state.copyWith(
+      //     status: ProductStatus.success,
+      //     productList: products,
+      //     type: TypeList.all));
     } catch (_) {
       emit(state.copyWith(status: ProductStatus.failure));
     }
+  }
+
+  @override
+  Future<void> close() {
+    productSubscription?.cancel();
+    return super.close();
   }
 
   void productNewLoaded() async {

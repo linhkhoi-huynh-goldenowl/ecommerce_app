@@ -20,8 +20,7 @@ class HomeScreen extends ProductCoordinatorBase {
         create: (BuildContext context) => CategoryCubit(),
       ),
       BlocProvider<ProductCubit>(
-        create: (BuildContext context) => ProductCubit(),
-      ),
+          create: (BuildContext context) => ProductCubit()),
     ], child: stackView(context));
   }
 
@@ -39,11 +38,12 @@ class HomeScreen extends ProductCoordinatorBase {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
           child: BlocBuilder<ProductCubit, ProductState>(
               buildWhen: (previous, current) =>
-                  previous.status != current.status,
+                  previous.productList != current.productList,
               builder: (context, state) {
-                ProductHelper helper = ProductHelper();
-                var productNew = helper.getNewsProducts(state.productList);
-                var productSale = helper.getSaleProducts(state.productList);
+                var productNew =
+                    ProductHelper.getNewsProducts(state.productList);
+                var productSale =
+                    ProductHelper.getSaleProducts(state.productList);
                 return Column(
                   children: [
                     HomeLabelWidget(

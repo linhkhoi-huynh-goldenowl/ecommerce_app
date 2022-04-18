@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:e_commerce_app/modules/models/e_user.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:e_commerce_app/utils/services/firebase_storage.dart';
+import 'package:e_commerce_app/utils/services/image_picker_services.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -186,7 +187,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   void getImageFromGallery() async {
     try {
       emit(state.copyWith(imageStatus: ImageStatus.loading));
-      final imageUrl = await Domain().profile.handleImageFromGallery();
+      final imageUrl = await ImagePickerService.handleImageFromGallery();
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageChangeUrl: imageUrl));
     } catch (_) {
@@ -197,7 +198,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   void getImageFromCamera() async {
     try {
       emit(state.copyWith(imageStatus: ImageStatus.loading));
-      final imageUrl = await Domain().profile.handleImageFromCamera();
+      final imageUrl = await ImagePickerService.handleImageFromCamera();
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageChangeUrl: imageUrl));
     } catch (_) {

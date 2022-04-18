@@ -11,8 +11,9 @@ class ProductProvider extends BaseCollectionReference<ProductItem> {
                 ProductItem.fromJson(snapshot.data() as Map<String, dynamic>),
             toFirestore: (product, _) => product.toJson()));
 
-  Future<void> createProduct(ProductItem productItem) async {
-    await set(productItem);
+  Future<XResult<ProductItem>> updateProduct(ProductItem productItem) async {
+    final XResult<ProductItem> res = await set(productItem);
+    return res;
   }
 
   Future<XResult<List<ProductItem>>> getAllProduct() async {

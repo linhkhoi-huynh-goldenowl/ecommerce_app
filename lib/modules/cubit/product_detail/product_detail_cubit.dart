@@ -16,6 +16,10 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
     emit(state.copyWith(size: size, sizeStatus: SizeStatus.selected));
   }
 
+  void setReviews(int reviewStar, int numReview) async {
+    emit(state.copyWith(reviewStars: reviewStar, numReview: numReview));
+  }
+
   void setUnselectSize() async {
     emit(state.copyWith(sizeStatus: SizeStatus.unselected));
   }

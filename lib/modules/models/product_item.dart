@@ -8,8 +8,8 @@ class ProductItem extends BaseModel {
   final DateTime createdDate;
   final double? salePercent;
   final bool isPopular;
-  final int numberReviews;
-  final int reviewStars;
+  int numberReviews;
+  int reviewStars;
   final String categoryName;
   final String description;
   final List<ColorCloth> colors;

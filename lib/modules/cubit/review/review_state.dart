@@ -2,6 +2,10 @@ part of 'review_cubit.dart';
 
 enum ReviewStatus { initial, loading, success, failure }
 enum LikeReviewStatus { initial, loading, success, failure }
+enum StarReviewStatus { initial, selected, unselected }
+enum ContentReviewStatus { initial, typed, untyped }
+enum ImageStatus { initial, loading, success, failure }
+enum AddReviewStatus { initial, loading, success, failure }
 
 class ReviewState extends Equatable {
   const ReviewState(
@@ -13,7 +17,14 @@ class ReviewState extends Equatable {
       this.reviewCount = const <int>[],
       this.reviewPercent = const <double>[],
       this.userId = "",
-      this.likeStatus = LikeReviewStatus.initial});
+      this.likeStatus = LikeReviewStatus.initial,
+      this.starNum = 0,
+      this.starStatus = StarReviewStatus.initial,
+      this.imageLocalPaths = const <String>[],
+      this.reviewContent = "",
+      this.imageStatus = ImageStatus.initial,
+      this.addStatus = AddReviewStatus.initial,
+      this.contentStatus = ContentReviewStatus.initial});
   final ReviewStatus status;
   final List<ReviewModel> reviews;
   final String userId;
@@ -23,6 +34,13 @@ class ReviewState extends Equatable {
   final List<double> reviewPercent;
   final List<int> reviewCount;
   final LikeReviewStatus likeStatus;
+  final int starNum;
+  final StarReviewStatus starStatus;
+  final String reviewContent;
+  final ContentReviewStatus contentStatus;
+  final ImageStatus imageStatus;
+  final List<String> imageLocalPaths;
+  final AddReviewStatus addStatus;
   ReviewState copyWith(
       {ReviewStatus? status,
       List<ReviewModel>? reviews,
@@ -32,7 +50,14 @@ class ReviewState extends Equatable {
       List<int>? reviewCount,
       List<double>? reviewPercent,
       String? userId,
-      LikeReviewStatus? likeStatus}) {
+      LikeReviewStatus? likeStatus,
+      int? starNum,
+      StarReviewStatus? starStatus,
+      List<String>? imageLocalPaths,
+      String? reviewContent,
+      ImageStatus? imageStatus,
+      AddReviewStatus? addStatus,
+      ContentReviewStatus? contentStatus}) {
     return ReviewState(
         reviews: reviews ?? this.reviews,
         status: status ?? this.status,
@@ -42,7 +67,14 @@ class ReviewState extends Equatable {
         reviewCount: reviewCount ?? this.reviewCount,
         reviewPercent: reviewPercent ?? this.reviewPercent,
         userId: userId ?? this.userId,
-        likeStatus: likeStatus ?? this.likeStatus);
+        likeStatus: likeStatus ?? this.likeStatus,
+        starNum: starNum ?? this.starNum,
+        starStatus: starStatus ?? this.starStatus,
+        imageLocalPaths: imageLocalPaths ?? this.imageLocalPaths,
+        reviewContent: reviewContent ?? this.reviewContent,
+        imageStatus: imageStatus ?? this.imageStatus,
+        addStatus: addStatus ?? this.addStatus,
+        contentStatus: contentStatus ?? this.contentStatus);
   }
 
   @override
@@ -55,6 +87,13 @@ class ReviewState extends Equatable {
         reviewCount,
         reviewPercent,
         userId,
-        likeStatus
+        likeStatus,
+        starNum,
+        starStatus,
+        imageLocalPaths,
+        reviewContent,
+        imageStatus,
+        addStatus,
+        contentStatus
       ];
 }
