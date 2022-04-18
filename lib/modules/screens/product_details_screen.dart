@@ -103,7 +103,8 @@ class ProductDetailsScreen extends StatelessWidget {
                                 fontSize: 24, weight: FontWeight.w600),
                           ),
                           PriceText(
-                            price: productItem.colors[0].sizes[0].price,
+                            price: ProductHelper.getPriceItem(
+                                productItem, state.color, state.size),
                             fontSize: 24,
                             salePercent: productItem.salePercent,
                             fontWeight: FontWeight.w600,

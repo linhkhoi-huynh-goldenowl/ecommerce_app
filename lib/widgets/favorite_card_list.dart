@@ -72,7 +72,7 @@ class FavoriteCardList extends StatelessWidget {
                             height: 5,
                           ),
                           ColorSizeWidget(
-                              color:
+                              color: favoriteProduct.color ??
                                   favoriteProduct.productItem.colors[0].color,
                               size: favoriteProduct.size),
                           const SizedBox(
