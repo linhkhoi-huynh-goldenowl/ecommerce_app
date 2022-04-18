@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors_in_immutables
 
+import 'package:e_commerce_app/modules/models/product_item.dart';
+import 'package:e_commerce_app/modules/screens/product_details_screen.dart';
 import 'package:e_commerce_app/modules/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +33,15 @@ abstract class ProductCoordinatorBase extends StatelessWidget {
       case Routes.settingScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const SettingScreen());
+      case Routes.productDetailsScreen:
+        {
+          final product = settings.arguments as ProductItem;
+          return MaterialPageRoute(
+              settings: settings,
+              builder: (_) => ProductDetailsScreen(
+                    productItem: product,
+                  ));
+        }
 
       default:
         return MaterialPageRoute(

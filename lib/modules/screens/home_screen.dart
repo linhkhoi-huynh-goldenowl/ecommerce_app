@@ -29,70 +29,74 @@ class HomeScreen extends ProductCoordinatorBase {
   Widget buildInitialBody() {
     return _buildBody();
   }
-}
 
-Widget _buildBody() {
-  return Scaffold(
-      body: ListView(
-    children: [
-      const CarouselWidget(),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-        child: BlocBuilder<ProductCubit, ProductState>(
-            buildWhen: (previous, current) => previous.status != current.status,
-            builder: (context, state) {
-              ProductHelper helper = ProductHelper();
-              var productNew = helper.getNewsProducts(state.productList);
-              var productSale = helper.getSaleProducts(state.productList);
-              return Column(
-                children: [
-                  HomeLabelWidget(
-                      title: "Sale",
-                      subTitle: "Super summer sale",
-                      func: () {
-                        context.read<ProductCubit>().productSaleLoaded();
-                        Navigator.of(context)
-                            .pushNamed(Routes.shopCategoryScreen);
-                      }),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  SizedBox(
-                    height: 300,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return MainProductCard(product: productSale[index]);
-                      },
-                      itemCount:
-                          productSale.length > 3 ? 3 : productSale.length,
+  Widget _buildBody() {
+    return Scaffold(
+        body: ListView(
+      children: [
+        CarouselWidget(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+          child: BlocBuilder<ProductCubit, ProductState>(
+              buildWhen: (previous, current) =>
+                  previous.status != current.status,
+              builder: (context, state) {
+                ProductHelper helper = ProductHelper();
+                var productNew = helper.getNewsProducts(state.productList);
+                var productSale = helper.getSaleProducts(state.productList);
+                return Column(
+                  children: [
+                    HomeLabelWidget(
+                        title: "Sale",
+                        subTitle: "Super summer sale",
+                        func: () {
+                          context.read<ProductCubit>().productSaleLoaded();
+                          Navigator.of(context)
+                              .pushNamed(Routes.shopCategoryScreen);
+                        }),
+                    const SizedBox(
+                      height: 5,
                     ),
-                  ),
-                  HomeLabelWidget(
-                      title: "New",
-                      subTitle: "You've never seen it before!",
-                      func: () {
-                        context.read<ProductCubit>().productNewLoaded();
-                        Navigator.of(context)
-                            .pushNamed(Routes.shopCategoryScreen);
-                      }),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  SizedBox(
-                    height: 300,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return MainProductCard(product: productNew[index]);
-                      },
-                      itemCount: productNew.length > 3 ? 3 : productNew.length,
+                    SizedBox(
+                      height: 300,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return MainProductCard(
+                            product: productSale[index],
+                          );
+                        },
+                        itemCount:
+                            productSale.length > 3 ? 3 : productSale.length,
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }),
-      ),
-    ],
-  ));
+                    HomeLabelWidget(
+                        title: "New",
+                        subTitle: "You've never seen it before!",
+                        func: () {
+                          context.read<ProductCubit>().productNewLoaded();
+                          Navigator.of(context)
+                              .pushNamed(Routes.shopCategoryScreen);
+                        }),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: 300,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return MainProductCard(product: productNew[index]);
+                        },
+                        itemCount:
+                            productNew.length > 3 ? 3 : productNew.length,
+                      ),
+                    ),
+                  ],
+                );
+              }),
+        ),
+      ],
+    ));
+  }
 }

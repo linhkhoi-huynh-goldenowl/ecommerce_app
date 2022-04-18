@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageProductWidget extends StatelessWidget {
@@ -19,8 +20,8 @@ class ImageProductWidget extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(radius),
-          image:
-              DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover)),
+          image: DecorationImage(
+              image: CachedNetworkImageProvider(imagePath), fit: BoxFit.cover)),
     );
   }
 }

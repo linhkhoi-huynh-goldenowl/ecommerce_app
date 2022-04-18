@@ -1,8 +1,8 @@
-import 'package:e_commerce_app/modules/screens/home_screen.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/screens/landing_page.dart';
 import 'package:e_commerce_app/modules/screens/dashboard_screen.dart';
+import 'package:e_commerce_app/modules/screens/product_details_screen.dart';
 import 'package:e_commerce_app/modules/screens/setting_screen.dart';
-import 'package:e_commerce_app/modules/screens/shop_category_screen.dart';
 import 'package:flutter/material.dart';
 import '../../modules/screens/login_screen.dart';
 import '../../modules/screens/sign_up_screen.dart';
@@ -15,6 +15,7 @@ class Routes {
   static const String signUp = '/SignUpScreen';
   static const String shopCategoryScreen = '/ShopCategoryScreen';
   static const String settingScreen = '/SettingScreen';
+  static const String productDetailsScreen = '/ProductDetailsScreen';
 }
 
 class AppRouter {
@@ -31,10 +32,7 @@ class AppRouter {
         return MaterialPageRoute(
             settings: settings,
             builder: (BuildContext context) => const DashboardScreen());
-      case Routes.home:
-        return MaterialPageRoute(
-            settings: settings,
-            builder: (BuildContext context) => HomeScreen());
+
       case Routes.logIn:
         return MaterialPageRoute(
             settings: settings,
@@ -43,17 +41,20 @@ class AppRouter {
         return MaterialPageRoute(
             settings: settings,
             builder: (BuildContext context) => SignUpScreen());
-      case Routes.shopCategoryScreen:
-        return MaterialPageRoute(
-            settings: settings,
-            builder: (_) {
-              return const ShopCategoryScreen();
-            });
 
       case Routes.settingScreen:
         return MaterialPageRoute(
             settings: settings,
             builder: (BuildContext context) => const SettingScreen());
+      case Routes.productDetailsScreen:
+        {
+          final product = settings.arguments as ProductItem;
+          return MaterialPageRoute(
+              settings: settings,
+              builder: (_) => ProductDetailsScreen(
+                    productItem: product,
+                  ));
+        }
 
       default:
         return MaterialPageRoute(

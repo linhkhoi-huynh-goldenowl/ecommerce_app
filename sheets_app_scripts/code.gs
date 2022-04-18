@@ -32,15 +32,15 @@ function myFunction() {
        data.createdDate = updatedDt;
        data.title = sourceData[i][0];
        data.brandName = sourceData[i][1];
-       data.image = sourceData[i][2];
+       data.images = JSON.parse(sourceData[i][2]);
        data.salePercent = sourceData[i][4] == ""?null:sourceData[i][4];
        data.isPopular = sourceData[i][5];
        data.numberReviews = sourceData[i][6];
        data.reviewStars = sourceData[i][7];
        data.categoryName = sourceData[i][8];
-       data.color = sourceData[i][9];
-       data.sizes = JSON.parse(sourceData[i][10]);
-       data.id = sourceData[i][11];
+       data.colors = JSON.parse(sourceData[i][9])  ;
+       data.id = sourceData[i][10];
+       data.description = sourceData[i][11];
         
        firestore.createDocument("products/"+data.id,data);
 

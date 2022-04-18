@@ -1,6 +1,8 @@
+import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/dialogs/button_add_favorite.dart';
+import 'package:e_commerce_app/utils/services/navigator_services.dart';
 import 'package:e_commerce_app/widgets/chip_label.dart';
 import 'package:e_commerce_app/widgets/image_product_widget.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
@@ -22,7 +24,12 @@ class ShopProductCard extends StatelessWidget {
           Column(
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(NavigationService.navigatorKey.currentContext ??
+                          context)
+                      .pushNamed(Routes.productDetailsScreen,
+                          arguments: productItem);
+                },
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
@@ -31,7 +38,7 @@ class ShopProductCard extends StatelessWidget {
                   child: Row(
                     children: [
                       ImageProductWidget(
-                          imagePath: productItem.image,
+                          imagePath: productItem.images[0],
                           width: 104,
                           height: 104,
                           radius: 20),
@@ -40,24 +47,35 @@ class ShopProductCard extends StatelessWidget {
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(productItem.title,
                               style: ETextStyle.metropolis(
                                   weight: FontWeight.bold)),
                           const SizedBox(
-                            height: 5,
+                            height: 7,
                           ),
                           Text(
                             productItem.brandName,
                             style: ETextStyle.metropolis(
                                 fontSize: 11, color: const Color(0xff9B9B9B)),
                           ),
+                          const SizedBox(
+                            height: 9,
+                          ),
                           ReviewStarWidget(
                               reviewStars: productItem.reviewStars,
-                              numberReviews: productItem.numberReviews),
+                              numberReviews: productItem.numberReviews,
+                              size: 13),
+                          const SizedBox(
+                            height: 12,
+                          ),
                           PriceText(
-                              salePercent: productItem.salePercent,
-                              price: productItem.sizes[0].price)
+                            salePercent: productItem.salePercent,
+                            price: productItem.colors[0].sizes[0].price,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          )
                         ],
                       ),
                     ],
@@ -89,7 +107,7 @@ class ShopProductCard extends StatelessWidget {
               : const SizedBox(),
           Positioned(
               bottom: 5,
-              right: -23,
+              right: 0,
               child: ButtonAddFavorite(product: productItem))
         ],
       ),

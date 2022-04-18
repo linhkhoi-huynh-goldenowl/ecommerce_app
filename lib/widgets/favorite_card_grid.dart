@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
 import 'package:e_commerce_app/widgets/review_star_widget.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../modules/cubit/favorite/favorite_cubit.dart';
 import '../modules/models/favorite_product.dart';
+import '../utils/services/navigator_services.dart';
 import 'button_circle.dart';
 import 'chip_label.dart';
 import 'color_size_widget.dart';
@@ -25,12 +27,17 @@ class FavoriteCardGrid extends StatelessWidget {
       child: Stack(
         children: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(
+                      NavigationService.navigatorKey.currentContext ?? context)
+                  .pushNamed(Routes.productDetailsScreen,
+                      arguments: favoriteProduct.productItem);
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ImageProductWidget(
-                    imagePath: favoriteProduct.productItem.image,
+                    imagePath: favoriteProduct.productItem.images[0],
                     width: 162,
                     height: 200,
                     radius: 20),
@@ -39,7 +46,8 @@ class FavoriteCardGrid extends StatelessWidget {
                 ),
                 ReviewStarWidget(
                     reviewStars: favoriteProduct.productItem.reviewStars,
-                    numberReviews: favoriteProduct.productItem.numberReviews),
+                    numberReviews: favoriteProduct.productItem.numberReviews,
+                    size: 13),
                 const SizedBox(
                   height: 5,
                 ),
@@ -55,14 +63,17 @@ class FavoriteCardGrid extends StatelessWidget {
                   height: 5,
                 ),
                 ColorSizeWidget(
-                    color: favoriteProduct.productItem.color,
+                    color: favoriteProduct.productItem.colors[0].color,
                     size: favoriteProduct.size),
                 const SizedBox(
                   height: 3,
                 ),
                 PriceText(
-                    salePercent: favoriteProduct.productItem.salePercent,
-                    price: favoriteProduct.productItem.sizes[0].price)
+                  salePercent: favoriteProduct.productItem.salePercent,
+                  price: favoriteProduct.productItem.colors[0].sizes[0].price,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                )
               ],
             ),
           ),
@@ -101,7 +112,7 @@ class FavoriteCardGrid extends StatelessWidget {
               )),
           Positioned(
               top: 170,
-              right: -23,
+              right: 0,
               child: ButtonCircle(
                   func: () {},
                   iconPath: "assets/images/icons/bag_favorite.png",

@@ -1,6 +1,8 @@
+import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/dialogs/button_add_favorite.dart';
+import 'package:e_commerce_app/utils/services/navigator_services.dart';
 import 'package:e_commerce_app/widgets/price_text.dart';
 import 'package:e_commerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import 'image_product_widget.dart';
 class MainProductCard extends StatelessWidget {
   const MainProductCard({Key? key, required this.product}) : super(key: key);
   final ProductItem product;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,12 +26,16 @@ class MainProductCard extends StatelessWidget {
       child: Stack(
         children: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(
+                      NavigationService.navigatorKey.currentContext ?? context)
+                  .pushNamed(Routes.productDetailsScreen, arguments: product);
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ImageProductWidget(
-                    imagePath: product.image,
+                    imagePath: product.images[0],
                     width: 162,
                     height: 200,
                     radius: 20),
@@ -37,7 +44,8 @@ class MainProductCard extends StatelessWidget {
                 ),
                 ReviewStarWidget(
                     reviewStars: product.reviewStars,
-                    numberReviews: product.numberReviews),
+                    numberReviews: product.numberReviews,
+                    size: 13),
                 const SizedBox(
                   height: 5,
                 ),
@@ -53,8 +61,11 @@ class MainProductCard extends StatelessWidget {
                   height: 5,
                 ),
                 PriceText(
-                    salePercent: product.salePercent,
-                    price: product.sizes[0].price)
+                  salePercent: product.salePercent,
+                  price: product.colors[0].sizes[0].price,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                )
               ],
             ),
           ),
@@ -78,7 +89,7 @@ class MainProductCard extends StatelessWidget {
               : const SizedBox(),
           Positioned(
             top: 170,
-            right: -23,
+            right: 0,
             child: ButtonAddFavorite(product: product),
           )
         ],
