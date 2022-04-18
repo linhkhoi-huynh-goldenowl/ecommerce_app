@@ -2,6 +2,7 @@ import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/screens/landing_page.dart';
 import 'package:e_commerce_app/modules/screens/dashboard_screen.dart';
 import 'package:e_commerce_app/modules/screens/product_details_screen.dart';
+import 'package:e_commerce_app/modules/screens/product_rating_screen.dart';
 import 'package:e_commerce_app/modules/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import '../../modules/screens/login_screen.dart';
@@ -16,6 +17,7 @@ class Routes {
   static const String shopCategoryScreen = '/ShopCategoryScreen';
   static const String settingScreen = '/SettingScreen';
   static const String productDetailsScreen = '/ProductDetailsScreen';
+  static const String productRatingScreen = '/ProductRatingScreen';
 }
 
 class AppRouter {
@@ -46,12 +48,19 @@ class AppRouter {
         return MaterialPageRoute(
             settings: settings,
             builder: (BuildContext context) => const SettingScreen());
+      case Routes.productRatingScreen:
+        final productId = settings.arguments as String;
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (BuildContext context) => ProductRatingScreen(
+                  productId: productId,
+                ));
       case Routes.productDetailsScreen:
         {
           final product = settings.arguments as ProductItem;
           return MaterialPageRoute(
               settings: settings,
-              builder: (_) => ProductDetailsScreen(
+              builder: (BuildContext context) => ProductDetailsScreen(
                     productItem: product,
                   ));
         }

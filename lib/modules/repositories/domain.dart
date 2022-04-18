@@ -3,11 +3,13 @@ import 'package:e_commerce_app/modules/repositories/features/repository/category
 import 'package:e_commerce_app/modules/repositories/features/repository/favorite_repository.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/product_repository.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository/profile_repository.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/review_repository.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/cart_repository_impl.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/category_repository_impl.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/favorite_repository_impl.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/product_repository_impl.dart';
 import 'package:e_commerce_app/modules/repositories/features/repository_impl/profile_repository_impl.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository_impl/review_repository_impl.dart';
 
 import 'features/repository/auth_repository.dart';
 import 'features/repository_impl/auth_repository_impl.dart';
@@ -21,6 +23,7 @@ class Domain {
     category = CategoryRepositoryImpl();
     profile = ProfileRepositoryImpl();
     cart = CartRepositoryImpl();
+    review = ReviewRepositoryImpl();
   }
   factory Domain() {
     _internal ??= Domain._();
@@ -32,4 +35,5 @@ class Domain {
   late final CategoryRepository category;
   late final ProfileRepository profile;
   late final CartRepository cart;
+  late final ReviewRepository review;
 }

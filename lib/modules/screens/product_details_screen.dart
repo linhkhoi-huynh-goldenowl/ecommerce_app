@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/config/routes/router.dart';
 import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:e_commerce_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
@@ -123,13 +124,17 @@ class ProductDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16, top: 10, bottom: 6),
-                      child: ReviewStarWidget(
-                          reviewStars: productItem.reviewStars,
-                          numberReviews: productItem.numberReviews,
-                          size: 16),
-                    ),
+                        padding:
+                            const EdgeInsets.only(left: 16, top: 10, bottom: 6),
+                        child: InkWell(
+                          onTap: () => Navigator.of(context).pushNamed(
+                              Routes.productRatingScreen,
+                              arguments: productItem.id),
+                          child: ReviewStarWidget(
+                              reviewStars: productItem.reviewStars,
+                              numberReviews: productItem.numberReviews,
+                              size: 16),
+                        )),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 16),

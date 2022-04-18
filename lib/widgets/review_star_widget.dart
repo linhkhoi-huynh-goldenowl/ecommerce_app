@@ -1,4 +1,5 @@
 import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/widgets/star_bar.dart';
 import 'package:flutter/material.dart';
 
 class ReviewStarWidget extends StatelessWidget {
@@ -16,61 +17,7 @@ class ReviewStarWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        reviewStars > 0
-            ? ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xffFFBA49),
-                size: size,
-              )
-            : ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xff9B9B9B),
-                size: size,
-              ),
-        reviewStars > 1
-            ? ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xffFFBA49),
-                size: size,
-              )
-            : ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xff9B9B9B),
-                size: size,
-              ),
-        reviewStars > 2
-            ? ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xffFFBA49),
-                size: size,
-              )
-            : ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xff9B9B9B),
-                size: size,
-              ),
-        reviewStars > 3
-            ? ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xffFFBA49),
-                size: size,
-              )
-            : ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xff9B9B9B),
-                size: size,
-              ),
-        reviewStars > 4
-            ? ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xffFFBA49),
-                size: size,
-              )
-            : ImageIcon(
-                const AssetImage("assets/images/icons/star_fill.png"),
-                color: const Color(0xff9B9B9B),
-                size: size,
-              ),
+        StarBar(reviewStars: reviewStars, size: size),
         const SizedBox(
           width: 3,
         ),
