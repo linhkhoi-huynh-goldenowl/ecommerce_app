@@ -170,11 +170,15 @@ class PopupReview extends StatelessWidget {
                                 context.read<ReviewCubit>().removeImage);
                           } else if (state.imageLocalPaths.length < 5) {
                             return _addImageButton(context, () {
-                              context.read<ReviewCubit>().getImageFromGallery();
+                              context
+                                  .read<ReviewCubit>()
+                                  .getImageFromGallery(context);
                               Navigator.of(context, rootNavigator: true)
                                   .pop(showDialog);
                             }, () {
-                              context.read<ReviewCubit>().getImageFromCamera();
+                              context
+                                  .read<ReviewCubit>()
+                                  .getImageFromCamera(context);
                               Navigator.of(context, rootNavigator: true)
                                   .pop(showDialog);
                             });

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:e_commerce_app/modules/models/cart_model.dart';
+import 'package:e_commerce_app/modules/models/promo_model.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../repositories/domain.dart';
@@ -15,7 +16,7 @@ class CartCubit extends Cubit<CartState> {
     try {
       emit(state.copyWith(status: CartStatus.loading));
       var carts = await Domain().cart.addProductToCart(cartModel);
-      var total = Domain().cart.getTotalPrice();
+      var total = Domain().cart.getTotalPrice(state.salePercent);
       emit(state.copyWith(
           status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {
@@ -28,7 +29,7 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(status: CartStatus.loading));
 
       var carts = await Domain().cart.removeCart(cartModel);
-      var total = Domain().cart.getTotalPrice();
+      var total = Domain().cart.getTotalPrice(state.salePercent);
       emit(state.copyWith(
           status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {
@@ -41,12 +42,31 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(status: CartStatus.loading));
 
       var carts = await Domain().cart.removeCartByOne(cartModel);
-      var total = Domain().cart.getTotalPrice();
+      var total = Domain().cart.getTotalPrice(state.salePercent);
       emit(state.copyWith(
           status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
     }
+  }
+
+  void setPromoToCart(String code) async {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+      PromoModel promoModel = await Domain().promo.getPromoById(code);
+      emit(state.copyWith(
+          status: CartStatus.success,
+          salePercent: promoModel.salePercent,
+          code: code));
+      fetchCart();
+    } catch (_) {
+      emit(state.copyWith(status: CartStatus.failure));
+    }
+  }
+
+  void clearCodePromo() async {
+    emit(state.copyWith(code: "", salePercent: 0));
+    fetchCart();
   }
 
   void fetchCart() async {
@@ -61,7 +81,7 @@ class CartCubit extends Cubit<CartState> {
       // });
       emit(state.copyWith(status: CartStatus.loading));
       final carts = await Domain().cart.getCarts();
-      var total = Domain().cart.getTotalPrice();
+      var total = Domain().cart.getTotalPrice(state.salePercent);
       emit(state.copyWith(
           status: CartStatus.success, carts: carts, totalPrice: total));
     } catch (_) {

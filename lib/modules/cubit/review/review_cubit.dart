@@ -3,6 +3,7 @@ import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/models/review_model.dart';
 import 'package:e_commerce_app/utils/helpers/review_helpers.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/services/firebase_storage.dart';
@@ -94,7 +95,7 @@ class ReviewCubit extends Cubit<ReviewState> {
         ProductItem? productItem =
             await Domain().product.getProductById(productId);
         if (productItem != null) {
-          productItem.reviewStars = state.avgReviews.ceil();
+          productItem.reviewStars = state.avgReviews.round();
           productItem.numberReviews = state.reviews.length;
           await Domain().product.updateProduct(productItem);
         }
@@ -155,10 +156,10 @@ class ReviewCubit extends Cubit<ReviewState> {
     return super.close();
   }
 
-  void getImageFromGallery() async {
+  void getImageFromGallery(BuildContext context) async {
     try {
       emit(state.copyWith(imageStatus: ImageStatus.loading));
-      final imageUrl = await ImagePickerService.handleImageFromGallery();
+      final imageUrl = await ImagePickerService.handleImageFromGallery(context);
       var listImage = await Domain().review.addImageToList(imageUrl);
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageLocalPaths: listImage));
@@ -167,10 +168,10 @@ class ReviewCubit extends Cubit<ReviewState> {
     }
   }
 
-  void getImageFromCamera() async {
+  void getImageFromCamera(BuildContext context) async {
     try {
       emit(state.copyWith(imageStatus: ImageStatus.loading));
-      final imageUrl = await ImagePickerService.handleImageFromCamera();
+      final imageUrl = await ImagePickerService.handleImageFromCamera(context);
       var listImage = await Domain().review.addImageToList(imageUrl);
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageLocalPaths: listImage));

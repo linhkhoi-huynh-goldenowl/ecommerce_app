@@ -11,7 +11,7 @@ import 'package:path/path.dart' as p;
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit() : super(ProfileState(dateOfBirth: DateTime.now())) {
+  ProfileCubit() : super(ProfileState(dateOfBirth: DateTime(1950))) {
     profileLoaded();
     setLoginType();
   }
@@ -120,30 +120,19 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void settingNotificationSale(switched) {
     emit(
-      state.copyWith(status: ProfileStatus.loading),
-    );
-    emit(
-      state.copyWith(notificationSale: switched, status: ProfileStatus.success),
+      state.copyWith(notificationSale: switched),
     );
   }
 
   void settingNotificationNew(switched) {
     emit(
-      state.copyWith(status: ProfileStatus.loading),
-    );
-    emit(
-      state.copyWith(
-          notificationNewArrivals: switched, status: ProfileStatus.success),
+      state.copyWith(notificationNewArrivals: switched),
     );
   }
 
   void settingNotificationDelivery(switched) {
     emit(
-      state.copyWith(status: ProfileStatus.loading),
-    );
-    emit(
-      state.copyWith(
-          notificationDelivery: switched, status: ProfileStatus.success),
+      state.copyWith(notificationDelivery: switched),
     );
   }
 
@@ -184,10 +173,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void getImageFromGallery() async {
+  void getImageFromGallery(BuildContext context) async {
     try {
       emit(state.copyWith(imageStatus: ImageStatus.loading));
-      final imageUrl = await ImagePickerService.handleImageFromGallery();
+      final imageUrl = await ImagePickerService.handleImageFromGallery(context);
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageChangeUrl: imageUrl));
     } catch (_) {
@@ -195,10 +184,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void getImageFromCamera() async {
+  void getImageFromCamera(BuildContext context) async {
     try {
       emit(state.copyWith(imageStatus: ImageStatus.loading));
-      final imageUrl = await ImagePickerService.handleImageFromCamera();
+      final imageUrl = await ImagePickerService.handleImageFromCamera(context);
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageChangeUrl: imageUrl));
     } catch (_) {

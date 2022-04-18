@@ -6,6 +6,6 @@ abstract class CartRepository {
   Future<List<CartModel>> removeCartByOne(CartModel item);
   bool checkContainTitle(String title);
   int getIndexContainList(CartModel item);
-  double getTotalPrice();
+  double getTotalPrice([int? salePercent]);
   Future<List<CartModel>> getCarts();
 }

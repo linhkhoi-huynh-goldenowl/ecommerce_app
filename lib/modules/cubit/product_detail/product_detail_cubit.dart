@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_app/modules/models/product_item.dart';
 import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
@@ -32,7 +31,7 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
     try {
       emit(state.copyWith(relatedStatus: RelatedStatus.loading));
       final relatedList =
-          await Domain().product.getProductsByCategory(TypeList.all, category);
+          await Domain().product.getProductsFilter(categoryName: category);
       emit(state.copyWith(
           relatedStatus: RelatedStatus.success, relatedList: relatedList));
     } catch (_) {

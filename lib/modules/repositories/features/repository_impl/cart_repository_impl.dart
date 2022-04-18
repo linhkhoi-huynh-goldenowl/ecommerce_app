@@ -81,7 +81,7 @@ class CartRepositoryImpl extends CartRepository {
   }
 
   @override
-  double getTotalPrice() {
+  double getTotalPrice([int? salePercent]) {
     double total = 0;
 
     for (var item in _listCarts) {
@@ -89,6 +89,9 @@ class CartRepositoryImpl extends CartRepository {
           item.productItem, item.color, item.size);
 
       total += (item.quantity * price);
+    }
+    if (salePercent != null && salePercent > 0) {
+      total = total - (total * salePercent / 100);
     }
     return total;
   }

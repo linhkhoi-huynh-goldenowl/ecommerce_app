@@ -1,21 +1,34 @@
+import 'package:e_commerce_app/dialogs/setting_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../config/styles/text_style.dart';
 
 class ImagePickerService {
-  static Future<String> handleImageFromCamera() async {
+  static Future<String> handleImageFromCamera(BuildContext context) async {
     final picker = ImagePicker();
-    final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.camera);
+    XFile? pickedImage;
+    var status = await Permission.camera.request();
+    if (status.isDenied || status.isPermanentlyDenied) {
+      SettingDialog.permissionCamera(context);
+    } else {
+      pickedImage = await picker.pickImage(source: ImageSource.camera);
+    }
 
     return pickedImage!.path;
   }
 
-  static Future<String> handleImageFromGallery() async {
+  static Future<String> handleImageFromGallery(BuildContext context) async {
     final picker = ImagePicker();
-    final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.gallery);
+    XFile? pickedImage;
+    var status = await Permission.camera.request();
+    if (status.isDenied || status.isPermanentlyDenied) {
+      SettingDialog.permissionCamera(context);
+    } else {
+      pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    }
+
     return pickedImage!.path;
   }
 

@@ -4,27 +4,33 @@ import 'package:e_commerce_app/modules/models/product_item.dart';
 import '../../x_result.dart';
 
 abstract class ProductRepository {
-  Future<List<ProductItem>> getProducts();
+  List<ProductItem> getProducts();
+  void setProducts(List<ProductItem> products);
   Stream<XResult<List<ProductItem>>> getProductsStream();
   Future<ProductItem?> getProductById(String id);
   Future<ProductItem?> updateProduct(ProductItem productItem);
+  Future<List<ProductItem>> getProductsFilter(
+      {String searchName = "",
+      TypeList typeList = TypeList.all,
+      ChooseSort chooseSort = ChooseSort.newest,
+      String categoryName = ""});
   Future<List<ProductItem>> getProductsByType(TypeList typeList);
 
   Future<List<ProductItem>> getProductsNew(List<ProductItem> products);
 
   Future<List<ProductItem>> getProductsSale(List<ProductItem> products);
 
-  Future<List<ProductItem>> getProductsByPopular(TypeList typeList);
+  Future<List<ProductItem>> getProductsByPopular(List<ProductItem> products);
 
-  Future<List<ProductItem>> getProductsByNewest(TypeList typeList);
-  Future<List<ProductItem>> getProductsByReview(TypeList typeList);
+  Future<List<ProductItem>> getProductsByNewest(List<ProductItem> products);
+  Future<List<ProductItem>> getProductsByReview(List<ProductItem> products);
 
-  Future<List<ProductItem>> getProductsByLowest(TypeList typeList);
+  Future<List<ProductItem>> getProductsByLowest(List<ProductItem> products);
 
-  Future<List<ProductItem>> getProductsByHighest(TypeList typeList);
+  Future<List<ProductItem>> getProductsByHighest(List<ProductItem> products);
 
   Future<List<ProductItem>> getProductsByName(
-      TypeList typeList, String searchName);
+      List<ProductItem> products, String searchName);
   Future<List<ProductItem>> getProductsByCategory(
-      TypeList typeList, String categoryName);
+      List<ProductItem> products, String categoryName);
 }

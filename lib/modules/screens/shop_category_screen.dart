@@ -24,69 +24,105 @@ class ShopCategoryScreen extends StatelessWidget {
             );
 
           case ProductStatus.success:
-            return Scaffold(
-                body: NestedScrollView(
-              physics: const BouncingScrollPhysics(),
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
-                      shadowColor: Colors.white,
-                      elevation: 5,
-                      backgroundColor: const Color(0xffF9F9F9),
-                      expandedHeight: 100.0,
-                      pinned: true,
-                      leading: _leadingButton(context),
-                      actions: [_findButton(context)],
-                      flexibleSpace: _flexibleSpaceBar(
-                          context,
-                          state.type == TypeList.newest
-                              ? "New - " + state.categoryName
-                              : state.type == TypeList.sale
-                                  ? "Sale - " + state.categoryName
-                                  : "" + state.categoryName,
-                          state.isSearch,
-                          state.searchInput)),
-                  SliverPersistentHeader(
-                      pinned: true,
-                      delegate: SliverAppBarDelegate(
-                        child: PreferredSize(
-                            preferredSize: const Size.fromHeight(110.0),
-                            child: BlocBuilder<ProductCubit, ProductState>(
-                                buildWhen: (previous, current) =>
-                                    previous.status != current.status,
-                                builder: (context, state) {
-                                  return FilterBarWidget(
-                                    chooseCategory: state.categoryName,
-                                    applyGrid:
-                                        BlocProvider.of<ProductCubit>(context)
-                                            .productLoadGridLayout,
-                                    applyChoose: context
-                                        .read<ProductCubit>()
-                                        .productSort,
-                                    chooseSort: state.sort,
-                                    isGridLayout: state.isGridLayout,
-                                    applyCategory:
-                                        BlocProvider.of<ProductCubit>(context)
-                                            .productCategoryEvent,
-                                  );
-                                })),
-                      ))
-                ];
+            return GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus &&
+                    currentFocus.focusedChild != null) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
               },
-              body: state.searchStatus == SearchProductStatus.loadingSearch ||
-                      state.gridStatus == GridProductStatus.loadingGrid
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : state.productList.isEmpty
-                      ? const Center(
-                          child: Text("No products"),
-                        )
-                      : state.isGridLayout
-                          ? _displayGridView(state.productList)
-                          : _displayListView(state.productList),
-            ));
+              child: Scaffold(
+                  body: NestedScrollView(
+                physics: const BouncingScrollPhysics(),
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverAppBar(
+                        shadowColor: Colors.white,
+                        elevation: 5,
+                        backgroundColor: const Color(0xffF9F9F9),
+                        expandedHeight: 100.0,
+                        pinned: true,
+                        leading: _leadingButton(context),
+                        actions: [_findButton(context)],
+                        flexibleSpace: BlocBuilder<ProductCubit, ProductState>(
+                            buildWhen: (previous, current) =>
+                                previous.gridStatus != current.gridStatus,
+                            builder: (context, state) {
+                              return _flexibleSpaceBar(
+                                  context,
+                                  state.type == TypeList.newest
+                                      ? ("New - " +
+                                          (state.categoryName == ""
+                                              ? "All products"
+                                              : state.categoryName))
+                                      : state.type == TypeList.sale
+                                          ? "Sale - " +
+                                              (state.categoryName == ""
+                                                  ? "All products"
+                                                  : state.categoryName)
+                                          : "" + state.categoryName == ""
+                                              ? "All products"
+                                              : state.categoryName,
+                                  state.isSearch,
+                                  state.searchInput);
+                            })),
+                    SliverPersistentHeader(
+                        pinned: true,
+                        delegate: SliverAppBarDelegate(
+                          child: PreferredSize(
+                              preferredSize: const Size.fromHeight(100),
+                              child: BlocBuilder<ProductCubit, ProductState>(
+                                  buildWhen: (previous, current) =>
+                                      previous.gridStatus != current.gridStatus,
+                                  builder: (context, state) {
+                                    return FilterBarWidget(
+                                      showCategory:
+                                          BlocProvider.of<ProductCubit>(context)
+                                              .productOpenCategoryBarEvent,
+                                      isVisible: state.isShowCategoryBar,
+                                      chooseCategory: state.categoryName,
+                                      applyGrid:
+                                          BlocProvider.of<ProductCubit>(context)
+                                              .productLoadGridLayout,
+                                      applySort: context
+                                          .read<ProductCubit>()
+                                          .productSort,
+                                      chooseSort: state.sort,
+                                      isGridLayout: state.isGridLayout,
+                                    );
+                                  })),
+                        )),
+                  ];
+                },
+                body: BlocBuilder<ProductCubit, ProductState>(
+                    buildWhen: (previous, current) =>
+                        previous.gridStatus != current.gridStatus ||
+                        previous.searchStatus != current.searchStatus,
+                    builder: (context, state) {
+                      if (state.searchStatus ==
+                              SearchProductStatus.loadingSearch ||
+                          state.gridStatus == GridProductStatus.loadingGrid) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        if (state.productList.isEmpty) {
+                          return const Center(
+                            child: Text("No products"),
+                          );
+                        } else {
+                          if (state.isGridLayout) {
+                            return _displayGridView(state.productList);
+                          } else {
+                            return _displayListView(state.productList);
+                          }
+                        }
+                      }
+                    }),
+              )),
+            );
 
           default:
             return const Center(child: CircularProgressIndicator());
@@ -123,7 +159,7 @@ Widget _leadingButton(BuildContext context) {
   return IconButton(
     icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
     onPressed: () {
-      context.read<ProductCubit>().productLoaded();
+      context.read<ProductCubit>().productSort(typeList: TypeList.all);
       Navigator.pop(context);
     },
   );
@@ -162,7 +198,7 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
                   initValue: searchInput,
                   func: (value) {
                     BlocProvider.of<ProductCubit>(context)
-                        .productSearchEvent(value);
+                        .productSort(searchName: value);
                   })),
     );
   });

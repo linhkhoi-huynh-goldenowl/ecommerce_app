@@ -21,9 +21,11 @@ class ProductCubit extends Cubit<ProductState> {
           Domain().product.getProductsStream();
 
       productSubscription = productsStream.listen((event) {
+        Domain().product.setProducts(event.data ?? []);
+        final products = Domain().product.getProducts();
         emit(state.copyWith(
             status: ProductStatus.success,
-            productList: event.data,
+            productList: products,
             type: TypeList.all));
       });
       // emit(state.copyWith(status: ProductStatus.loading));
@@ -43,130 +45,81 @@ class ProductCubit extends Cubit<ProductState> {
     return super.close();
   }
 
-  void productNewLoaded() async {
-    try {
-      emit(state.copyWith(status: ProductStatus.loading));
-      final products = await Domain().product.getProductsNew(state.productList);
-      emit(state.copyWith(
-          status: ProductStatus.success,
-          productList: products,
-          type: TypeList.newest));
-    } catch (_) {
-      emit(state.copyWith(status: ProductStatus.failure));
-    }
-  }
-
-  void productSaleLoaded() async {
-    try {
-      emit(state.copyWith(status: ProductStatus.loading));
-      final products =
-          await Domain().product.getProductsSale(state.productList);
-      emit(state.copyWith(
-          status: ProductStatus.success,
-          productList: products,
-          type: TypeList.sale));
-    } catch (_) {
-      emit(state.copyWith(status: ProductStatus.failure));
-    }
-  }
-
   void productLoadGridLayout() async {
     try {
-      emit(state.copyWith(
-          gridStatus: GridProductStatus.loadingGrid,
-          status: ProductStatus.loading));
+      emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
       emit(state.copyWith(
           isGridLayout: !state.isGridLayout,
-          gridStatus: GridProductStatus.successGrid,
-          status: ProductStatus.success));
+          gridStatus: GridProductStatus.successGrid));
     } catch (_) {
       emit(state.copyWith(gridStatus: GridProductStatus.failureGrid));
     }
   }
 
-  void productSearchEvent(String searchName) async {
-    try {
-      emit(state.copyWith(
-          searchStatus: SearchProductStatus.loadingSearch,
-          status: ProductStatus.loading));
-      var products =
-          await Domain().product.getProductsByName(state.type, searchName);
-      emit(state.copyWith(
-          productList: products,
-          searchStatus: SearchProductStatus.successSearch,
-          searchInput: searchName,
-          status: ProductStatus.success));
-    } catch (_) {
-      emit(state.copyWith(searchStatus: SearchProductStatus.failureSearch));
-    }
-  }
-
   void productOpenSearchBarEvent() async {
     try {
-      emit(state.copyWith(status: ProductStatus.loading));
+      emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
       emit(state.copyWith(
-          isSearch: !state.isSearch, status: ProductStatus.success));
+          isSearch: !state.isSearch,
+          gridStatus: GridProductStatus.successGrid));
     } catch (_) {
-      emit(state.copyWith(status: ProductStatus.failure));
+      emit(state.copyWith(gridStatus: GridProductStatus.failureGrid));
     }
   }
 
-  void productCategoryEvent(String categoryName) async {
+  void productOpenCategoryBarEvent() async {
     try {
-      emit(state.copyWith(status: ProductStatus.loading));
-      if (categoryName == "All products" ||
-          categoryName == state.categoryName) {
-        var products = await Domain().product.getProductsByType(state.type);
-
-        emit(state.copyWith(
-            categoryName: "All products",
-            productList: products,
-            type: state.type,
-            status: ProductStatus.success));
-      } else {
-        var products = await Domain()
-            .product
-            .getProductsByCategory(state.type, categoryName);
-
-        emit(state.copyWith(
-            categoryName: categoryName,
-            productList: products,
-            type: state.type,
-            status: ProductStatus.success));
-      }
-    } catch (_) {
-      emit(state.copyWith(status: ProductStatus.failure));
-    }
-  }
-
-  void productSort(ChooseSort chooseSort) async {
-    try {
-      emit(state.copyWith(status: ProductStatus.loading));
-      var products = await Domain().product.getProducts();
-      switch (chooseSort) {
-        case ChooseSort.popular:
-          products = await Domain().product.getProductsByPopular(state.type);
-          break;
-        case ChooseSort.newest:
-          products = await Domain().product.getProductsByNewest(state.type);
-          break;
-
-        case ChooseSort.review:
-          products = await Domain().product.getProductsByReview(state.type);
-          break;
-        case ChooseSort.priceLowest:
-          products = await Domain().product.getProductsByLowest(state.type);
-          break;
-        case ChooseSort.priceHighest:
-          products = await Domain().product.getProductsByHighest(state.type);
-          break;
-      }
       emit(state.copyWith(
-          sort: chooseSort,
-          productList: products,
+          gridStatus: GridProductStatus.loadingGrid,
+          status: ProductStatus.loading));
+      emit(state.copyWith(
+          isShowCategoryBar: !state.isShowCategoryBar,
+          gridStatus: GridProductStatus.successGrid,
           status: ProductStatus.success));
     } catch (_) {
-      emit(state.copyWith(status: ProductStatus.failure));
+      emit(state.copyWith(
+          gridStatus: GridProductStatus.failureGrid,
+          status: ProductStatus.failure));
+    }
+  }
+
+  void productSort(
+      {String? searchName,
+      TypeList? typeList,
+      ChooseSort? chooseSort,
+      String? categoryName}) async {
+    try {
+      emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
+
+      if (categoryName == state.categoryName) {
+        var products = await Domain().product.getProductsFilter(
+            searchName: searchName ?? state.searchInput,
+            chooseSort: chooseSort ?? state.sort,
+            typeList: typeList ?? state.type);
+
+        emit(state.copyWith(
+            sort: chooseSort ?? state.sort,
+            categoryName: "",
+            searchInput: searchName ?? state.searchInput,
+            type: typeList ?? state.type,
+            productList: products,
+            gridStatus: GridProductStatus.successGrid));
+      } else {
+        var products = await Domain().product.getProductsFilter(
+            searchName: searchName ?? state.searchInput,
+            categoryName: categoryName ?? state.categoryName,
+            chooseSort: chooseSort ?? state.sort,
+            typeList: typeList ?? state.type);
+        emit(state.copyWith(
+            sort: chooseSort ?? state.sort,
+            categoryName: categoryName ?? state.categoryName,
+            searchInput: searchName ?? state.searchInput,
+            type: typeList ?? state.type,
+            productList: products,
+            gridStatus: GridProductStatus.successGrid));
+      }
+    } catch (_) {
+      emit(state.copyWith(gridStatus: GridProductStatus.failureGrid));
     }
   }
 }

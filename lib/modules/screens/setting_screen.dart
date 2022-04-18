@@ -17,7 +17,7 @@ class SettingScreen extends StatelessWidget {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initDate,
-      firstDate: DateTime(2000),
+      firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
     if (picked != null && picked != initDate) {
@@ -82,14 +82,14 @@ class SettingScreen extends StatelessWidget {
                                 funcGallery: () {
                                   context
                                       .read<ProfileCubit>()
-                                      .getImageFromGallery();
+                                      .getImageFromGallery(context);
                                   Navigator.of(context, rootNavigator: true)
                                       .pop(showDialog);
                                 },
                                 funcCamera: () {
                                   context
                                       .read<ProfileCubit>()
-                                      .getImageFromCamera();
+                                      .getImageFromCamera(context);
                                   Navigator.of(context, rootNavigator: true)
                                       .pop(showDialog);
                                 });
@@ -171,27 +171,42 @@ class SettingScreen extends StatelessWidget {
                       const SizedBox(
                         height: 12,
                       ),
-                      _switchNotification(
-                          "Sales",
-                          state.notificationSale,
-                          (p0) => context
-                              .read<ProfileCubit>()
-                              .settingNotificationSale(
-                                  !state.notificationSale)),
-                      _switchNotification(
-                          "New arrivals",
-                          state.notificationNewArrivals,
-                          (p0) => context
-                              .read<ProfileCubit>()
-                              .settingNotificationNew(
-                                  !state.notificationNewArrivals)),
-                      _switchNotification(
-                          "Delivery status changes",
-                          state.notificationDelivery,
-                          (p0) => context
-                              .read<ProfileCubit>()
-                              .settingNotificationDelivery(
-                                  !state.notificationDelivery)),
+                      BlocBuilder<ProfileCubit, ProfileState>(
+                          buildWhen: (previous, current) =>
+                              previous.notificationSale !=
+                                  current.notificationSale ||
+                              previous.notificationNewArrivals !=
+                                  current.notificationNewArrivals ||
+                              previous.notificationDelivery !=
+                                  current.notificationDelivery,
+                          builder: (context, state) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _switchNotification(
+                                    "Sales",
+                                    state.notificationSale,
+                                    (p0) => context
+                                        .read<ProfileCubit>()
+                                        .settingNotificationSale(
+                                            !state.notificationSale)),
+                                _switchNotification(
+                                    "New arrivals",
+                                    state.notificationNewArrivals,
+                                    (p0) => context
+                                        .read<ProfileCubit>()
+                                        .settingNotificationNew(
+                                            !state.notificationNewArrivals)),
+                                _switchNotification(
+                                    "Delivery status changes",
+                                    state.notificationDelivery,
+                                    (p0) => context
+                                        .read<ProfileCubit>()
+                                        .settingNotificationDelivery(
+                                            !state.notificationDelivery)),
+                              ],
+                            );
+                          }),
                       const SizedBox(
                         height: 12,
                       ),
