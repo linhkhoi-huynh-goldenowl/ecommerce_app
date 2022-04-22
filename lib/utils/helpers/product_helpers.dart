@@ -1,6 +1,6 @@
-import 'package:e_commerce_app/modules/models/color_cloth.dart';
-import 'package:e_commerce_app/modules/models/product_item.dart';
-import 'package:e_commerce_app/modules/models/size_cloth.dart';
+import 'package:e_commerce_shop_app/modules/models/color_cloth.dart';
+import 'package:e_commerce_shop_app/modules/models/product_item.dart';
+import 'package:e_commerce_shop_app/modules/models/size_cloth.dart';
 
 class ProductHelper {
   static List getNewsProducts(List products) {

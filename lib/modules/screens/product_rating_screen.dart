@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_commerce_app/config/styles/text_style.dart';
-import 'package:e_commerce_app/dialogs/bottom_sheet_app.dart';
-import 'package:e_commerce_app/modules/cubit/review/review_cubit.dart';
-import 'package:e_commerce_app/modules/models/review_model.dart';
-import 'package:e_commerce_app/utils/helpers/review_helpers.dart';
-import 'package:e_commerce_app/widgets/review_chart.dart';
+import 'package:e_commerce_shop_app/config/styles/text_style.dart';
+import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
+import 'package:e_commerce_shop_app/modules/cubit/review/review_cubit.dart';
+import 'package:e_commerce_shop_app/modules/models/review_model.dart';
+import 'package:e_commerce_shop_app/utils/helpers/review_helpers.dart';
+import 'package:e_commerce_shop_app/widgets/review_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -228,6 +228,9 @@ Widget _reviewBar(int numReviews, bool withImage, VoidCallback func) {
             Transform.scale(
               scale: 1.5,
               child: Checkbox(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3.5)),
+                activeColor: Colors.black,
                 checkColor: Colors.white,
                 value: withImage,
                 onChanged: (_) {

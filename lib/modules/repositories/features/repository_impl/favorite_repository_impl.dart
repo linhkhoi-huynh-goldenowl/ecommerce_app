@@ -1,8 +1,8 @@
-import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_app/modules/models/favorite_product.dart';
-import 'package:e_commerce_app/modules/repositories/features/repository/favorite_repository.dart';
-import 'package:e_commerce_app/modules/repositories/provider/favorite_provider.dart';
-import 'package:e_commerce_app/modules/repositories/x_result.dart';
+import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_shop_app/modules/models/favorite_product.dart';
+import 'package:e_commerce_shop_app/modules/repositories/features/repository/favorite_repository.dart';
+import 'package:e_commerce_shop_app/modules/repositories/provider/favorite_provider.dart';
+import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteRepositoryImpl implements FavoriteRepository {

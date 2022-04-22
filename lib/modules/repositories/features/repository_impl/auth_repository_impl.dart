@@ -1,7 +1,7 @@
-import 'package:e_commerce_app/modules/models/e_user.dart';
-import 'package:e_commerce_app/modules/repositories/features/repository/auth_repository.dart';
-import 'package:e_commerce_app/modules/repositories/provider/user_provider.dart';
-import 'package:e_commerce_app/modules/repositories/x_result.dart';
+import 'package:e_commerce_shop_app/modules/models/e_user.dart';
+import 'package:e_commerce_shop_app/modules/repositories/features/repository/auth_repository.dart';
+import 'package:e_commerce_shop_app/modules/repositories/provider/user_provider.dart';
+import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -47,7 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
           email: email,
           name: name,
           dateOfBirth: null,
-          shippingAddress: [],
+          shippingAddress: 0,
           notificationSale: false,
           notificationNewArrivals: false,
           notificationDelivery: false);
@@ -104,10 +104,12 @@ class AuthRepositoryImpl implements AuthRepository {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
+
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -148,7 +150,7 @@ class AuthRepositoryImpl implements AuthRepository {
           email: userCredential.user?.email ?? "",
           name: userCredential.user!.displayName ?? "",
           dateOfBirth: null,
-          shippingAddress: [],
+          shippingAddress: 0,
           notificationSale: false,
           notificationNewArrivals: false,
           notificationDelivery: false);

@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_commerce_app/config/styles/text_style.dart';
-import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
-import 'package:e_commerce_app/modules/cubit/profile/profile_cubit.dart';
-import 'package:e_commerce_app/widgets/profile_info_button.dart';
+import 'package:e_commerce_shop_app/config/styles/text_style.dart';
+import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_shop_app/modules/cubit/profile/profile_cubit.dart';
+import 'package:e_commerce_shop_app/widgets/profile_info_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../config/routes/router.dart';
+import '../../utils/services/navigator_services.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class ProfileScreen extends ProductCoordinatorBase {
@@ -96,12 +97,26 @@ class ProfileScreen extends ProductCoordinatorBase {
                     func: () {}),
                 ProfileInfoButton(
                     title: "Shipping addresses",
-                    subTitle: "3 addresses",
-                    func: () {}),
+                    subTitle: "${state.shippingAddress} addresses",
+                    func: () {
+                      Navigator.of(
+                              NavigationService.navigatorKey.currentContext ??
+                                  context)
+                          .pushNamed(Routes.shippingAddressScreen);
+                    }),
                 ProfileInfoButton(
                     title: "Payment methods",
-                    subTitle: "Visa **34",
-                    func: () {}),
+                    subTitle: state.creditNumber.isEmpty
+                        ? ''
+                        : (state.creditNumber[0] == '4'
+                            ? "Visa **${state.creditNumber.substring(state.creditNumber.length - 2)}"
+                            : "Mastercard **${state.creditNumber.substring(state.creditNumber.length - 2)}"),
+                    func: () {
+                      Navigator.of(
+                              NavigationService.navigatorKey.currentContext ??
+                                  context)
+                          .pushNamed(Routes.paymentScreen);
+                    }),
                 ProfileInfoButton(
                     title: "Promo codes",
                     subTitle: "You have special promo codes",

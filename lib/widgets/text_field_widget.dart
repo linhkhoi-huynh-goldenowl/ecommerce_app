@@ -1,5 +1,6 @@
-import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget(
@@ -13,7 +14,9 @@ class TextFieldWidget extends StatelessWidget {
       this.focusNode,
       this.onTap,
       this.onEditComplete,
-      this.readOnly})
+      this.readOnly,
+      this.inputType,
+      this.inputFormatters})
       : super(key: key);
   final String labelText;
   final String validatorText;
@@ -25,6 +28,8 @@ class TextFieldWidget extends StatelessWidget {
   final String? initValue;
   final VoidCallback? onTap;
   final bool? readOnly;
+  final TextInputType? inputType;
+  final List<TextInputFormatter>? inputFormatters;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,7 +39,7 @@ class TextFieldWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withOpacity(0.2),
                 spreadRadius: 2,
                 blurRadius: 7,
                 offset: const Offset(0, 3), // changes position of shadow
@@ -43,6 +48,8 @@ class TextFieldWidget extends StatelessWidget {
         child: TextFormField(
           readOnly: readOnly ?? false,
           onTap: onTap,
+          inputFormatters: inputFormatters,
+          keyboardType: inputType,
           onEditingComplete: onEditComplete,
           focusNode: focusNode,
           initialValue: initValue,

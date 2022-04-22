@@ -13,12 +13,13 @@ class ProfileState extends Equatable {
       this.name = "",
       this.imageUrl = "",
       required this.dateOfBirth,
-      this.shippingAddress = const <String>[],
+      this.shippingAddress = 0,
       this.notificationSale = false,
       this.notificationNewArrivals = false,
       this.notificationDelivery = false,
       this.status = ProfileStatus.initial,
       this.saveStatus = SaveStatus.initial,
+      this.creditNumber = "",
       this.oldPassword = "",
       this.newPassword = "",
       this.newPasswordConfirm = "",
@@ -36,7 +37,8 @@ class ProfileState extends Equatable {
   final String name;
   final String imageUrl;
   final DateTime dateOfBirth;
-  final List<String> shippingAddress;
+  final int shippingAddress;
+  final String creditNumber;
   final bool notificationSale;
   final bool notificationNewArrivals;
   final bool notificationDelivery;
@@ -63,7 +65,8 @@ class ProfileState extends Equatable {
       String? name,
       String? imageUrl,
       DateTime? dateOfBirth,
-      List<String>? shippingAddress,
+      String? creditNumber,
+      int? shippingAddress,
       bool? notificationSale,
       bool? notificationNewArrivals,
       bool? notificationDelivery,
@@ -97,7 +100,8 @@ class ProfileState extends Equatable {
         savePassMessage: savePassMessage ?? this.savePassMessage,
         imageUrl: imageUrl ?? this.imageUrl,
         imageChangeUrl: imageChangeUrl ?? this.imageChangeUrl,
-        imageStatus: imageStatus ?? this.imageStatus);
+        imageStatus: imageStatus ?? this.imageStatus,
+        creditNumber: creditNumber ?? this.creditNumber);
   }
 
   @override
@@ -121,6 +125,7 @@ class ProfileState extends Equatable {
         savePassStatus,
         savePassMessage,
         imageChangeUrl,
-        imageStatus
+        imageStatus,
+        creditNumber
       ];
 }

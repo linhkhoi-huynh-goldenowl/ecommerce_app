@@ -1,8 +1,8 @@
-import 'package:e_commerce_app/config/styles/text_style.dart';
-import 'package:e_commerce_app/modules/screens/bag_screen.dart';
-import 'package:e_commerce_app/modules/screens/favorite_screen.dart';
-import 'package:e_commerce_app/modules/screens/profile_screen.dart';
-import 'package:e_commerce_app/modules/screens/shop_screen.dart';
+import 'package:e_commerce_shop_app/config/styles/text_style.dart';
+import 'package:e_commerce_shop_app/modules/screens/bag_screen.dart';
+import 'package:e_commerce_shop_app/modules/screens/favorite_screen.dart';
+import 'package:e_commerce_shop_app/modules/screens/profile_screen.dart';
+import 'package:e_commerce_shop_app/modules/screens/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

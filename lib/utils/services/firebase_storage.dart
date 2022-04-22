@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:e_commerce_app/modules/repositories/x_result.dart';
+import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseStorageService {

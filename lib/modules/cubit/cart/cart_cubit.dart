@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/models/cart_model.dart';
-import 'package:e_commerce_app/modules/models/promo_model.dart';
+import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
+import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../repositories/domain.dart';
@@ -84,6 +84,21 @@ class CartCubit extends Cubit<CartState> {
       var total = Domain().cart.getTotalPrice(state.salePercent);
       emit(state.copyWith(
           status: CartStatus.success, carts: carts, totalPrice: total));
+    } catch (_) {
+      emit(state.copyWith(status: CartStatus.failure));
+    }
+  }
+
+  void clearCart() async {
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+      final carts = await Domain().cart.clearCarts();
+      emit(state.copyWith(
+          status: CartStatus.success,
+          carts: carts,
+          totalPrice: 0,
+          code: "",
+          salePercent: 0));
     } catch (_) {
       emit(state.copyWith(status: CartStatus.failure));
     }
