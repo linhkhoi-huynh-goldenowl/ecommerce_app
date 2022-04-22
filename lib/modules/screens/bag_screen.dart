@@ -1,6 +1,7 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -105,15 +106,21 @@ class BagScreen extends StatelessWidget {
                         ),
                         ButtonIntro(
                             func: () {
-                              Navigator.of(NavigationService
-                                          .navigatorKey.currentContext ??
-                                      context)
-                                  .pushNamed(Routes.checkoutScreen, arguments: {
-                                'carts': state.carts,
-                                'promoId': state.code,
-                                'totalPrice': state.totalPrice,
-                                'contextBag': context
-                              });
+                              if (state.carts.isNotEmpty) {
+                                Navigator.of(NavigationService
+                                            .navigatorKey.currentContext ??
+                                        context)
+                                    .pushNamed(Routes.checkoutScreen,
+                                        arguments: {
+                                      'carts': state.carts,
+                                      'promoId': state.code,
+                                      'totalPrice': state.totalPrice,
+                                      'contextBag': context
+                                    });
+                              } else {
+                                AppSnackBar.showSnackBar(
+                                    context, "Please add product to cart");
+                              }
                             },
                             title: "CHECK OUT")
                       ],
