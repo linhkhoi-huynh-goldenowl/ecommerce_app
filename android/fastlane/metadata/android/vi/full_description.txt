@@ -1,0 +1,1 @@
+This is an app that can help people shoping online. User can log in and buy some thing

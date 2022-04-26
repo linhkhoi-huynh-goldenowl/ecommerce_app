@@ -18,7 +18,7 @@ Future<void> main() async {
   //Add device preview to see UI on IOS device
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       builder: (context) => const MyApp(), // Wrap your app
     ),
   );
