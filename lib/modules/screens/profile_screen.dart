@@ -29,24 +29,25 @@ class ProfileScreen extends ProductCoordinatorBase {
         buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(
-              actions: [_findButton()],
-              elevation: 0,
-              backgroundColor: const Color(0xffF9F9F9),
-            ),
+              body: NestedScrollView(
+            physics: const BouncingScrollPhysics(),
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                    shadowColor: Colors.white,
+                    elevation: 5,
+                    backgroundColor: const Color(0xffF9F9F9),
+                    expandedHeight: 110.0,
+                    pinned: true,
+                    stretch: true,
+                    automaticallyImplyLeading: false,
+                    flexibleSpace: _flexibleSpaceBar(),
+                    actions: [_findButton()]),
+              ];
+            },
             body: ListView(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    "My profile",
-                    style: ETextStyle.metropolis(
-                        fontSize: 34, weight: FontWeight.w700),
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -93,8 +94,10 @@ class ProfileScreen extends ProductCoordinatorBase {
                 ),
                 ProfileInfoButton(
                     title: "My orders",
-                    subTitle: "Already have 12 orders",
-                    func: () {}),
+                    subTitle: "Already have ${state.orderCount} orders",
+                    func: () {
+                      Navigator.of(context).pushNamed(Routes.orderScreen);
+                    }),
                 ProfileInfoButton(
                     title: "Shipping addresses",
                     subTitle: "${state.shippingAddress} addresses",
@@ -140,7 +143,7 @@ class ProfileScreen extends ProductCoordinatorBase {
                     }),
               ],
             ),
-          );
+          ));
         });
   }
 }
@@ -148,4 +151,31 @@ class ProfileScreen extends ProductCoordinatorBase {
 Widget _findButton() {
   return IconButton(
       onPressed: () {}, icon: Image.asset('assets/images/icons/find.png'));
+}
+
+Widget _flexibleSpaceBar() {
+  return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+    var top = constraints.biggest.height;
+    return FlexibleSpaceBar(
+      titlePadding: EdgeInsets.only(
+          left: top < MediaQuery.of(context).size.height * 0.12 ? 0 : 16,
+          bottom: top < MediaQuery.of(context).size.height * 0.12 ? 15 : 0),
+      centerTitle:
+          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
+      title: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: 1,
+          child: Text(
+            "My profile",
+            textAlign: TextAlign.start,
+            style: ETextStyle.metropolis(
+                weight: top < MediaQuery.of(context).size.height * 0.12
+                    ? FontWeight.w600
+                    : FontWeight.w700,
+                fontSize:
+                    top < MediaQuery.of(context).size.height * 0.12 ? 22 : 27),
+          )),
+    );
+  });
 }

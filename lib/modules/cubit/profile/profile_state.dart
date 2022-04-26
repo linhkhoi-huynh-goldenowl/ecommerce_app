@@ -14,6 +14,7 @@ class ProfileState extends Equatable {
       this.imageUrl = "",
       required this.dateOfBirth,
       this.shippingAddress = 0,
+      this.orderCount = 0,
       this.notificationSale = false,
       this.notificationNewArrivals = false,
       this.notificationDelivery = false,
@@ -27,7 +28,8 @@ class ProfileState extends Equatable {
       this.savePassStatus = SavePassStatus.initial,
       this.savePassMessage = "",
       this.imageChangeUrl = "",
-      this.imageStatus = ImageStatus.initial});
+      this.imageStatus = ImageStatus.initial,
+      this.errMessage = ""});
 
   bool get isValidName => name.length > 3;
   bool get isValidDateOfBirth => dateOfBirth.isBefore(DateTime.now());
@@ -38,6 +40,7 @@ class ProfileState extends Equatable {
   final String imageUrl;
   final DateTime dateOfBirth;
   final int shippingAddress;
+  final int orderCount;
   final String creditNumber;
   final bool notificationSale;
   final bool notificationNewArrivals;
@@ -59,6 +62,8 @@ class ProfileState extends Equatable {
   final String loginType;
   final String imageChangeUrl;
   final ImageStatus imageStatus;
+  final String errMessage;
+
   ProfileState copyWith(
       {String? id,
       String? email,
@@ -67,6 +72,7 @@ class ProfileState extends Equatable {
       DateTime? dateOfBirth,
       String? creditNumber,
       int? shippingAddress,
+      int? orderCount,
       bool? notificationSale,
       bool? notificationNewArrivals,
       bool? notificationDelivery,
@@ -79,13 +85,15 @@ class ProfileState extends Equatable {
       SavePassStatus? savePassStatus,
       String? savePassMessage,
       String? imageChangeUrl,
-      ImageStatus? imageStatus}) {
+      ImageStatus? imageStatus,
+      String? errMessage}) {
     return ProfileState(
         id: id ?? this.id,
         email: email ?? this.email,
         name: name ?? this.name,
         dateOfBirth: dateOfBirth ?? this.dateOfBirth,
         shippingAddress: shippingAddress ?? this.shippingAddress,
+        orderCount: orderCount ?? this.orderCount,
         notificationSale: notificationSale ?? this.notificationSale,
         notificationNewArrivals:
             notificationNewArrivals ?? this.notificationNewArrivals,
@@ -101,7 +109,8 @@ class ProfileState extends Equatable {
         imageUrl: imageUrl ?? this.imageUrl,
         imageChangeUrl: imageChangeUrl ?? this.imageChangeUrl,
         imageStatus: imageStatus ?? this.imageStatus,
-        creditNumber: creditNumber ?? this.creditNumber);
+        creditNumber: creditNumber ?? this.creditNumber,
+        errMessage: errMessage ?? this.errMessage);
   }
 
   @override
@@ -126,6 +135,8 @@ class ProfileState extends Equatable {
         savePassMessage,
         imageChangeUrl,
         imageStatus,
-        creditNumber
+        creditNumber,
+        orderCount,
+        errMessage
       ];
 }

@@ -8,10 +8,12 @@ class PromoState extends Equatable {
       {this.promos = const [],
       this.status = PromoStatus.initial,
       this.codeInput = "",
-      this.codeStatus = CodePromoStatus.initial});
+      this.codeStatus = CodePromoStatus.initial,
+      this.errMessage = ""});
   final List<PromoModel> promos;
   final String codeInput;
   final CodePromoStatus codeStatus;
+  final String errMessage;
   bool get isValidCodeInput => promos
       .where((element) {
         return element.id == codeInput;
@@ -23,14 +25,16 @@ class PromoState extends Equatable {
       {List<PromoModel>? promos,
       PromoStatus? status,
       String? codeInput,
-      CodePromoStatus? codeStatus}) {
+      CodePromoStatus? codeStatus,
+      String? errMessage}) {
     return PromoState(
         promos: promos ?? this.promos,
         status: status ?? this.status,
         codeInput: codeInput ?? this.codeInput,
-        codeStatus: codeStatus ?? this.codeStatus);
+        codeStatus: codeStatus ?? this.codeStatus,
+        errMessage: errMessage ?? this.errMessage);
   }
 
   @override
-  List<Object> get props => [promos, status, codeInput, codeStatus];
+  List<Object> get props => [promos, status, codeInput, codeStatus, errMessage];
 }

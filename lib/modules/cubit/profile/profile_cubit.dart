@@ -44,44 +44,33 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       profileSubscription = profileStream.listen((event) async {
         emit(state.copyWith(status: ProfileStatus.loading));
-        Domain().profile.setCurrentUser(event.data()!);
-        final profile = await Domain().profile.getProfile();
-
-        emit(state.copyWith(
-            id: profile.id,
-            status: ProfileStatus.success,
-            saveStatus: SaveStatus.initial,
-            savePassStatus: SavePassStatus.initial,
-            name: profile.name,
-            imageUrl: profile.imageUrl,
-            creditNumber: profile.creditDefault,
-            email: profile.email,
-            dateOfBirth: profile.dateOfBirth,
-            notificationDelivery: profile.notificationDelivery,
-            notificationNewArrivals: profile.notificationNewArrivals,
-            notificationSale: profile.notificationSale,
-            shippingAddress: profile.shippingAddress));
+        if (event.data() != null) {
+          Domain().profile.setCurrentUser(event.data()!);
+          final profile = await Domain().profile.getProfile();
+          emit(state.copyWith(
+              id: profile.id,
+              status: ProfileStatus.success,
+              saveStatus: SaveStatus.initial,
+              savePassStatus: SavePassStatus.initial,
+              name: profile.name,
+              imageUrl: profile.imageUrl,
+              creditNumber: profile.creditDefault,
+              email: profile.email,
+              dateOfBirth: profile.dateOfBirth,
+              notificationDelivery: profile.notificationDelivery,
+              notificationNewArrivals: profile.notificationNewArrivals,
+              notificationSale: profile.notificationSale,
+              shippingAddress: profile.shippingAddress,
+              orderCount: profile.orderCount));
+        } else {
+          emit(state.copyWith(
+              status: ProfileStatus.failure,
+              errMessage: "Can not get profile data"));
+        }
       });
-
-      // emit(state.copyWith(status: ProfileStatus.loading));
-
-      // final profile = await Domain().profile.getProfile();
-
-      // emit(state.copyWith(
-      //     id: profile.id,
-      //     status: ProfileStatus.success,
-      //     saveStatus: SaveStatus.initial,
-      //     savePassStatus: SavePassStatus.initial,
-      //     name: profile.name,
-      //     imageUrl: profile.imageUrl,
-      //     email: profile.email,
-      //     dateOfBirth: profile.dateOfBirth,
-      //     notificationDelivery: profile.notificationDelivery,
-      //     notificationNewArrivals: profile.notificationNewArrivals,
-      //     notificationSale: profile.notificationSale,
-      //     shippingAddress: profile.shippingAddress));
     } catch (_) {
-      emit(state.copyWith(status: ProfileStatus.failure));
+      emit(state.copyWith(
+          status: ProfileStatus.failure, errMessage: "Something not right"));
     }
   }
 
@@ -99,6 +88,7 @@ class ProfileCubit extends Cubit<ProfileState> {
               email: state.email,
               name: state.name,
               imageUrl: result.data,
+              orderCount: state.orderCount,
               dateOfBirth: state.dateOfBirth,
               creditDefault: state.creditNumber,
               shippingAddress: state.shippingAddress,
@@ -111,10 +101,11 @@ class ProfileCubit extends Cubit<ProfileState> {
               status: ProfileStatus.success,
               saveStatus: SaveStatus.success,
               imageChangeUrl: ""));
-          profileLoaded();
         } else {
           emit(state.copyWith(
-              status: ProfileStatus.failure, saveStatus: SaveStatus.failure));
+              status: ProfileStatus.failure,
+              saveStatus: SaveStatus.failure,
+              errMessage: result.error));
         }
       } else {
         final user = EUser(
@@ -122,6 +113,7 @@ class ProfileCubit extends Cubit<ProfileState> {
             email: state.email,
             name: state.name,
             imageUrl: state.imageUrl,
+            orderCount: state.orderCount,
             dateOfBirth: state.dateOfBirth,
             creditDefault: state.creditNumber,
             shippingAddress: state.shippingAddress,
@@ -129,10 +121,16 @@ class ProfileCubit extends Cubit<ProfileState> {
             notificationNewArrivals: state.notificationNewArrivals,
             notificationDelivery: state.notificationDelivery);
 
-        await Domain().profile.saveProfile(user);
-        emit(state.copyWith(
-            status: ProfileStatus.success, saveStatus: SaveStatus.success));
-        profileLoaded();
+        XResult<EUser> res = await Domain().profile.saveProfile(user);
+        if (res.isSuccess) {
+          emit(state.copyWith(
+              status: ProfileStatus.success, saveStatus: SaveStatus.success));
+        } else {
+          emit(state.copyWith(
+              status: ProfileStatus.failure,
+              saveStatus: SaveStatus.failure,
+              errMessage: res.error));
+        }
       }
     } catch (_) {
       emit(state.copyWith(
@@ -206,7 +204,6 @@ class ProfileCubit extends Cubit<ProfileState> {
             savePassMessage: result.error));
       } else {
         emit(state.copyWith(savePassStatus: SavePassStatus.success));
-        profileLoaded();
       }
     } on Exception {
       emit(state.copyWith(savePassStatus: SavePassStatus.failure));

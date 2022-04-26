@@ -5,6 +5,8 @@ enum AddressOrderStatus { initial, selected, unselected }
 enum CreditOrderStatus { initial, selected, unselected }
 enum DeliveryOrderStatus { initial, selected, unselected }
 enum OrderSubmitStatus { initial, loading, success, failure }
+enum OrderSelect { delivered, processing, cancelled }
+enum ReOrderStatus { initial, loading, success, failure }
 
 class OrderState extends Equatable {
   const OrderState(
@@ -15,7 +17,10 @@ class OrderState extends Equatable {
       this.creditStatus = CreditOrderStatus.initial,
       this.deliveryStatus = DeliveryOrderStatus.initial,
       this.submitStatus = OrderSubmitStatus.initial,
-      this.deliPrice = 0});
+      this.deliPrice = 0,
+      this.orderSelect = OrderSelect.delivered,
+      this.errMessage = "",
+      this.reOrderStatus = ReOrderStatus.initial});
   final OrderStatus status;
   final List<Order> orders;
   final String deliveryId;
@@ -24,6 +29,9 @@ class OrderState extends Equatable {
   final CreditOrderStatus creditStatus;
   final DeliveryOrderStatus deliveryStatus;
   final OrderSubmitStatus submitStatus;
+  final OrderSelect orderSelect;
+  final String errMessage;
+  final ReOrderStatus reOrderStatus;
 
   OrderState copyWith(
       {List<Order>? orders,
@@ -33,7 +41,10 @@ class OrderState extends Equatable {
       CreditOrderStatus? creditStatus,
       DeliveryOrderStatus? deliveryStatus,
       double? deliPrice,
-      OrderSubmitStatus? submitStatus}) {
+      OrderSubmitStatus? submitStatus,
+      OrderSelect? orderSelect,
+      String? errMessage,
+      ReOrderStatus? reOrderStatus}) {
     return OrderState(
         status: status ?? this.status,
         orders: orders ?? this.orders,
@@ -42,7 +53,10 @@ class OrderState extends Equatable {
         creditStatus: creditStatus ?? this.creditStatus,
         deliveryStatus: deliveryStatus ?? this.deliveryStatus,
         deliPrice: deliPrice ?? this.deliPrice,
-        submitStatus: submitStatus ?? this.submitStatus);
+        submitStatus: submitStatus ?? this.submitStatus,
+        orderSelect: orderSelect ?? this.orderSelect,
+        errMessage: errMessage ?? this.errMessage,
+        reOrderStatus: reOrderStatus ?? this.reOrderStatus);
   }
 
   @override
@@ -54,6 +68,9 @@ class OrderState extends Equatable {
         creditStatus,
         deliveryStatus,
         deliPrice,
-        submitStatus
+        submitStatus,
+        orderSelect,
+        errMessage,
+        reOrderStatus
       ];
 }

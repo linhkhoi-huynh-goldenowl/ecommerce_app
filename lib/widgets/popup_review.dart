@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product_detail/product_detail_cubit.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:e_commerce_shop_app/utils/services/image_picker_services.dart';
 import 'package:e_commerce_shop_app/widgets/button_intro.dart';
 import 'package:e_commerce_shop_app/widgets/rate_star.dart';
@@ -29,6 +30,10 @@ class PopupReview extends StatelessWidget {
                   if (state.addStatus == AddReviewStatus.success) {
                     context.read<ProductDetailCubit>().setReviews(
                         state.avgReviews.ceil(), state.reviews.length);
+                    Navigator.pop(context);
+                  }
+                  if (state.addStatus == AddReviewStatus.failure) {
+                    AppSnackBar.showSnackBar(context, state.errMessage);
                     Navigator.pop(context);
                   }
                 },
@@ -64,8 +69,7 @@ class PopupReview extends StatelessWidget {
                   }
                 }),
           )),
-          body: ListView(
-            padding: const EdgeInsets.only(bottom: 100),
+          body: Column(
             children: [
               const SizedBox(
                 height: 14,
@@ -77,120 +81,131 @@ class PopupReview extends StatelessWidget {
               const SizedBox(
                 height: 16,
               ),
-              Center(
-                child: Text(
-                  "What is your rate?",
-                  style: ETextStyle.metropolis(
-                      fontSize: 18, weight: FontWeight.w600),
-                ),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: BlocBuilder<ReviewCubit, ReviewState>(
-                    buildWhen: (previous, current) =>
-                        previous.starStatus != current.starStatus ||
-                        previous.starNum != current.starNum,
-                    builder: (context, state) {
-                      return Column(
-                        children: [
-                          state.starStatus == StarReviewStatus.initial ||
-                                  state.starStatus == StarReviewStatus.selected
-                              ? const SizedBox()
-                              : Text(
-                                  "Please Choose Star",
-                                  style:
-                                      ETextStyle.metropolis(color: Colors.red),
-                                ),
-                          RateStar(
-                              reviewStars: state.starNum,
-                              func: context.read<ReviewCubit>().starChange),
-                        ],
-                      );
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 38, bottom: 24, left: 60, right: 60),
-                child: Text(
-                  "Please share your opinion about the product",
-                  textAlign: TextAlign.center,
-                  style: ETextStyle.metropolis(
-                      fontSize: 18, weight: FontWeight.w600),
-                ),
-              ),
-              BlocBuilder<ReviewCubit, ReviewState>(
-                  buildWhen: (previous, current) =>
-                      previous.reviewContent.length !=
-                          current.reviewContent.length ||
-                      previous.contentStatus != current.contentStatus,
-                  builder: (context, state) {
-                    return Column(
-                      children: [
-                        state.contentStatus == ContentReviewStatus.initial ||
-                                state.contentStatus == ContentReviewStatus.typed
-                            ? const SizedBox()
-                            : Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "Please Type Review",
-                                    style: ETextStyle.metropolis(
-                                        color: Colors.red),
+              Expanded(
+                  child: ListView(
+                children: [
+                  Center(
+                    child: Text(
+                      "What is your rate?",
+                      style: ETextStyle.metropolis(
+                          fontSize: 18, weight: FontWeight.w600),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50),
+                    child: BlocBuilder<ReviewCubit, ReviewState>(
+                        buildWhen: (previous, current) =>
+                            previous.starStatus != current.starStatus ||
+                            previous.starNum != current.starNum,
+                        builder: (context, state) {
+                          return Column(
+                            children: [
+                              state.starStatus == StarReviewStatus.initial ||
+                                      state.starStatus ==
+                                          StarReviewStatus.selected
+                                  ? const SizedBox()
+                                  : Text(
+                                      "Please Choose Star",
+                                      style: ETextStyle.metropolis(
+                                          color: Colors.red),
+                                    ),
+                              RateStar(
+                                  reviewStars: state.starNum,
+                                  func: context.read<ReviewCubit>().starChange),
+                            ],
+                          );
+                        }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 38, bottom: 24, left: 60, right: 60),
+                    child: Text(
+                      "Please share your opinion about the product",
+                      textAlign: TextAlign.center,
+                      style: ETextStyle.metropolis(
+                          fontSize: 18, weight: FontWeight.w600),
+                    ),
+                  ),
+                  BlocBuilder<ReviewCubit, ReviewState>(
+                      buildWhen: (previous, current) =>
+                          previous.reviewContent.length !=
+                              current.reviewContent.length ||
+                          previous.contentStatus != current.contentStatus,
+                      builder: (context, state) {
+                        return Column(
+                          children: [
+                            state.contentStatus ==
+                                        ContentReviewStatus.initial ||
+                                    state.contentStatus ==
+                                        ContentReviewStatus.typed
+                                ? const SizedBox()
+                                : Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "Please Type Review",
+                                        style: ETextStyle.metropolis(
+                                            color: Colors.red),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      )
+                                    ],
                                   ),
-                                  const SizedBox(
-                                    height: 5,
-                                  )
-                                ],
-                              ),
-                        _contentReview(
-                            context.read<ReviewCubit>().contentReviewChanged,
-                            state.reviewContent),
-                      ],
-                    );
-                  }),
-              const SizedBox(
-                height: 40,
-              ),
-              Container(
-                padding: const EdgeInsets.only(left: 16),
-                height: 104,
-                child: BlocBuilder<ReviewCubit, ReviewState>(
-                    buildWhen: (previous, current) =>
-                        previous.imageStatus != current.imageStatus,
-                    builder: (context, state) {
-                      return ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          if (index != state.imageLocalPaths.length) {
-                            return _imageReview(state.imageLocalPaths[index],
-                                context.read<ReviewCubit>().removeImage);
-                          } else if (state.imageLocalPaths.length < 5) {
-                            return _addImageButton(context, () {
-                              context
-                                  .read<ReviewCubit>()
-                                  .getImageFromGallery(context);
-                              Navigator.of(context, rootNavigator: true)
-                                  .pop(showDialog);
-                            }, () {
-                              context
-                                  .read<ReviewCubit>()
-                                  .getImageFromCamera(context);
-                              Navigator.of(context, rootNavigator: true)
-                                  .pop(showDialog);
-                            });
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                        itemCount: state.imageLocalPaths.length + 1,
-                      );
-                    }),
-              )
+                            _contentReview(
+                                context
+                                    .read<ReviewCubit>()
+                                    .contentReviewChanged,
+                                state.reviewContent),
+                          ],
+                        );
+                      }),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 16),
+                    height: 104,
+                    child: BlocBuilder<ReviewCubit, ReviewState>(
+                        buildWhen: (previous, current) =>
+                            previous.imageStatus != current.imageStatus,
+                        builder: (context, state) {
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            physics: const ClampingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              if (index != state.imageLocalPaths.length) {
+                                return _imageReview(
+                                    state.imageLocalPaths[index],
+                                    context.read<ReviewCubit>().removeImage);
+                              } else if (state.imageLocalPaths.length < 5) {
+                                return _addImageButton(context, () {
+                                  context
+                                      .read<ReviewCubit>()
+                                      .getImageFromGallery(context);
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop(showDialog);
+                                }, () {
+                                  context
+                                      .read<ReviewCubit>()
+                                      .getImageFromCamera(context);
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop(showDialog);
+                                });
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                            itemCount: state.imageLocalPaths.length + 1,
+                          );
+                        }),
+                  )
+                ],
+              ))
             ],
           ),
         ));

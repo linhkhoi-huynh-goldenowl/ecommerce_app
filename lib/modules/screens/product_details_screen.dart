@@ -184,10 +184,14 @@ class ProductDetailsScreen extends StatelessWidget {
                         : SizedBox(
                             height: 300,
                             child: ListView.builder(
+                              padding: const EdgeInsets.only(left: 16),
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
-                                return MainProductCard(
-                                    product: state.relatedList[index]);
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 16),
+                                  child: MainProductCard(
+                                      product: state.relatedList[index]),
+                                );
                               },
                               itemCount: state.relatedList.length,
                             ),
@@ -280,7 +284,7 @@ Widget _favoriteButton(ProductItem productItem, List<SizeCloth> listSize) {
             iconPath: "assets/images/icons/heart.png",
             iconSize: 16,
             iconColor: const Color(0xffDADADA),
-            fillColor: Domain().favorite.checkContainTitle(productItem.title)
+            fillColor: Domain().favorite.checkContainId(productItem.id!)
                 ? const Color(0xffDB3022)
                 : Colors.white,
             padding: 12);

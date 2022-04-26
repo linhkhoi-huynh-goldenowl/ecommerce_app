@@ -5,6 +5,7 @@ import 'package:e_commerce_shop_app/modules/models/address.dart';
 import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../models/e_user.dart';
 import '../../repositories/x_result.dart';
 
 part 'address_state.dart';
@@ -28,15 +29,23 @@ class AddressCubit extends Cubit<AddressState> {
 
       addressSubscription = addressStream.listen((event) async {
         emit(state.copyWith(status: AddressStatus.loading));
-        var listAddress = await Domain().address.setAddress(event.data ?? []);
+        if (event.isError) {
+          emit(state.copyWith(
+              status: AddressStatus.failure,
+              addresses: [],
+              errMessage: event.error));
+        } else {
+          var listAddress = await Domain().address.setAddress(event.data ?? []);
 
-        emit(state.copyWith(
-            status: AddressStatus.success, addresses: listAddress));
+          emit(state.copyWith(
+              status: AddressStatus.success,
+              addresses: listAddress,
+              errMessage: ""));
+        }
       });
-      // var addresses = await Domain().address.getAddress();
-      // emit(state.copyWith(status: AddressStatus.success, addresses: addresses));
     } catch (_) {
-      emit(state.copyWith(status: AddressStatus.failure));
+      emit(state.copyWith(
+          status: AddressStatus.failure, errMessage: "Something not right"));
     }
   }
 
@@ -45,19 +54,33 @@ class AddressCubit extends Cubit<AddressState> {
       emit(state.copyWith(
           status: AddressStatus.loading,
           typeStatus: AddressTypeStatus.submitting));
-      var addresses = await Domain().address.addAddress(address);
-
-      var localUser = await Domain().profile.getProfile();
-      localUser.shippingAddress = localUser.shippingAddress + 1;
-      await Domain().profile.saveProfile(localUser);
-      emit(state.copyWith(
-          status: AddressStatus.success,
-          addresses: addresses,
-          typeStatus: AddressTypeStatus.submitted));
+      XResult<Address> addressRes = await Domain().address.addAddress(address);
+      if (addressRes.isSuccess) {
+        var localUser = await Domain().profile.getProfile();
+        localUser.shippingAddress = localUser.shippingAddress + 1;
+        XResult<EUser> resUser = await Domain().profile.saveProfile(localUser);
+        if (resUser.isSuccess) {
+          emit(state.copyWith(
+              status: AddressStatus.success,
+              typeStatus: AddressTypeStatus.submitted,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: AddressStatus.failure,
+              typeStatus: AddressTypeStatus.initial,
+              errMessage: resUser.error));
+        }
+      } else {
+        emit(state.copyWith(
+            status: AddressStatus.failure,
+            typeStatus: AddressTypeStatus.initial,
+            errMessage: addressRes.error));
+      }
     } catch (_) {
       emit(state.copyWith(
           status: AddressStatus.failure,
-          typeStatus: AddressTypeStatus.initial));
+          typeStatus: AddressTypeStatus.initial,
+          errMessage: "Something not right"));
     }
   }
 
@@ -66,15 +89,23 @@ class AddressCubit extends Cubit<AddressState> {
       emit(state.copyWith(
           status: AddressStatus.loading,
           typeStatus: AddressTypeStatus.submitting));
-      var addresses = await Domain().address.editAddress(address);
-      emit(state.copyWith(
-          status: AddressStatus.success,
-          addresses: addresses,
-          typeStatus: AddressTypeStatus.submitted));
+      XResult<Address> addressRes = await Domain().address.editAddress(address);
+      if (addressRes.isSuccess) {
+        emit(state.copyWith(
+            status: AddressStatus.success,
+            typeStatus: AddressTypeStatus.submitted,
+            errMessage: ""));
+      } else {
+        emit(state.copyWith(
+            status: AddressStatus.failure,
+            typeStatus: AddressTypeStatus.initial,
+            errMessage: addressRes.error));
+      }
     } catch (_) {
       emit(state.copyWith(
           status: AddressStatus.failure,
-          typeStatus: AddressTypeStatus.initial));
+          typeStatus: AddressTypeStatus.initial,
+          errMessage: "Something not right"));
     }
   }
 
@@ -83,26 +114,46 @@ class AddressCubit extends Cubit<AddressState> {
       emit(state.copyWith(
           status: AddressStatus.loading,
           typeStatus: AddressTypeStatus.submitting));
-      var addresses = await Domain().address.setDefaultAddress(address);
-      emit(state.copyWith(
-          status: AddressStatus.success,
-          addresses: addresses,
-          typeStatus: AddressTypeStatus.submitted));
+      XResult<Address> addressRes =
+          await Domain().address.setDefaultAddress(address);
+      if (addressRes.isSuccess) {
+        emit(state.copyWith(
+            status: AddressStatus.success,
+            typeStatus: AddressTypeStatus.submitted,
+            errMessage: ""));
+      } else {
+        emit(state.copyWith(
+            status: AddressStatus.failure,
+            typeStatus: AddressTypeStatus.initial,
+            errMessage: addressRes.error));
+      }
     } catch (_) {
       emit(state.copyWith(
           status: AddressStatus.failure,
-          typeStatus: AddressTypeStatus.initial));
+          typeStatus: AddressTypeStatus.initial,
+          errMessage: "Something not right"));
     }
   }
 
   void removeAddress(Address address) async {
     try {
       emit(state.copyWith(status: AddressStatus.loading));
-      var addresses = await Domain().address.removeAddress(address);
-      var localUser = await Domain().profile.getProfile();
-      localUser.shippingAddress = localUser.shippingAddress - 1;
-      await Domain().profile.saveProfile(localUser);
-      emit(state.copyWith(status: AddressStatus.success, addresses: addresses));
+      XResult<String> addressRes =
+          await Domain().address.removeAddress(address);
+      if (addressRes.isSuccess) {
+        var localUser = await Domain().profile.getProfile();
+        localUser.shippingAddress = localUser.shippingAddress - 1;
+        XResult<EUser> resUser = await Domain().profile.saveProfile(localUser);
+        if (resUser.isSuccess) {
+          emit(state.copyWith(status: AddressStatus.success, errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: AddressStatus.failure, errMessage: resUser.error));
+        }
+      } else {
+        emit(state.copyWith(
+            status: AddressStatus.failure, errMessage: addressRes.error));
+      }
     } catch (_) {
       emit(state.copyWith(status: AddressStatus.failure));
     }

@@ -98,9 +98,9 @@ class CheckoutScreen extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           )
                         : bottomCheckBar(() {
-                            if (card == null) {
+                            if (address == null) {
                               context.read<OrderCubit>().setUnselectAddress();
-                            } else if (address == null) {
+                            } else if (card == null) {
                               context.read<OrderCubit>().setUnselectCredit();
                             } else if (stateOrder.deliveryId == "") {
                               context.read<OrderCubit>().setUnselectDelivery();
@@ -434,7 +434,9 @@ Widget _creditCard(CreditCard card) {
         width: 16,
       ),
       Text(
-          "**** **** **** ${card.cardNumber.substring(card.cardNumber.length - 4)}")
+        "**** **** **** ${card.cardNumber.substring(card.cardNumber.length - 4)}",
+        style: ETextStyle.metropolis(fontSize: 14, weight: FontWeight.w600),
+      )
     ],
   );
 }

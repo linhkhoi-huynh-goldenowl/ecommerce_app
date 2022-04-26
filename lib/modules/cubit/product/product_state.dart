@@ -30,7 +30,8 @@ class ProductState extends Equatable {
       this.productList = const <ProductItem>[],
       this.status = ProductStatus.initial,
       this.type = TypeList.all,
-      this.isShowCategoryBar = true});
+      this.isShowCategoryBar = true,
+      this.errMessage = ""});
   final List<ProductItem> productList;
   final ProductStatus status;
   final GridProductStatus gridStatus;
@@ -42,6 +43,7 @@ class ProductState extends Equatable {
   final bool isSearch;
   final String categoryName;
   final TypeList type;
+  final String errMessage;
 
   ProductState copyWith(
       {ProductStatus? status,
@@ -54,7 +56,8 @@ class ProductState extends Equatable {
       GridProductStatus? gridStatus,
       SearchProductStatus? searchStatus,
       TypeList? type,
-      bool? isShowCategoryBar}) {
+      bool? isShowCategoryBar,
+      String? errMessage}) {
     return ProductState(
         status: status ?? this.status,
         productList: productList ?? this.productList,
@@ -66,7 +69,8 @@ class ProductState extends Equatable {
         gridStatus: gridStatus ?? this.gridStatus,
         searchStatus: searchStatus ?? this.searchStatus,
         type: type ?? this.type,
-        isShowCategoryBar: isShowCategoryBar ?? this.isShowCategoryBar);
+        isShowCategoryBar: isShowCategoryBar ?? this.isShowCategoryBar,
+        errMessage: errMessage ?? this.errMessage);
   }
 
   @override
@@ -81,6 +85,7 @@ class ProductState extends Equatable {
         gridStatus,
         searchStatus,
         type,
+        errMessage,
         isShowCategoryBar
       ];
 }

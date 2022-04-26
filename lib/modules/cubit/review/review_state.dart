@@ -24,7 +24,8 @@ class ReviewState extends Equatable {
       this.reviewContent = "",
       this.imageStatus = ImageStatus.initial,
       this.addStatus = AddReviewStatus.initial,
-      this.contentStatus = ContentReviewStatus.initial});
+      this.contentStatus = ContentReviewStatus.initial,
+      this.errMessage = ""});
   final ReviewStatus status;
   final List<ReviewModel> reviews;
   final String userId;
@@ -41,6 +42,8 @@ class ReviewState extends Equatable {
   final ImageStatus imageStatus;
   final List<String> imageLocalPaths;
   final AddReviewStatus addStatus;
+
+  final String errMessage;
   ReviewState copyWith(
       {ReviewStatus? status,
       List<ReviewModel>? reviews,
@@ -57,7 +60,8 @@ class ReviewState extends Equatable {
       String? reviewContent,
       ImageStatus? imageStatus,
       AddReviewStatus? addStatus,
-      ContentReviewStatus? contentStatus}) {
+      ContentReviewStatus? contentStatus,
+      String? errMessage}) {
     return ReviewState(
         reviews: reviews ?? this.reviews,
         status: status ?? this.status,
@@ -74,7 +78,8 @@ class ReviewState extends Equatable {
         reviewContent: reviewContent ?? this.reviewContent,
         imageStatus: imageStatus ?? this.imageStatus,
         addStatus: addStatus ?? this.addStatus,
-        contentStatus: contentStatus ?? this.contentStatus);
+        contentStatus: contentStatus ?? this.contentStatus,
+        errMessage: errMessage ?? this.errMessage);
   }
 
   @override
@@ -94,6 +99,7 @@ class ReviewState extends Equatable {
         reviewContent,
         imageStatus,
         addStatus,
-        contentStatus
+        contentStatus,
+        errMessage
       ];
 }

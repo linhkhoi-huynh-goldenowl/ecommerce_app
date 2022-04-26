@@ -12,12 +12,11 @@ class UserProvider extends BaseCollectionReference<EUser> {
                     EUser.fromJson(snapshot.data() as Map<String, dynamic>),
                 toFirestore: (user, _) => user.toJson()));
 
-  void setUser(EUser user) async {
-    await set(user);
+  Future<XResult<EUser>> setUser(EUser user) async {
+    return await set(user);
   }
 
   Future<XResult<EUser>> getUser(String id) async {
-    final XResult<EUser> res = await get(id);
-    return res;
+    return await get(id);
   }
 }

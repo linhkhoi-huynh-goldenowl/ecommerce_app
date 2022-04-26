@@ -7,6 +7,7 @@ class EUser extends BaseModel {
   final DateTime? dateOfBirth;
   int shippingAddress;
   String? creditDefault;
+  int orderCount;
   final bool notificationSale;
   final bool notificationNewArrivals;
   final bool notificationDelivery;
@@ -17,6 +18,7 @@ class EUser extends BaseModel {
     this.imageUrl,
     this.dateOfBirth,
     this.creditDefault,
+    required this.orderCount,
     required this.shippingAddress,
     required this.notificationSale,
     required this.notificationNewArrivals,
@@ -33,6 +35,7 @@ class EUser extends BaseModel {
         dateOfBirth: parsedJson['dateOfBirth'] != null
             ? DateTime.parse(parsedJson['dateOfBirth'])
             : null,
+        orderCount: parsedJson['orderCount'],
         shippingAddress: parsedJson['shippingAddress'],
         notificationDelivery: parsedJson['notificationDelivery'],
         notificationNewArrivals: parsedJson['notificationNewArrivals'],
@@ -49,6 +52,7 @@ class EUser extends BaseModel {
         'notificationSale': notificationSale,
         'notificationNewArrivals': notificationNewArrivals,
         'notificationDelivery': notificationDelivery,
-        'creditDefault': creditDefault
+        'creditDefault': creditDefault,
+        'orderCount': orderCount
       };
 }

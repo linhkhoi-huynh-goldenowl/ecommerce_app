@@ -20,22 +20,24 @@ class ProductCubit extends Cubit<ProductState> {
       final Stream<XResult<List<ProductItem>>> productsStream =
           Domain().product.getProductsStream();
 
-      productSubscription = productsStream.listen((event) {
-        Domain().product.setProducts(event.data ?? []);
-        final products = Domain().product.getProducts();
-        emit(state.copyWith(
-            status: ProductStatus.success,
-            productList: products,
-            type: TypeList.all));
+      productSubscription = productsStream.listen((event) async {
+        emit(state.copyWith(status: ProductStatus.loading));
+        if (event.isSuccess) {
+          final products = await Domain().product.setProducts(event.data ?? []);
+
+          emit(state.copyWith(
+              status: ProductStatus.success,
+              productList: products,
+              type: TypeList.all,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: ProductStatus.failure, errMessage: event.error));
+        }
       });
-      // emit(state.copyWith(status: ProductStatus.loading));
-      // final products = await Domain().product.getProducts();
-      // emit(state.copyWith(
-      //     status: ProductStatus.success,
-      //     productList: products,
-      //     type: TypeList.all));
     } catch (_) {
-      emit(state.copyWith(status: ProductStatus.failure));
+      emit(state.copyWith(
+          status: ProductStatus.failure, errMessage: "Something wrong"));
     }
   }
 
@@ -50,9 +52,12 @@ class ProductCubit extends Cubit<ProductState> {
       emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
       emit(state.copyWith(
           isGridLayout: !state.isGridLayout,
-          gridStatus: GridProductStatus.successGrid));
+          gridStatus: GridProductStatus.successGrid,
+          errMessage: ""));
     } catch (_) {
-      emit(state.copyWith(gridStatus: GridProductStatus.failureGrid));
+      emit(state.copyWith(
+          gridStatus: GridProductStatus.failureGrid,
+          errMessage: "Something wrong"));
     }
   }
 
@@ -61,9 +66,12 @@ class ProductCubit extends Cubit<ProductState> {
       emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
       emit(state.copyWith(
           isSearch: !state.isSearch,
-          gridStatus: GridProductStatus.successGrid));
+          gridStatus: GridProductStatus.successGrid,
+          errMessage: ""));
     } catch (_) {
-      emit(state.copyWith(gridStatus: GridProductStatus.failureGrid));
+      emit(state.copyWith(
+          gridStatus: GridProductStatus.failureGrid,
+          errMessage: "Something wrong"));
     }
   }
 
@@ -75,11 +83,13 @@ class ProductCubit extends Cubit<ProductState> {
       emit(state.copyWith(
           isShowCategoryBar: !state.isShowCategoryBar,
           gridStatus: GridProductStatus.successGrid,
-          status: ProductStatus.success));
+          status: ProductStatus.success,
+          errMessage: ""));
     } catch (_) {
       emit(state.copyWith(
           gridStatus: GridProductStatus.failureGrid,
-          status: ProductStatus.failure));
+          status: ProductStatus.failure,
+          errMessage: "Something wrong"));
     }
   }
 
@@ -103,7 +113,8 @@ class ProductCubit extends Cubit<ProductState> {
             searchInput: searchName ?? state.searchInput,
             type: typeList ?? state.type,
             productList: products,
-            gridStatus: GridProductStatus.successGrid));
+            gridStatus: GridProductStatus.successGrid,
+            errMessage: ""));
       } else {
         var products = await Domain().product.getProductsFilter(
             searchName: searchName ?? state.searchInput,
@@ -116,10 +127,13 @@ class ProductCubit extends Cubit<ProductState> {
             searchInput: searchName ?? state.searchInput,
             type: typeList ?? state.type,
             productList: products,
-            gridStatus: GridProductStatus.successGrid));
+            gridStatus: GridProductStatus.successGrid,
+            errMessage: ""));
       }
     } catch (_) {
-      emit(state.copyWith(gridStatus: GridProductStatus.failureGrid));
+      emit(state.copyWith(
+          gridStatus: GridProductStatus.failureGrid,
+          errMessage: "Something wrong"));
     }
   }
 }

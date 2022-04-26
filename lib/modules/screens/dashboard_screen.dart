@@ -48,61 +48,63 @@ class DashboardScreen extends StatelessWidget {
                   selectedItemColor: Colors.red,
                   selectedFontSize: 14,
                   unselectedFontSize: 14,
-                  selectedLabelStyle: ETextStyle.metropolis(),
-                  unselectedLabelStyle: ETextStyle.metropolis(),
+                  selectedLabelStyle: ETextStyle.metropolis(
+                      fontSize: 10, weight: FontWeight.w600),
+                  unselectedLabelStyle: ETextStyle.metropolis(
+                      fontSize: 10, weight: FontWeight.w600),
                   items: const [
                     BottomNavigationBarItem(
                       activeIcon: ImageIcon(
                         AssetImage("assets/images/icons/home_fill.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       icon: ImageIcon(
                         AssetImage("assets/images/icons/home.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       label: 'Home',
                     ),
                     BottomNavigationBarItem(
                       activeIcon: ImageIcon(
                         AssetImage("assets/images/icons/shop_fill.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       icon: ImageIcon(
                         AssetImage("assets/images/icons/shop.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       label: 'Shop',
                     ),
                     BottomNavigationBarItem(
                       activeIcon: ImageIcon(
                         AssetImage("assets/images/icons/bag_fill.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       icon: ImageIcon(
                         AssetImage("assets/images/icons/bag.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       label: 'Bag',
                     ),
                     BottomNavigationBarItem(
                       activeIcon: ImageIcon(
                         AssetImage("assets/images/icons/heart_fill.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       icon: ImageIcon(
-                        AssetImage("assets/images/icons/hear_outline.png"),
-                        size: 38,
+                        AssetImage("assets/images/icons/heart.png"),
+                        size: 30,
                       ),
-                      label: 'favorites',
+                      label: 'Favorites',
                     ),
                     BottomNavigationBarItem(
                       activeIcon: ImageIcon(
                         AssetImage("assets/images/icons/person_fill.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       icon: ImageIcon(
                         AssetImage("assets/images/icons/person.png"),
-                        size: 38,
+                        size: 30,
                       ),
                       label: 'Profile',
                     ),

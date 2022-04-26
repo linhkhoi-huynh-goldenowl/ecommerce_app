@@ -9,37 +9,45 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
   List<FavoriteProduct> _listFavorites = [];
   final FavoriteProvider _favoriteProvider = FavoriteProvider();
   @override
-  Future<List<FavoriteProduct>> addProductToFavorite(
+  Future<XResult<FavoriteProduct>> addProductToFavorite(
       FavoriteProduct item) async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
     item.userId = userId;
     item.id = "$userId-${item.productItem.id}- ${item.size}";
-    if (checkNotContainInList(item)) {
-      XResult<FavoriteProduct> result =
-          await _favoriteProvider.addFavorite(item);
-      _listFavorites.add(result.data!);
-    }
+    return await _favoriteProvider.addFavorite(item);
+  }
+
+  @override
+  Future<List<FavoriteProduct>> addFavoriteToLocal(FavoriteProduct item) async {
+    _listFavorites.add(item);
     return _listFavorites;
   }
 
   @override
-  Future<List<FavoriteProduct>> removeFavorite(FavoriteProduct item) async {
-    await _favoriteProvider.removeFavorite(item);
+  Future<List<FavoriteProduct>> setFavorites(
+      List<FavoriteProduct> favorites) async {
+    _listFavorites = favorites;
+    return _listFavorites;
+  }
+
+  @override
+  Future<XResult<String>> removeFavorite(FavoriteProduct item) async {
+    return await _favoriteProvider.removeFavorite(item);
+  }
+
+  @override
+  Future<List<FavoriteProduct>> removeFavoriteToLocal(
+      FavoriteProduct item) async {
     _listFavorites.removeWhere((element) =>
         element.size == item.size && element.productItem == item.productItem);
-
-    if (_listFavorites
-        .where((element) => element.productItem == item.productItem)
-        .toList()
-        .isEmpty) {}
     return _listFavorites;
   }
 
   @override
-  bool checkContainTitle(String title) {
+  bool checkContainId(String id) {
     return _listFavorites
-        .where((element) => element.productItem.title == title)
+        .where((element) => element.productItem.id == id)
         .toList()
         .isNotEmpty;
   }
@@ -48,20 +56,17 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
   bool checkNotContainInList(FavoriteProduct item) {
     return _listFavorites
         .where((element) =>
-            element.productItem.title == item.productItem.title &&
+            element.productItem.id == item.productItem.id &&
             element.size == item.size)
         .toList()
         .isEmpty;
   }
 
   @override
-  Future<List<FavoriteProduct>> getFavorites() async {
+  Future<XResult<List<FavoriteProduct>>> getFavorites() async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
-    XResult<List<FavoriteProduct>> result =
-        await _favoriteProvider.getFavoritesByUser(userId ?? "");
-    _listFavorites = result.data ?? [];
-    return _listFavorites;
+    return await _favoriteProvider.getFavoritesByUser(userId ?? "");
   }
 
   @override

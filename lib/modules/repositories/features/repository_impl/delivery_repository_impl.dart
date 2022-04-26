@@ -8,10 +8,8 @@ class DeliveryRepositoryImpl extends DeliveryRepository {
   List<Delivery> _listDeliveries = [];
   final DeliveryProvider _deliveryProvider = DeliveryProvider();
   @override
-  Future<List<Delivery>> getDeliveries() async {
-    XResult<List<Delivery>> result = await _deliveryProvider.getAllDelivery();
-    _listDeliveries = result.data ?? [];
-    return _listDeliveries;
+  Future<XResult<List<Delivery>>> getDeliveries() async {
+    return await _deliveryProvider.getAllDelivery();
   }
 
   @override
@@ -19,5 +17,11 @@ class DeliveryRepositoryImpl extends DeliveryRepository {
     final deliveryResult =
         _listDeliveries.firstWhere((element) => element.id == id);
     return deliveryResult;
+  }
+
+  @override
+  Future<List<Delivery>> setDeliveries(List<Delivery> deli) async {
+    _listDeliveries = deli;
+    return _listDeliveries;
   }
 }

@@ -11,29 +11,31 @@ class ReviewRepositoryImpl extends ReviewRepository {
   final List<String> _listImage = [];
   final ReviewProvider _reviewProvider = ReviewProvider();
   @override
-  Future<XResult<List<ReviewModel>>> addReviewToProduct(
-      ReviewModel item) async {
+  Future<XResult<ReviewModel>> addReviewToProduct(ReviewModel item) async {
     final account = await Domain().profile.getProfile();
     item.accountAvatar = account.imageUrl;
     item.accountName = account.name;
     item.createdDate = Timestamp.now();
     item.id = "${item.accountName}-${item.productId}- ${item.createdDate}";
 
-    XResult<ReviewModel> result =
-        await _reviewProvider.addReviewToProduct(item);
-    if (result.isSuccess) {
-      _listReviews.add(result.data!);
-      return XResult.success(_listReviews);
-    } else {
-      return XResult.error(result.error);
-    }
+    return await _reviewProvider.addReviewToProduct(item);
   }
 
   @override
-  Future<List<ReviewModel>> getReviewsFromProduct(String productId) async {
-    XResult<List<ReviewModel>> result =
-        await _reviewProvider.getReviewByProduct(productId);
-    _listReviews = result.data ?? [];
+  Future<List<ReviewModel>> addReviewToLocal(ReviewModel item) async {
+    _listReviews.add(item);
+    return _listReviews;
+  }
+
+  @override
+  Future<XResult<List<ReviewModel>>> getReviewsFromProduct(
+      String productId) async {
+    return await _reviewProvider.getReviewByProduct(productId);
+  }
+
+  @override
+  Future<List<ReviewModel>> setReviewList(List<ReviewModel> reviews) async {
+    _listReviews = reviews;
     _listReviews.sort(
       (a, b) => b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
     );
@@ -41,13 +43,18 @@ class ReviewRepositoryImpl extends ReviewRepository {
   }
 
   @override
-  Future<List<ReviewModel>> getReviewsFromProductWithImage(
-      String productId) async {
-    return _listReviews.where((element) => element.images.isNotEmpty).toList();
+  Future<List<ReviewModel>> getReviewsFromProductWithImage(bool isImage) async {
+    if (isImage) {
+      return _listReviews
+          .where((element) => element.images.isNotEmpty)
+          .toList();
+    } else {
+      return _listReviews;
+    }
   }
 
   @override
-  Future<List<ReviewModel>> addLikeToReview(
+  Future<XResult<ReviewModel>> addLikeToReview(
       ReviewModel item, String userId) async {
     final indexLikeUser = item.like.indexWhere((element) => element == userId);
     if (indexLikeUser < 0) {
@@ -56,7 +63,11 @@ class ReviewRepositoryImpl extends ReviewRepository {
       item.like.removeAt(indexLikeUser);
     }
 
-    await _reviewProvider.addReviewToProduct(item);
+    return await _reviewProvider.addReviewToProduct(item);
+  }
+
+  @override
+  Future<List<ReviewModel>> addLikeToLocal(ReviewModel item) async {
     final indexList =
         _listReviews.indexWhere((element) => element.id == item.id);
     _listReviews[indexList] == item;
