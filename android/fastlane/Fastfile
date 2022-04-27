@@ -18,7 +18,7 @@ default_platform(:android)
 platform :android do
   desc "Deploy a beta version to the Google Play"
   lane :beta do
-    gradle(task: "clean bundleRelease", project_dir: '../../android/')
+    gradle(task: "clean bundleRelease", gradle_path: '../../android/gradle/wrapper/')
     upload_to_play_store(track: 'beta',
 	package_name: 'com.goldenowl.e_commerce_shop_app',
 	version_name: '1.0.9+8',
