@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/models/e_user.dart';
-import 'package:e_commerce_app/modules/repositories/domain.dart';
-import 'package:e_commerce_app/modules/repositories/x_result.dart';
+import 'package:e_commerce_shop_app/modules/models/e_user.dart';
+import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
+import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -32,7 +32,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
       final XResult<EUser> result = await Domain().auth.login(email, password);
       if (result.data != null) {
-        Domain().profile.setCurrentUser(result.data!);
+        // Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,

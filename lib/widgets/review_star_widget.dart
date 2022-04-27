@@ -1,5 +1,5 @@
-import 'package:e_commerce_app/config/styles/text_style.dart';
-import 'package:e_commerce_app/widgets/star_bar.dart';
+import 'package:e_commerce_shop_app/config/styles/text_style.dart';
+import 'package:e_commerce_shop_app/widgets/star_bar.dart';
 import 'package:flutter/material.dart';
 
 class ReviewStarWidget extends StatelessWidget {

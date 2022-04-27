@@ -32,6 +32,13 @@ class BaseCollectionReference<T extends BaseModel> {
         .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
   }
 
+  Stream<XResult<List<T>>> snapshotsAllQuery(String param, String variable) {
+    return ref
+        .where(param, isEqualTo: variable)
+        .snapshots()
+        .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
+  }
+
   _onSuccessWithQuerySnapshot(QuerySnapshot snapshot) {
     List<QueryDocumentSnapshot<T>> results =
         snapshot.docs as List<QueryDocumentSnapshot<T>>;

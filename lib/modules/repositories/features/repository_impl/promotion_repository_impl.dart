@@ -1,6 +1,6 @@
-import 'package:e_commerce_app/modules/models/promo_model.dart';
-import 'package:e_commerce_app/modules/repositories/features/repository/promotion_repository.dart';
-import 'package:e_commerce_app/modules/repositories/provider/promotion_provider.dart';
+import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
+import 'package:e_commerce_shop_app/modules/repositories/features/repository/promotion_repository.dart';
+import 'package:e_commerce_shop_app/modules/repositories/provider/promotion_provider.dart';
 
 class PromotionRepositoryImpl extends PromotionRepository {
   List<PromoModel> _listPromo = [];

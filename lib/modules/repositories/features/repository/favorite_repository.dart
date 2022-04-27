@@ -1,4 +1,4 @@
-import 'package:e_commerce_app/modules/models/favorite_product.dart';
+import 'package:e_commerce_shop_app/modules/models/favorite_product.dart';
 
 import '../../../cubit/product/product_cubit.dart';
 import '../../x_result.dart';

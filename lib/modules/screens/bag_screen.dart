@@ -1,10 +1,13 @@
-import 'package:e_commerce_app/modules/cubit/cart/cart_cubit.dart';
-import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
+import 'package:e_commerce_shop_app/config/routes/router.dart';
+import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
+import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../config/styles/text_style.dart';
 import '../../dialogs/bottom_sheet_app.dart';
+import '../../utils/services/navigator_services.dart';
 import '../../widgets/button_intro.dart';
 import '../../widgets/cart_card_widget.dart';
 import '../../widgets/promo_code_field.dart';
@@ -101,7 +104,25 @@ class BagScreen extends StatelessWidget {
                         const SizedBox(
                           height: 32,
                         ),
-                        ButtonIntro(func: () {}, title: "CHECK OUT")
+                        ButtonIntro(
+                            func: () {
+                              if (state.carts.isNotEmpty) {
+                                Navigator.of(NavigationService
+                                            .navigatorKey.currentContext ??
+                                        context)
+                                    .pushNamed(Routes.checkoutScreen,
+                                        arguments: {
+                                      'carts': state.carts,
+                                      'promoId': state.code,
+                                      'totalPrice': state.totalPrice,
+                                      'contextBag': context
+                                    });
+                              } else {
+                                AppSnackBar.showSnackBar(
+                                    context, "Please add product to cart");
+                              }
+                            },
+                            title: "CHECK OUT")
                       ],
                     ))),
           );

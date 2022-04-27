@@ -1,6 +1,6 @@
-import 'package:e_commerce_app/config/routes/router.dart';
-import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
-import 'package:e_commerce_app/widgets/button_intro.dart';
+import 'package:e_commerce_shop_app/config/routes/router.dart';
+import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_shop_app/widgets/button_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

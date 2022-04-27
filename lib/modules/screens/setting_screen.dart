@@ -1,6 +1,6 @@
-import 'package:e_commerce_app/dialogs/avatar_change_image.dart';
-import 'package:e_commerce_app/dialogs/button_change_password.dart';
-import 'package:e_commerce_app/utils/helpers/show_snackbar.dart';
+import 'package:e_commerce_shop_app/dialogs/avatar_change_image.dart';
+import 'package:e_commerce_shop_app/dialogs/button_change_password.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -239,7 +239,6 @@ Widget _leadingButton(BuildContext context) {
   return IconButton(
     icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
     onPressed: () {
-      context.read<ProfileCubit>().profileLoaded();
       Navigator.pop(context);
     },
   );

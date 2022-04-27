@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors_in_immutables
 
-import 'package:e_commerce_app/modules/models/product_item.dart';
-import 'package:e_commerce_app/modules/screens/product_details_screen.dart';
-import 'package:e_commerce_app/modules/screens/setting_screen.dart';
+import 'package:e_commerce_shop_app/modules/models/product_item.dart';
+import 'package:e_commerce_shop_app/modules/screens/product_details_screen.dart';
+import 'package:e_commerce_shop_app/modules/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../config/routes/router.dart';
@@ -20,6 +20,12 @@ abstract class ProductCoordinatorBase extends StatelessWidget {
   void navigateLogin() {
     Navigator.of(context).popUntil((route) {
       return route.settings.name == Routes.landing;
+    });
+  }
+
+  void navigateDashboard() {
+    Navigator.of(context).popUntil((route) {
+      return route.settings.name == Routes.dashboard;
     });
   }
 

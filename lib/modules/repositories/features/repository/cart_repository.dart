@@ -1,4 +1,4 @@
-import 'package:e_commerce_app/modules/models/cart_model.dart';
+import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 
 abstract class CartRepository {
   Future<List<CartModel>> addProductToCart(CartModel item);
@@ -8,4 +8,5 @@ abstract class CartRepository {
   int getIndexContainList(CartModel item);
   double getTotalPrice([int? salePercent]);
   Future<List<CartModel>> getCarts();
+  Future<List<CartModel>> clearCarts();
 }

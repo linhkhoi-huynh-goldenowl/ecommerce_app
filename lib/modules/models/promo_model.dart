@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:e_commerce_app/modules/models/base_model.dart';
+import 'package:e_commerce_shop_app/modules/models/base_model.dart';
 
 class PromoModel extends BaseModel {
   final String name;

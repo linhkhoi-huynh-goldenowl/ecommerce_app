@@ -1,7 +1,7 @@
-import 'package:e_commerce_app/modules/models/cart_model.dart';
-import 'package:e_commerce_app/modules/repositories/features/repository/cart_repository.dart';
-import 'package:e_commerce_app/modules/repositories/provider/cart_provider.dart';
-import 'package:e_commerce_app/utils/helpers/product_helpers.dart';
+import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
+import 'package:e_commerce_shop_app/modules/repositories/features/repository/cart_repository.dart';
+import 'package:e_commerce_shop_app/modules/repositories/provider/cart_provider.dart';
+import 'package:e_commerce_shop_app/utils/helpers/product_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../x_result.dart';
@@ -94,5 +94,14 @@ class CartRepositoryImpl extends CartRepository {
       total = total - (total * salePercent / 100);
     }
     return total;
+  }
+
+  @override
+  Future<List<CartModel>> clearCarts() async {
+    for (var item in _listCarts) {
+      await _cartProvider.removeCart(item);
+    }
+    _listCarts.clear();
+    return _listCarts;
   }
 }

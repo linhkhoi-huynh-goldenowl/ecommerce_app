@@ -1,11 +1,12 @@
-import 'package:e_commerce_app/modules/models/base_model.dart';
+import 'package:e_commerce_shop_app/modules/models/base_model.dart';
 
 class EUser extends BaseModel {
   final String email;
   final String name;
   final String? imageUrl;
   final DateTime? dateOfBirth;
-  final List<String> shippingAddress;
+  int shippingAddress;
+  String? creditDefault;
   final bool notificationSale;
   final bool notificationNewArrivals;
   final bool notificationDelivery;
@@ -15,6 +16,7 @@ class EUser extends BaseModel {
     required this.name,
     this.imageUrl,
     this.dateOfBirth,
+    this.creditDefault,
     required this.shippingAddress,
     required this.notificationSale,
     required this.notificationNewArrivals,
@@ -27,10 +29,11 @@ class EUser extends BaseModel {
         email: parsedJson['email'],
         name: parsedJson['name'],
         imageUrl: parsedJson['imageUrl'],
+        creditDefault: parsedJson['creditDefault'],
         dateOfBirth: parsedJson['dateOfBirth'] != null
             ? DateTime.parse(parsedJson['dateOfBirth'])
             : null,
-        shippingAddress: parsedJson['shippingAddress'].cast<String>(),
+        shippingAddress: parsedJson['shippingAddress'],
         notificationDelivery: parsedJson['notificationDelivery'],
         notificationNewArrivals: parsedJson['notificationNewArrivals'],
         notificationSale: parsedJson['notificationSale'],
@@ -46,5 +49,6 @@ class EUser extends BaseModel {
         'notificationSale': notificationSale,
         'notificationNewArrivals': notificationNewArrivals,
         'notificationDelivery': notificationDelivery,
+        'creditDefault': creditDefault
       };
 }

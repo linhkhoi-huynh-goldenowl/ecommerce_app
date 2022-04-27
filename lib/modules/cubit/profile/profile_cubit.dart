@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/models/e_user.dart';
-import 'package:e_commerce_app/modules/repositories/domain.dart';
-import 'package:e_commerce_app/utils/services/firebase_storage.dart';
-import 'package:e_commerce_app/utils/services/image_picker_services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_shop_app/modules/models/e_user.dart';
+import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
+import 'package:e_commerce_shop_app/utils/services/firebase_storage.dart';
+import 'package:e_commerce_shop_app/utils/services/image_picker_services.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +17,13 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileState(dateOfBirth: DateTime(1950))) {
     profileLoaded();
     setLoginType();
+  }
+  StreamSubscription? profileSubscription;
+
+  @override
+  Future<void> close() {
+    profileSubscription?.cancel();
+    return super.close();
   }
 
   void setLoginType() async {
@@ -27,21 +37,49 @@ class ProfileCubit extends Cubit<ProfileState> {
   void profileLoaded() async {
     try {
       emit(state.copyWith(status: ProfileStatus.loading));
-      final profile = await Domain().profile.getProfile();
+      final pref = await SharedPreferences.getInstance();
+      final userId = pref.getString("userId");
+      final Stream<DocumentSnapshot<EUser>> profileStream =
+          Domain().profile.getProfileStream(userId!);
 
-      emit(state.copyWith(
-          id: profile.id,
-          status: ProfileStatus.success,
-          saveStatus: SaveStatus.initial,
-          savePassStatus: SavePassStatus.initial,
-          name: profile.name,
-          imageUrl: profile.imageUrl,
-          email: profile.email,
-          dateOfBirth: profile.dateOfBirth,
-          notificationDelivery: profile.notificationDelivery,
-          notificationNewArrivals: profile.notificationNewArrivals,
-          notificationSale: profile.notificationSale,
-          shippingAddress: profile.shippingAddress));
+      profileSubscription = profileStream.listen((event) async {
+        emit(state.copyWith(status: ProfileStatus.loading));
+        Domain().profile.setCurrentUser(event.data()!);
+        final profile = await Domain().profile.getProfile();
+
+        emit(state.copyWith(
+            id: profile.id,
+            status: ProfileStatus.success,
+            saveStatus: SaveStatus.initial,
+            savePassStatus: SavePassStatus.initial,
+            name: profile.name,
+            imageUrl: profile.imageUrl,
+            creditNumber: profile.creditDefault,
+            email: profile.email,
+            dateOfBirth: profile.dateOfBirth,
+            notificationDelivery: profile.notificationDelivery,
+            notificationNewArrivals: profile.notificationNewArrivals,
+            notificationSale: profile.notificationSale,
+            shippingAddress: profile.shippingAddress));
+      });
+
+      // emit(state.copyWith(status: ProfileStatus.loading));
+
+      // final profile = await Domain().profile.getProfile();
+
+      // emit(state.copyWith(
+      //     id: profile.id,
+      //     status: ProfileStatus.success,
+      //     saveStatus: SaveStatus.initial,
+      //     savePassStatus: SavePassStatus.initial,
+      //     name: profile.name,
+      //     imageUrl: profile.imageUrl,
+      //     email: profile.email,
+      //     dateOfBirth: profile.dateOfBirth,
+      //     notificationDelivery: profile.notificationDelivery,
+      //     notificationNewArrivals: profile.notificationNewArrivals,
+      //     notificationSale: profile.notificationSale,
+      //     shippingAddress: profile.shippingAddress));
     } catch (_) {
       emit(state.copyWith(status: ProfileStatus.failure));
     }
@@ -62,6 +100,7 @@ class ProfileCubit extends Cubit<ProfileState> {
               name: state.name,
               imageUrl: result.data,
               dateOfBirth: state.dateOfBirth,
+              creditDefault: state.creditNumber,
               shippingAddress: state.shippingAddress,
               notificationSale: state.notificationSale,
               notificationNewArrivals: state.notificationNewArrivals,
@@ -84,6 +123,7 @@ class ProfileCubit extends Cubit<ProfileState> {
             name: state.name,
             imageUrl: state.imageUrl,
             dateOfBirth: state.dateOfBirth,
+            creditDefault: state.creditNumber,
             shippingAddress: state.shippingAddress,
             notificationSale: state.notificationSale,
             notificationNewArrivals: state.notificationNewArrivals,

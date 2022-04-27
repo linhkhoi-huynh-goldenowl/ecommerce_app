@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_app/modules/models/product_item.dart';
-import 'package:e_commerce_app/modules/models/review_model.dart';
-import 'package:e_commerce_app/utils/helpers/review_helpers.dart';
+import 'package:e_commerce_shop_app/modules/models/product_item.dart';
+import 'package:e_commerce_shop_app/modules/models/review_model.dart';
+import 'package:e_commerce_shop_app/utils/helpers/review_helpers.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
