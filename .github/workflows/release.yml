@@ -14,12 +14,14 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: '2.6'
+      - name: cd android root
+        run: |
+          cd android
           
       - name: Install bundle
         run: |
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
-          gem install fastlane -NV
           
       - name: Configure Keystore
         run: |
