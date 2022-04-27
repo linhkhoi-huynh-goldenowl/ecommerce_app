@@ -1,7 +1,5 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
-import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
-import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -29,15 +27,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthenticationCubit>(
-              create: (BuildContext context) => AuthenticationCubit()),
-          BlocProvider<FavoriteCubit>(
-              create: (BuildContext context) => FavoriteCubit()),
-          BlocProvider<CartCubit>(
-              create: (BuildContext context) => CartCubit()),
-        ],
+    return BlocProvider<AuthenticationCubit>(
+        create: (BuildContext context) => AuthenticationCubit(),
         child: MaterialApp(
           //Add device preview to see UI on IOS device
           useInheritedMediaQuery: true,
