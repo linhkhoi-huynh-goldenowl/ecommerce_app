@@ -14,23 +14,22 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: '2.6'
-      - name: cd android root
-        run: |
-          cd android
           
       - name: Install bundle
+        working-directory: ../android
         run: |
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           
       - name: Configure Keystore
+        working-directory: ../android
         run: |
           echo "$ANDROID_KEYSTORE_FILE" > keystore.jks.b64
-          base64 -d -i keystore.jks.b64 > android/app/upload-keystore1.jks
-          echo "storeFile=keystore" >> android/keystore.properties
-          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> android/keystore.properties
-          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> android/keystore.properties
-          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> android/keystore.properties
+          base64 -d -i keystore.jks.b64 > app/upload-keystore1.jks
+          echo "storeFile=keystore" >> keystore.properties
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> keystore.properties
         env:
           ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
@@ -38,6 +37,7 @@ jobs:
           KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
 
       - name: Create Google Play Config file
+        working-directory: ../android
         run : |
           echo "$PLAY_CONFIG_JSON" > play_config.json.b64
           base64 -d -i play_config.json.b64 > play_config.json
@@ -45,4 +45,5 @@ jobs:
           PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG_JSON }}
           
       - name: Distribute app to Beta track 🚀
+        working-directory: ../android
         run: bundle exec fastlane beta          
