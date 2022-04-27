@@ -48,10 +48,10 @@
 #         subdirectory: android #mention if the fastlane folder is inside the android folder.    
 #       - name: Distribute app to Beta track 🚀
 #         run: bundle exec fastlane beta          
-
 name: Flutter CICD # action name
 on:
-push:
+  push:
+    branches: [ git_action ]
 tags:
 - “v*”
 jobs:
