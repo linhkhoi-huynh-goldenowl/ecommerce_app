@@ -10,6 +10,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: fastlane/github-actions/fastlane-env-reminder@latest
 
       - uses: actions/setup-ruby@v1
         with:
