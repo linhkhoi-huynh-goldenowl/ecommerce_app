@@ -6,7 +6,7 @@ import '../../x_result.dart';
 abstract class ProfileRepository {
   Future<void> setCurrentUser(EUser user);
   Future<EUser> getProfile();
-  Future<bool> saveProfile(EUser eUser);
+  Future<XResult<EUser>> saveProfile(EUser eUser);
   Stream<DocumentSnapshot<EUser>> getProfileStream(String id);
   Future<XResult> changePassword(
       String email, String oldPass, String newPassword);

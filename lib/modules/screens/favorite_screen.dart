@@ -1,15 +1,15 @@
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
-import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_shop_app/widgets/favorite_card_grid.dart';
-import 'package:e_commerce_shop_app/widgets/favorite_card_list.dart';
-import 'package:e_commerce_shop_app/widgets/search_text_field.dart';
-import 'package:e_commerce_shop_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../config/styles/text_style.dart';
+import '../../widgets/favorite_card_grid.dart';
+import '../../widgets/favorite_card_list.dart';
 import '../../widgets/filter_bar_widget.dart';
+import '../../widgets/search_text_field.dart';
+import '../../widgets/sliver_app_bar_delegate.dart';
 import '../cubit/category/category_cubit.dart';
+import '../cubit/favorite/favorite_cubit.dart';
+import '../cubit/product/product_cubit.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
@@ -116,7 +116,8 @@ class FavoriteScreen extends StatelessWidget {
                                         child: Text("No favorites"),
                                       )
                                     : state.isGridLayout
-                                        ? _displayGridView(state.favorites)
+                                        ? _displayGridView(
+                                            state.favorites, context)
                                         : _displayListView(state.favorites);
                           }))),
             );
@@ -129,15 +130,19 @@ class FavoriteScreen extends StatelessWidget {
   }
 }
 
-GridView _displayGridView(List favorites) {
+GridView _displayGridView(List favorites, BuildContext context) {
   return GridView.builder(
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      childAspectRatio: 0.6,
+    padding: const EdgeInsets.only(left: 16, top: 32),
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
+      childAspectRatio: 0.55,
     ),
     itemBuilder: (BuildContext context, int index) {
-      return FavoriteCardGrid(
-        favoriteProduct: favorites[index],
+      return Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: FavoriteCardGrid(
+          favoriteProduct: favorites[index],
+        ),
       );
     },
     itemCount: favorites.length,
@@ -170,10 +175,15 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
     return FlexibleSpaceBar(
       titlePadding: EdgeInsets.only(
           right: 40,
-          left: isSearch == false ? 15 : 40,
+          left: isSearch == false
+              ? top < MediaQuery.of(context).size.height * 0.12
+                  ? 40
+                  : 16
+              : 40,
           top: isSearch == false ? 0 : 5,
-          bottom: isSearch == false ? 11 : 5),
-      centerTitle: top > 71 && top < 91 ? true : false,
+          bottom: isSearch == false ? 15 : 5),
+      centerTitle:
+          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
@@ -182,7 +192,12 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
                   "Favorites",
                   textAlign: TextAlign.start,
                   style: ETextStyle.metropolis(
-                      weight: FontWeight.w600, fontSize: 18),
+                      weight: top < MediaQuery.of(context).size.height * 0.12
+                          ? FontWeight.w600
+                          : FontWeight.w700,
+                      fontSize: top < MediaQuery.of(context).size.height * 0.12
+                          ? 20
+                          : 26),
                 )
               : SearchTextField(
                   initValue: searchInput,

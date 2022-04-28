@@ -9,19 +9,16 @@ import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
 class ProductRepositoryImpl implements ProductRepository {
   final ProductProvider _productProvider = ProductProvider();
   List<ProductItem> _listProduct = [];
-  @override
-  List<ProductItem> getProducts() {
-    return _listProduct;
-  }
-
-  @override
-  void setProducts(List<ProductItem> products) {
-    _listProduct = products;
-  }
 
   @override
   Stream<XResult<List<ProductItem>>> getProductsStream() {
     return _productProvider.snapshotsAll();
+  }
+
+  @override
+  Future<List<ProductItem>> setProducts(List<ProductItem> products) async {
+    _listProduct = products;
+    return _listProduct;
   }
 
   @override
@@ -115,15 +112,18 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<ProductItem?> getProductById(String id) async {
-    XResult<ProductItem> result = await _productProvider.getProduct(id);
-    return result.data;
+    final findResult =
+        _listProduct.where((element) => element.id == id).toList();
+    if (findResult.isNotEmpty) {
+      return findResult[0];
+    } else {
+      return null;
+    }
   }
 
   @override
-  Future<ProductItem?> updateProduct(ProductItem productItem) async {
-    XResult<ProductItem> result =
-        await _productProvider.updateProduct(productItem);
-    return result.data;
+  Future<XResult<ProductItem>> updateProduct(ProductItem productItem) async {
+    return await _productProvider.updateProduct(productItem);
   }
 
   @override

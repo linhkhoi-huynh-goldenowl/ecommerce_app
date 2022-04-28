@@ -114,7 +114,7 @@ class ShopCategoryScreen extends StatelessWidget {
                           );
                         } else {
                           if (state.isGridLayout) {
-                            return _displayGridView(state.productList);
+                            return _displayGridView(state.productList, context);
                           } else {
                             return _displayListView(state.productList);
                           }
@@ -132,14 +132,19 @@ class ShopCategoryScreen extends StatelessWidget {
   }
 }
 
-GridView _displayGridView(List productItems) {
+GridView _displayGridView(List productItems, BuildContext context) {
   return GridView.builder(
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
+    shrinkWrap: true,
+    padding: const EdgeInsets.only(top: 32, left: 16),
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
       childAspectRatio: 0.6,
     ),
     itemBuilder: (BuildContext context, int index) {
-      return MainProductCard(product: productItems[index]);
+      return Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: MainProductCard(product: productItems[index]),
+      );
     },
     itemCount: productItems.length,
   );
@@ -181,10 +186,15 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
     return FlexibleSpaceBar(
       titlePadding: EdgeInsets.only(
           right: 40,
-          left: isSearch == false ? 15 : 40,
+          left: isSearch == false
+              ? top < MediaQuery.of(context).size.height * 0.12
+                  ? 40
+                  : 16
+              : 40,
           top: isSearch == false ? 0 : 5,
-          bottom: isSearch == false ? 11 : 5),
-      centerTitle: top < 91 ? true : false,
+          bottom: isSearch == false ? 15 : 5),
+      centerTitle:
+          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
@@ -192,7 +202,10 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
               ? Text(
                   categoryName,
                   style: ETextStyle.metropolis(
-                      weight: FontWeight.w600, fontSize: 18),
+                      weight: top < MediaQuery.of(context).size.height * 0.12
+                          ? FontWeight.w600
+                          : FontWeight.w700,
+                      fontSize: 20),
                 )
               : SearchTextField(
                   initValue: searchInput,

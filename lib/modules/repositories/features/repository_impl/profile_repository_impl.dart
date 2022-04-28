@@ -15,14 +15,8 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
-  Future<bool> saveProfile(EUser eUser) async {
-    try {
-      _userProvider.setUser(eUser);
-
-      return true;
-    } catch (_) {
-      return false;
-    }
+  Future<XResult<EUser>> saveProfile(EUser eUser) async {
+    return await _userProvider.setUser(eUser);
   }
 
   @override

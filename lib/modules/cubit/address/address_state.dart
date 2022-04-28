@@ -19,7 +19,8 @@ class AddressState extends Equatable {
       this.status = AddressStatus.initial,
       this.typeStatus = AddressTypeStatus.initial,
       this.addresses = const [],
-      this.isDefault = false});
+      this.isDefault = false,
+      this.errMessage = ""});
 
   final String fullName;
   bool get isFullNameValid => fullName.length > 2;
@@ -47,6 +48,8 @@ class AddressState extends Equatable {
 
   final List<Address> addresses;
 
+  final String errMessage;
+
   AddressState copyWith(
       {String? fullName,
       String? address,
@@ -57,7 +60,8 @@ class AddressState extends Equatable {
       AddressStatus? status,
       AddressTypeStatus? typeStatus,
       List<Address>? addresses,
-      bool? isDefault}) {
+      bool? isDefault,
+      String? errMessage}) {
     return AddressState(
         status: status ?? this.status,
         fullName: fullName ?? this.fullName,
@@ -68,7 +72,8 @@ class AddressState extends Equatable {
         country: country ?? this.country,
         addresses: addresses ?? this.addresses,
         typeStatus: typeStatus ?? this.typeStatus,
-        isDefault: isDefault ?? this.isDefault);
+        isDefault: isDefault ?? this.isDefault,
+        errMessage: errMessage ?? this.errMessage);
   }
 
   @override
@@ -82,6 +87,7 @@ class AddressState extends Equatable {
         status,
         addresses,
         typeStatus,
-        isDefault
+        isDefault,
+        errMessage
       ];
 }

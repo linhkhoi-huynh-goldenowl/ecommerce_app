@@ -48,6 +48,7 @@ class AuthRepositoryImpl implements AuthRepository {
           name: name,
           dateOfBirth: null,
           shippingAddress: 0,
+          orderCount: 0,
           notificationSale: false,
           notificationNewArrivals: false,
           notificationDelivery: false);
@@ -151,6 +152,7 @@ class AuthRepositoryImpl implements AuthRepository {
           name: userCredential.user!.displayName ?? "",
           dateOfBirth: null,
           shippingAddress: 0,
+          orderCount: 0,
           notificationSale: false,
           notificationNewArrivals: false,
           notificationDelivery: false);

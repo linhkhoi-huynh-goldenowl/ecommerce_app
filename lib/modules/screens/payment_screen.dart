@@ -1,5 +1,6 @@
 import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/creditCard/credit_card_cubit.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
@@ -12,7 +13,14 @@ class PaymentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<CreditCardCubit>(
         create: (BuildContext context) => CreditCardCubit(),
-        child: BlocBuilder<CreditCardCubit, CreditCardState>(
+        child: BlocConsumer<CreditCardCubit, CreditCardState>(
+            listenWhen: (previous, current) =>
+                previous.status != current.status,
+            listener: (context, state) {
+              if (state.status == CreditCardStatus.failure) {
+                AppSnackBar.showSnackBar(context, state.errMessage);
+              }
+            },
             buildWhen: (previous, current) => previous.status != current.status,
             builder: (context, state) {
               return Scaffold(

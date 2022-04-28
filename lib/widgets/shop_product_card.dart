@@ -43,6 +43,7 @@ class ShopProductCard extends StatelessWidget {
                   child: Row(
                     children: [
                       ImageProductWidget(
+                          isGrid: false,
                           imagePath: productItem.images[0],
                           width: 104,
                           height: 104,
@@ -123,11 +124,10 @@ class ShopProductCard extends StatelessWidget {
                         iconPath: "assets/images/icons/heart.png",
                         iconSize: 16,
                         iconColor: const Color(0xffDADADA),
-                        fillColor: Domain()
-                                .favorite
-                                .checkContainTitle(productItem.title)
-                            ? const Color(0xffDB3022)
-                            : Colors.white,
+                        fillColor:
+                            Domain().favorite.checkContainId(productItem.id!)
+                                ? const Color(0xffDB3022)
+                                : Colors.white,
                         padding: 12);
                   }))
         ],

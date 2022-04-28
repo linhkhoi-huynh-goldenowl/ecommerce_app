@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
@@ -14,7 +15,13 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  //Add device preview to see UI on IOS device
+  runApp(
+    DevicePreview(
+      enabled: true,
+      builder: (context) => const MyApp(), // Wrap your app
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,6 +39,10 @@ class MyApp extends StatelessWidget {
               create: (BuildContext context) => CartCubit()),
         ],
         child: MaterialApp(
+          //Add device preview to see UI on IOS device
+          useInheritedMediaQuery: true,
+          locale: DevicePreview.locale(context),
+          builder: DevicePreview.appBuilder,
           navigatorKey: NavigationService.navigatorKey,
           debugShowCheckedModeBanner: false,
           onGenerateRoute: AppRouter.generateRoute,

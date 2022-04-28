@@ -16,14 +16,20 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       final XResult<EUser> result = await Domain().auth.checkAuthentication();
       if (result.isSuccess) {
-        Domain().profile.setCurrentUser(result.data!);
+        await Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
-            status: AuthenticationStatus.authenticated, eUser: result.data));
+            status: AuthenticationStatus.authenticated,
+            eUser: result.data,
+            messageError: ""));
       } else {
-        emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+        emit(state.copyWith(
+            status: AuthenticationStatus.unauthenticated,
+            messageError: result.error));
       }
     } on Exception {
-      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+      emit(state.copyWith(
+          status: AuthenticationStatus.unauthenticated,
+          messageError: "Something wrong"));
     }
   }
 
@@ -31,12 +37,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       emit(state.copyWith(submitStatus: AuthSubmitStatus.loading));
       final XResult<EUser> result = await Domain().auth.login(email, password);
-      if (result.data != null) {
-        // Domain().profile.setCurrentUser(result.data!);
+      if (result.isSuccess) {
+        Domain().profile.setCurrentUser(result.data!);
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,
-            submitStatus: AuthSubmitStatus.success));
+            submitStatus: AuthSubmitStatus.success,
+            messageError: ""));
         return true;
       } else {
         emit(state.copyWith(
@@ -46,7 +53,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         return false;
       }
     } on Exception {
-      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+      emit(state.copyWith(
+          status: AuthenticationStatus.unauthenticated,
+          messageError: "Something wrong"));
     }
     return false;
   }
@@ -73,7 +82,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       }
       return true;
     } on Exception {
-      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+      emit(state.copyWith(
+          status: AuthenticationStatus.unauthenticated,
+          messageError: "Something wrong"));
     }
     return false;
   }
@@ -97,7 +108,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       }
       return true;
     } on Exception {
-      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+      emit(state.copyWith(
+          status: AuthenticationStatus.unauthenticated,
+          messageError: "Something wrong"));
     }
     return false;
   }
@@ -120,7 +133,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       }
       return true;
     } on Exception {
-      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+      emit(state.copyWith(
+          status: AuthenticationStatus.unauthenticated,
+          messageError: "Something wrong"));
     }
     return false;
   }
@@ -132,7 +147,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       emit(state.copyWith(
           status: AuthenticationStatus.unauthenticated, eUser: null));
     } on Exception {
-      emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
+      emit(state.copyWith(
+          status: AuthenticationStatus.unauthenticated,
+          messageError: "Something wrong"));
     }
   }
 }

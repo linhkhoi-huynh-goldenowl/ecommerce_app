@@ -4,6 +4,7 @@ import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/review/review_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/review_model.dart';
 import 'package:e_commerce_shop_app/utils/helpers/review_helpers.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:e_commerce_shop_app/widgets/review_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,13 @@ class ProductRatingScreen extends StatelessWidget {
         BlocProvider.value(
             value: BlocProvider.of<ProductDetailCubit>(contextParent))
       ],
-      child: BlocBuilder<ReviewCubit, ReviewState>(
+      child: BlocConsumer<ReviewCubit, ReviewState>(
+          listenWhen: (previous, current) => previous.status != current.status,
+          listener: (context, state) {
+            if (state.status == ReviewStatus.failure) {
+              AppSnackBar.showSnackBar(context, state.errMessage);
+            }
+          },
           buildWhen: (previous, current) => previous.status != current.status,
           builder: (context, state) {
             switch (state.status) {
@@ -164,17 +171,22 @@ Widget _flexibleSpaceBar() {
     var top = constraints.biggest.height;
     return FlexibleSpaceBar(
       titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
-      centerTitle: top > 71 && top < 91 ? true : false,
+      centerTitle:
+          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
           child: Text(
-            top > 71 && top < 91 ? "Rating and reviews" : "Rating&Reviews",
+            top < MediaQuery.of(context).size.height * 0.12
+                ? "Rating and reviews"
+                : "Rating&Reviews",
             textAlign: TextAlign.start,
             style: ETextStyle.metropolis(
-                weight:
-                    top > 71 && top < 91 ? FontWeight.w600 : FontWeight.w700,
-                fontSize: top > 71 && top < 91 ? 18 : 27),
+                weight: top < MediaQuery.of(context).size.height * 0.12
+                    ? FontWeight.w600
+                    : FontWeight.w700,
+                fontSize:
+                    top < MediaQuery.of(context).size.height * 0.12 ? 18 : 27),
           )),
     );
   });

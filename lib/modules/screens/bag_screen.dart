@@ -17,7 +17,13 @@ class BagScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CartCubit, CartState>(
+    return BlocConsumer<CartCubit, CartState>(
+        listenWhen: (previous, current) => previous.status != current.status,
+        listener: (context, state) {
+          if (state.status == CartStatus.failure) {
+            AppSnackBar.showSnackBar(context, state.errMessage);
+          }
+        },
         buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {
           return Scaffold(
@@ -141,9 +147,10 @@ Widget _flexibleSpaceBar() {
     var top = constraints.biggest.height;
     return FlexibleSpaceBar(
       titlePadding: EdgeInsets.only(
-          left: top > 71 && top < 91 ? 0 : 16,
-          bottom: top > 71 && top < 91 ? 12 : 0),
-      centerTitle: top > 71 && top < 91 ? true : false,
+          left: top < MediaQuery.of(context).size.height * 0.12 ? 0 : 16,
+          bottom: top < MediaQuery.of(context).size.height * 0.12 ? 15 : 0),
+      centerTitle:
+          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
@@ -151,9 +158,11 @@ Widget _flexibleSpaceBar() {
             "My Bag",
             textAlign: TextAlign.start,
             style: ETextStyle.metropolis(
-                weight:
-                    top > 71 && top < 91 ? FontWeight.w600 : FontWeight.w700,
-                fontSize: top > 71 && top < 91 ? 22 : 27),
+                weight: top < MediaQuery.of(context).size.height * 0.12
+                    ? FontWeight.w600
+                    : FontWeight.w700,
+                fontSize:
+                    top < MediaQuery.of(context).size.height * 0.12 ? 22 : 27),
           )),
     );
   });

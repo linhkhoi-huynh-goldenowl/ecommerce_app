@@ -4,11 +4,10 @@ import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import '../../x_result.dart';
 
 abstract class ProductRepository {
-  List<ProductItem> getProducts();
-  void setProducts(List<ProductItem> products);
+  Future<List<ProductItem>> setProducts(List<ProductItem> products);
   Stream<XResult<List<ProductItem>>> getProductsStream();
   Future<ProductItem?> getProductById(String id);
-  Future<ProductItem?> updateProduct(ProductItem productItem);
+  Future<XResult<ProductItem>> updateProduct(ProductItem productItem);
   Future<List<ProductItem>> getProductsFilter(
       {String searchName = "",
       TypeList typeList = TypeList.all,
