@@ -5,7 +5,8 @@ import '../../x_result.dart';
 abstract class AddressRepository {
   Future<List<Address>> addAddress(Address item);
   Future<List<Address>> editAddress(Address item);
-  Future<List<Address>> setDefaultAddress(Address item);
+  Future<XResult<Address>> setDefaultAddress(Address itemNew);
+  Future<XResult<Address>> setUnDefaultAddress(Address itemOld);
   Future<List<Address>> removeAddress(Address item);
   Future<List<Address>> getAddress();
   Future<Stream<XResult<List<Address>>>> getAddressStream();

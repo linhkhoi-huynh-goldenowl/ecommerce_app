@@ -8,6 +8,13 @@ enum AddressStatus {
 }
 enum AddressTypeStatus { initial, typing, typed, submitting, submitted }
 
+enum AddressDefaultStatus {
+  initial,
+  success,
+  failure,
+  loading,
+}
+
 class AddressState extends Equatable {
   const AddressState(
       {this.fullName = "",
@@ -19,7 +26,8 @@ class AddressState extends Equatable {
       this.status = AddressStatus.initial,
       this.typeStatus = AddressTypeStatus.initial,
       this.addresses = const [],
-      this.isDefault = false});
+      this.isDefault = false,
+      this.defaultStatus = AddressDefaultStatus.initial});
 
   final String fullName;
   bool get isFullNameValid => fullName.length > 2;
@@ -44,6 +52,7 @@ class AddressState extends Equatable {
   final AddressTypeStatus typeStatus;
 
   final AddressStatus status;
+  final AddressDefaultStatus defaultStatus;
 
   final List<Address> addresses;
 
@@ -57,6 +66,7 @@ class AddressState extends Equatable {
       AddressStatus? status,
       AddressTypeStatus? typeStatus,
       List<Address>? addresses,
+      AddressDefaultStatus? defaultStatus,
       bool? isDefault}) {
     return AddressState(
         status: status ?? this.status,
@@ -68,7 +78,8 @@ class AddressState extends Equatable {
         country: country ?? this.country,
         addresses: addresses ?? this.addresses,
         typeStatus: typeStatus ?? this.typeStatus,
-        isDefault: isDefault ?? this.isDefault);
+        isDefault: isDefault ?? this.isDefault,
+        defaultStatus: defaultStatus ?? this.defaultStatus);
   }
 
   @override
@@ -82,6 +93,7 @@ class AddressState extends Equatable {
         status,
         addresses,
         typeStatus,
-        isDefault
+        isDefault,
+        defaultStatus
       ];
 }

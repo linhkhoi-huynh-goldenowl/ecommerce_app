@@ -80,18 +80,37 @@ class AddressCubit extends Cubit<AddressState> {
 
   void setDefaultAddress(Address address) async {
     try {
-      emit(state.copyWith(
-          status: AddressStatus.loading,
-          typeStatus: AddressTypeStatus.submitting));
-      var addresses = await Domain().address.setDefaultAddress(address);
-      emit(state.copyWith(
-          status: AddressStatus.success,
-          addresses: addresses,
-          typeStatus: AddressTypeStatus.submitted));
+      emit(state.copyWith(defaultStatus: AddressDefaultStatus.loading));
+      int indexOldDefault =
+          state.addresses.indexWhere((element) => element.isDefault == true);
+      if (indexOldDefault > -1) {
+        XResult<Address> resOld = await Domain()
+            .address
+            .setUnDefaultAddress(state.addresses[indexOldDefault]);
+        if (resOld.isSuccess) {
+          XResult<Address> resNew =
+              await Domain().address.setDefaultAddress(address);
+          if (resNew.isSuccess) {
+            emit(state.copyWith(defaultStatus: AddressDefaultStatus.success));
+          } else {
+            emit(state.copyWith(defaultStatus: AddressDefaultStatus.failure));
+          }
+        } else {
+          emit(state.copyWith(defaultStatus: AddressDefaultStatus.failure));
+        }
+      } else {
+        XResult<Address> resNew =
+            await Domain().address.setDefaultAddress(address);
+        if (resNew.isSuccess) {
+          emit(state.copyWith(defaultStatus: AddressDefaultStatus.success));
+        } else {
+          emit(state.copyWith(defaultStatus: AddressDefaultStatus.failure));
+        }
+      }
     } catch (_) {
       emit(state.copyWith(
-          status: AddressStatus.failure,
-          typeStatus: AddressTypeStatus.initial));
+        defaultStatus: AddressDefaultStatus.failure,
+      ));
     }
   }
 

@@ -67,15 +67,45 @@ class CreditCardCubit extends Cubit<CreditCardState> {
 
   void setDefaultCredit(CreditCard creditCard) async {
     try {
-      emit(state.copyWith(status: CreditCardStatus.loading));
-      var creditCards = await Domain().creditCard.setDefaultCard(creditCard);
-      var localUser = await Domain().profile.getProfile();
-      localUser.creditDefault = creditCard.cardNumber;
-      await Domain().profile.saveProfile(localUser);
-      emit(state.copyWith(
-          status: CreditCardStatus.success, creditCards: creditCards));
+      emit(state.copyWith(defaultStatus: CardDefaultStatus.loading));
+      int indexOldDefault =
+          state.creditCards.indexWhere((element) => element.isDefault == true);
+      if (indexOldDefault > -1) {
+        XResult<CreditCard> resOld = await Domain()
+            .creditCard
+            .setUnDefaultCard(state.creditCards[indexOldDefault]);
+        if (resOld.isSuccess) {
+          XResult<CreditCard> resNew =
+              await Domain().creditCard.setDefaultCard(creditCard);
+          if (resNew.isSuccess) {
+            emit(state.copyWith(
+                defaultStatus: CardDefaultStatus.success,
+                typeStatus: CreditCardTypeStatus.submitted));
+          } else {
+            emit(state.copyWith(
+                defaultStatus: CardDefaultStatus.failure,
+                typeStatus: CreditCardTypeStatus.initial));
+          }
+        } else {
+          emit(state.copyWith(
+              defaultStatus: CardDefaultStatus.failure,
+              typeStatus: CreditCardTypeStatus.initial));
+        }
+      } else {
+        XResult<CreditCard> resNew =
+            await Domain().creditCard.setDefaultCard(creditCard);
+        if (resNew.isSuccess) {
+          emit(state.copyWith(
+              defaultStatus: CardDefaultStatus.success,
+              typeStatus: CreditCardTypeStatus.submitted));
+        } else {
+          emit(state.copyWith(
+              defaultStatus: CardDefaultStatus.failure,
+              typeStatus: CreditCardTypeStatus.initial));
+        }
+      }
     } catch (_) {
-      emit(state.copyWith(status: CreditCardStatus.failure));
+      emit(state.copyWith(defaultStatus: CardDefaultStatus.failure));
     }
   }
 

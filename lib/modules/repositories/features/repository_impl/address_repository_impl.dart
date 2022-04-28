@@ -57,30 +57,15 @@ class AddressRepositoryImpl extends AddressRepository {
   }
 
   @override
-  Future<List<Address>> setDefaultAddress(Address item) async {
-    //====>change old default
-    int indexAddressOldDefault =
-        _listAddress.indexWhere((element) => element.isDefault == true);
-    if (indexAddressOldDefault > -1) {
-      var oldDefault = _listAddress[indexAddressOldDefault];
-      oldDefault.isDefault = false;
-      XResult<Address> resultOld =
-          await _addressProvider.addAddress(oldDefault);
-      _listAddress[indexAddressOldDefault] = resultOld.data!;
-    }
+  Future<XResult<Address>> setDefaultAddress(Address itemNew) async {
+    itemNew.isDefault = true;
+    return await _addressProvider.addAddress(itemNew);
+  }
 
-    //change done<====
-
-    final pref = await SharedPreferences.getInstance();
-    final userId = pref.getString("userId");
-    item.userId = userId;
-    item.isDefault = true;
-    XResult<Address> result = await _addressProvider.addAddress(item);
-    int indexAddress =
-        _listAddress.indexWhere((element) => element.id == result.data!.id);
-    _listAddress[indexAddress] = item;
-
-    return _listAddress;
+  @override
+  Future<XResult<Address>> setUnDefaultAddress(Address itemOld) async {
+    itemOld.isDefault = false;
+    return await _addressProvider.addAddress(itemOld);
   }
 
   @override

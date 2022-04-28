@@ -98,9 +98,9 @@ class CheckoutScreen extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           )
                         : bottomCheckBar(() {
-                            if (card == null) {
+                            if (address == null) {
                               context.read<OrderCubit>().setUnselectAddress();
-                            } else if (address == null) {
+                            } else if (card == null) {
                               context.read<OrderCubit>().setUnselectCredit();
                             } else if (stateOrder.deliveryId == "") {
                               context.read<OrderCubit>().setUnselectDelivery();
