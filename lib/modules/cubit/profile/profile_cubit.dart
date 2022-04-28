@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_shop_app/modules/models/e_user.dart';
-import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
-import 'package:e_commerce_shop_app/utils/services/firebase_storage.dart';
-import 'package:e_commerce_shop_app/utils/services/image_picker_services.dart';
+import 'package:e_commerce_app/modules/models/e_user.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
+import 'package:e_commerce_app/utils/services/firebase_storage.dart';
+import 'package:e_commerce_app/utils/services/image_picker_services.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';

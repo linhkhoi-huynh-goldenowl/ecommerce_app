@@ -1,5 +1,5 @@
-import 'package:e_commerce_shop_app/modules/models/base_model.dart';
-import 'package:e_commerce_shop_app/modules/models/color_cloth.dart';
+import 'package:e_commerce_app/modules/models/base_model.dart';
+import 'package:e_commerce_app/modules/models/color_cloth.dart';
 
 class ProductItem extends BaseModel {
   final String title;

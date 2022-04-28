@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_shop_app/modules/models/review_model.dart';
-import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
-import 'package:e_commerce_shop_app/modules/repositories/features/repository/review_repository.dart';
-import 'package:e_commerce_shop_app/modules/repositories/provider/review_provider.dart';
+import 'package:e_commerce_app/modules/models/review_model.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/review_repository.dart';
+import 'package:e_commerce_app/modules/repositories/provider/review_provider.dart';
 
 import '../../x_result.dart';
 

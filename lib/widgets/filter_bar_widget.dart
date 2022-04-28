@@ -1,6 +1,6 @@
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/modules/cubit/category/category_cubit.dart';
-import 'package:e_commerce_shop_app/dialogs/sort_bottom_widget.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/category/category_cubit.dart';
+import 'package:e_commerce_app/dialogs/sort_bottom_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

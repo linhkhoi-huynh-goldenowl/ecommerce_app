@@ -1,4 +1,4 @@
-import 'package:e_commerce_shop_app/modules/models/delivery.dart';
+import 'package:e_commerce_app/modules/models/delivery.dart';
 
 import '../../x_result.dart';
 

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_shop_app/modules/models/product_item.dart';
-import 'package:e_commerce_shop_app/modules/repositories/provider/base_collection.dart';
-import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
+import 'package:e_commerce_app/modules/repositories/provider/base_collection.dart';
+import 'package:e_commerce_app/modules/repositories/x_result.dart';
 
 class ProductProvider extends BaseCollectionReference<ProductItem> {
   ProductProvider()

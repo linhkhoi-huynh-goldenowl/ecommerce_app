@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_shop_app/modules/repositories/provider/base_collection.dart';
+import 'package:e_commerce_app/modules/repositories/provider/base_collection.dart';
 
 import '../../models/credit_card.dart';
 import '../x_result.dart';

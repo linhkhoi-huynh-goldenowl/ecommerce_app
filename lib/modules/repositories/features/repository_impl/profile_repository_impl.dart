@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_shop_app/modules/models/e_user.dart';
-import 'package:e_commerce_shop_app/modules/repositories/features/repository/profile_repository.dart';
-import 'package:e_commerce_shop_app/modules/repositories/provider/user_provider.dart';
-import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
+import 'package:e_commerce_app/modules/models/e_user.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/profile_repository.dart';
+import 'package:e_commerce_app/modules/repositories/provider/user_provider.dart';
+import 'package:e_commerce_app/modules/repositories/x_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileRepositoryImpl extends ProfileRepository {

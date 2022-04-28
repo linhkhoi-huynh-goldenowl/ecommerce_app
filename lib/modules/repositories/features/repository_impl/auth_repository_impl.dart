@@ -1,7 +1,7 @@
-import 'package:e_commerce_shop_app/modules/models/e_user.dart';
-import 'package:e_commerce_shop_app/modules/repositories/features/repository/auth_repository.dart';
-import 'package:e_commerce_shop_app/modules/repositories/provider/user_provider.dart';
-import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
+import 'package:e_commerce_app/modules/models/e_user.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/auth_repository.dart';
+import 'package:e_commerce_app/modules/repositories/provider/user_provider.dart';
+import 'package:e_commerce_app/modules/repositories/x_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';

@@ -1,4 +1,4 @@
-import 'package:e_commerce_shop_app/modules/models/address.dart';
+import 'package:e_commerce_app/modules/models/address.dart';
 
 class AddressHelper {
   static Address? getDefaultAddress(List<Address> addresses) {

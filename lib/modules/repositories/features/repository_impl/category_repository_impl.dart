@@ -1,4 +1,4 @@
-import 'package:e_commerce_shop_app/modules/repositories/features/repository/category_repository.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/category_repository.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
   List<String> categories = <String>[

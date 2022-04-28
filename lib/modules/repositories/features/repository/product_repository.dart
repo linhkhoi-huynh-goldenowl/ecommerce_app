@@ -1,5 +1,5 @@
-import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_shop_app/modules/models/product_item.dart';
+import 'package:e_commerce_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
 
 import '../../x_result.dart';
 

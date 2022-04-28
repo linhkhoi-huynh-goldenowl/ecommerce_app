@@ -1,6 +1,6 @@
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/constants/countries_name.dart';
-import 'package:e_commerce_shop_app/modules/cubit/address/address_cubit.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/constants/countries_name.dart';
+import 'package:e_commerce_app/modules/cubit/address/address_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

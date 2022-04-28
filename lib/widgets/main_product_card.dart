@@ -1,13 +1,13 @@
-import 'package:e_commerce_shop_app/config/routes/router.dart';
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
-import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
-import 'package:e_commerce_shop_app/modules/models/product_item.dart';
-import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
-import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
-import 'package:e_commerce_shop_app/widgets/button_circle.dart';
-import 'package:e_commerce_shop_app/widgets/price_text.dart';
-import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
+import 'package:e_commerce_app/config/routes/router.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/dialogs/bottom_sheet_app.dart';
+import 'package:e_commerce_app/modules/cubit/favorite/favorite_cubit.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
+import 'package:e_commerce_app/utils/services/navigator_services.dart';
+import 'package:e_commerce_app/widgets/button_circle.dart';
+import 'package:e_commerce_app/widgets/price_text.dart';
+import 'package:e_commerce_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,5 +1,5 @@
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/widgets/button_intro.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/widgets/button_intro.dart';
 import 'package:flutter/material.dart';
 
 import 'base_screens/product_coordinator_base.dart';

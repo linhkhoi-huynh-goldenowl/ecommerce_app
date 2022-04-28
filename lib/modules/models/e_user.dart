@@ -1,4 +1,4 @@
-import 'package:e_commerce_shop_app/modules/models/base_model.dart';
+import 'package:e_commerce_app/modules/models/base_model.dart';
 
 class EUser extends BaseModel {
   final String email;

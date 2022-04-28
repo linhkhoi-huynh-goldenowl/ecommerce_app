@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/modules/cubit/product_detail/product_detail_cubit.dart';
-import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
-import 'package:e_commerce_shop_app/utils/services/image_picker_services.dart';
-import 'package:e_commerce_shop_app/widgets/button_intro.dart';
-import 'package:e_commerce_shop_app/widgets/rate_star.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/product_detail/product_detail_cubit.dart';
+import 'package:e_commerce_app/utils/helpers/show_snackbar.dart';
+import 'package:e_commerce_app/utils/services/image_picker_services.dart';
+import 'package:e_commerce_app/widgets/button_intro.dart';
+import 'package:e_commerce_app/widgets/rate_star.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

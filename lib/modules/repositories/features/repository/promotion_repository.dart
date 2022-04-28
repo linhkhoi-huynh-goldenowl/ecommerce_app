@@ -1,4 +1,4 @@
-import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
+import 'package:e_commerce_app/modules/models/promo_model.dart';
 
 import '../../x_result.dart';
 

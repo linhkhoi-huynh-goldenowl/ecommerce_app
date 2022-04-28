@@ -1,4 +1,4 @@
-import 'package:e_commerce_shop_app/modules/models/review_model.dart';
+import 'package:e_commerce_app/modules/models/review_model.dart';
 import 'dart:math' as math;
 
 class ReviewHelper {

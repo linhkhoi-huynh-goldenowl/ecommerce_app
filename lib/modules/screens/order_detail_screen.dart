@@ -1,10 +1,10 @@
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/modules/cubit/navigation/navigation_cubit.dart';
-import 'package:e_commerce_shop_app/modules/cubit/order/order_cubit.dart';
-import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
-import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
-import 'package:e_commerce_shop_app/modules/models/order.dart';
-import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/navigation/navigation_cubit.dart';
+import 'package:e_commerce_app/modules/cubit/order/order_cubit.dart';
+import 'package:e_commerce_app/modules/models/cart_model.dart';
+import 'package:e_commerce_app/modules/models/credit_card.dart';
+import 'package:e_commerce_app/modules/models/order.dart';
+import 'package:e_commerce_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';

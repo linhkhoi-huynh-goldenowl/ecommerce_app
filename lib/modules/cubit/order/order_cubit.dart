@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:e_commerce_shop_app/modules/models/address.dart';
-import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
-import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
-import 'package:e_commerce_shop_app/modules/models/delivery.dart';
-import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
+import 'package:e_commerce_app/modules/models/address.dart';
+import 'package:e_commerce_app/modules/models/cart_model.dart';
+import 'package:e_commerce_app/modules/models/credit_card.dart';
+import 'package:e_commerce_app/modules/models/delivery.dart';
+import 'package:e_commerce_app/modules/models/promo_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

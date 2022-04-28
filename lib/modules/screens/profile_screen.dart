@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
-import 'package:e_commerce_shop_app/modules/cubit/profile/profile_cubit.dart';
-import 'package:e_commerce_shop_app/widgets/profile_info_button.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_app/modules/cubit/profile/profile_cubit.dart';
+import 'package:e_commerce_app/widgets/profile_info_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_shop_app/modules/models/address.dart';
-import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
+import 'package:e_commerce_app/modules/models/address.dart';
+import 'package:e_commerce_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/e_user.dart';

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
+import 'package:e_commerce_app/config/styles/text_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

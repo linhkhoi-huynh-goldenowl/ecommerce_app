@@ -1,8 +1,8 @@
-import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
-import 'package:e_commerce_shop_app/modules/models/favorite_product.dart';
-import 'package:e_commerce_shop_app/modules/repositories/features/repository/cart_repository.dart';
-import 'package:e_commerce_shop_app/modules/repositories/provider/cart_provider.dart';
-import 'package:e_commerce_shop_app/utils/helpers/product_helpers.dart';
+import 'package:e_commerce_app/modules/models/cart_model.dart';
+import 'package:e_commerce_app/modules/models/favorite_product.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/cart_repository.dart';
+import 'package:e_commerce_app/modules/repositories/provider/cart_provider.dart';
+import 'package:e_commerce_app/utils/helpers/product_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../x_result.dart';

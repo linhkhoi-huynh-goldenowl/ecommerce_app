@@ -1,4 +1,4 @@
-import 'package:e_commerce_shop_app/modules/models/size_cloth.dart';
+import 'package:e_commerce_app/modules/models/size_cloth.dart';
 
 class ColorCloth {
   final String color;

@@ -1,5 +1,5 @@
-import 'package:e_commerce_shop_app/modules/models/base_model.dart';
-import 'package:e_commerce_shop_app/modules/models/product_item.dart';
+import 'package:e_commerce_app/modules/models/base_model.dart';
+import 'package:e_commerce_app/modules/models/product_item.dart';
 
 class CartModel extends BaseModel {
   final ProductItem productItem;

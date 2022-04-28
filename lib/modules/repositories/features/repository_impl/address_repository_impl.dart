@@ -1,6 +1,6 @@
-import 'package:e_commerce_shop_app/modules/models/address.dart';
-import 'package:e_commerce_shop_app/modules/repositories/features/repository/address_repository.dart';
-import 'package:e_commerce_shop_app/modules/repositories/provider/address_provider.dart';
+import 'package:e_commerce_app/modules/models/address.dart';
+import 'package:e_commerce_app/modules/repositories/features/repository/address_repository.dart';
+import 'package:e_commerce_app/modules/repositories/provider/address_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../x_result.dart';
