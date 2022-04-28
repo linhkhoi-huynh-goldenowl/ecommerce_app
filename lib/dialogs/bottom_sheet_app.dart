@@ -39,6 +39,7 @@ class BottomSheetApp {
                       previous.sizeStatus != current.sizeStatus,
                   builder: (context, state) {
                     return PopupChooseSize(
+                        title: "ADD TO CART",
                         listSize: listSize,
                         stateSize: state.size,
                         selectStatus: state.sizeStatus,
@@ -82,6 +83,7 @@ class BottomSheetApp {
                       previous.sizeStatus != current.sizeStatus,
                   builder: (context, state) {
                     return PopupChooseSize(
+                        title: "ADD TO FAVORITES",
                         listSize: listSize,
                         stateSize: state.size,
                         selectStatus: state.sizeStatus,

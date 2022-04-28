@@ -24,7 +24,7 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
   }
 
   void chooseColor(String color) async {
-    emit(state.copyWith(color: color));
+    emit(state.copyWith(color: color, size: ""));
   }
 
   void setRelatedList() async {
