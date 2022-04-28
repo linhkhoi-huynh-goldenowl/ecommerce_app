@@ -2,10 +2,11 @@ name: Deploy
 
 on:
   push:
-    branches: [ git_action ]
+    branches: [ main ]
 
 jobs:
-  distribute:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    timeout-minutes: 2
     runs-on: ubuntu-latest
 
     steps:
