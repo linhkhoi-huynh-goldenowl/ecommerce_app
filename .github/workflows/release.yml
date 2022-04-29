@@ -1,12 +1,11 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ main ]
+  pull_request_review:
+    types:
+      - submitted
 
 jobs:
-    if: github.event.pull_request.merged
-    timeout-minutes: 2
     runs-on: ubuntu-latest
 
     steps:
