@@ -175,11 +175,15 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<XResult<String>> resetPassword(String email) async {
     try {
+      print(email);
       await _firebaseAuth.sendPasswordResetEmail(email: email);
       return XResult.success("Send complete");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         return XResult.error('Email address is not valid.');
+      } else if (e.code == 'user-not-found') {
+        return XResult.error(
+            'We couldn\'t find your email on the system, please enter the correct email');
       } else {
         return XResult.error('Something wrong');
       }

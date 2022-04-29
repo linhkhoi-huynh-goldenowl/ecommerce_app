@@ -24,21 +24,30 @@ class ResetPassScreen extends StatelessWidget {
             Navigator.of(context).pop();
           }
         },
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            elevation: 0,
-            leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.black,
+        child: GestureDetector(
+          onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus &&
+                currentFocus.focusedChild != null) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                ),
               ),
             ),
+            body: _resetForm(),
           ),
-          body: _resetForm(),
         ));
   }
 
@@ -80,7 +89,8 @@ class ResetPassScreen extends StatelessWidget {
           ),
           BlocBuilder<AuthenticationCubit, AuthenticationState>(
               buildWhen: (previous, current) =>
-                  previous.resetPassStatus != current.resetPassStatus,
+                  previous.resetPassStatus != current.resetPassStatus ||
+                  previous.emailReset != current.emailReset,
               builder: (context, stateAuth) {
                 return stateAuth.resetPassStatus == ResetPassStatus.loading
                     ? const Center(
@@ -88,6 +98,11 @@ class ResetPassScreen extends StatelessWidget {
                       )
                     : ButtonIntro(
                         func: () async {
+                          FocusScopeNode currentFocus = FocusScope.of(context);
+                          if (!currentFocus.hasPrimaryFocus &&
+                              currentFocus.focusedChild != null) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          }
                           if (_formKey.currentState!.validate()) {
                             context
                                 .read<AuthenticationCubit>()
