@@ -6,7 +6,7 @@ on:
       - submitted
 
 jobs:
-    distribute:
+ distribute:
     runs-on: ubuntu-latest
 
     steps:
@@ -62,4 +62,4 @@ jobs:
           
       - name: Distribute app to Beta track 🚀
         working-directory: android
-        run: bundle exec fastlane beta          
+        run: bundle exec fastlane beta      
