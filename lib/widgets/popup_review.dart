@@ -29,7 +29,8 @@ class PopupReview extends StatelessWidget {
                 listener: (context, state) {
                   if (state.addStatus == AddReviewStatus.success) {
                     context.read<ProductDetailCubit>().setReviews(
-                        state.avgReviews.ceil(), state.reviews.length);
+                        state.avgReviews.isNaN ? 0 : state.avgReviews.round(),
+                        state.reviews.length);
                     Navigator.pop(context);
                   }
                   if (state.addStatus == AddReviewStatus.failure) {

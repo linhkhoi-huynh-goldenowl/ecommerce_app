@@ -33,8 +33,10 @@ class FavoriteCardGrid extends StatelessWidget {
             onTap: () {
               Navigator.of(
                       NavigationService.navigatorKey.currentContext ?? context)
-                  .pushNamed(Routes.productDetailsScreen,
-                      arguments: favoriteProduct.productItem);
+                  .pushNamed(Routes.productDetailsScreen, arguments: {
+                'product': favoriteProduct.productItem,
+                'contextParent': context
+              });
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

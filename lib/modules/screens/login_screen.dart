@@ -1,3 +1,4 @@
+import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/login/login_cubit.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
@@ -94,8 +95,11 @@ class LoginScreen extends StatelessWidget {
                   isPassword: true),
               Align(
                 alignment: Alignment.topRight,
-                child:
-                    TextButtonIntro(func: () {}, text: "Forgot your password?"),
+                child: TextButtonIntro(
+                    func: () {
+                      Navigator.of(context).pushNamed(Routes.resetPassScreen);
+                    },
+                    text: "Forgot your password?"),
               ),
               BlocBuilder<AuthenticationCubit, AuthenticationState>(
                   buildWhen: (previous, current) =>

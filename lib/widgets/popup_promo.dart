@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/promo/promo_cubit.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../utils/helpers/promo_helpers.dart';
+import 'e_cached_image.dart';
 
 class PopupPromo extends StatelessWidget {
   const PopupPromo({Key? key, this.code}) : super(key: key);
@@ -120,40 +120,54 @@ Widget _promoItem(PromoModel promoModel, VoidCallback func) {
 }
 
 Widget _showSalePercent(String backgroundImg, int percent) {
-  return Container(
-    height: 80,
-    width: 80,
-    decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-        image: DecorationImage(
-            image: CachedNetworkImageProvider(backgroundImg),
-            fit: BoxFit.fill)),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          percent.toString(),
-          style: ETextStyle.metropolis(
-              fontSize: 34, weight: FontWeight.w700, color: Colors.white),
+  return Stack(
+    children: [
+      SizedBox(
+        height: 80,
+        width: 80,
+        child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+            child: ECachedImage(img: backgroundImg)),
+      ),
+      Container(
+        height: 80,
+        width: 80,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
         ),
-        Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "%",
+              percent.toString(),
               style: ETextStyle.metropolis(
-                  fontSize: 14, weight: FontWeight.w600, color: Colors.white),
+                  fontSize: 34, weight: FontWeight.w700, color: Colors.white),
             ),
-            Text(
-              "off",
-              style: ETextStyle.metropolis(
-                  fontSize: 14, weight: FontWeight.w600, color: Colors.white),
-            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "%",
+                  style: ETextStyle.metropolis(
+                      fontSize: 14,
+                      weight: FontWeight.w600,
+                      color: Colors.white),
+                ),
+                Text(
+                  "off",
+                  style: ETextStyle.metropolis(
+                      fontSize: 14,
+                      weight: FontWeight.w600,
+                      color: Colors.white),
+                ),
+              ],
+            )
           ],
-        )
-      ],
-    ),
+        ),
+      ),
+    ],
   );
 }
 

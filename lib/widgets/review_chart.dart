@@ -20,7 +20,7 @@ class ReviewChart extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _reviewInfo(totalReviews, avgReviews),
-        _reviewChart(reviewCount, reviewPercent),
+        _reviewChart(reviewCount, reviewPercent, context),
         _reviewNum(reviewCount)
       ],
     );
@@ -46,7 +46,8 @@ Widget _reviewInfo(int totalReviews, double avgReviews) {
   );
 }
 
-Widget _reviewChart(List<int> reviewCount, List<double> reviewPercent) {
+Widget _reviewChart(
+    List<int> reviewCount, List<double> reviewPercent, BuildContext context) {
   return Row(
     children: [
       Column(
@@ -65,11 +66,11 @@ Widget _reviewChart(List<int> reviewCount, List<double> reviewPercent) {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _chartBar(reviewPercent[4]),
-          _chartBar(reviewPercent[3]),
-          _chartBar(reviewPercent[2]),
-          _chartBar(reviewPercent[1]),
-          _chartBar(reviewPercent[0])
+          _chartBar(reviewPercent[4], context),
+          _chartBar(reviewPercent[3], context),
+          _chartBar(reviewPercent[2], context),
+          _chartBar(reviewPercent[1], context),
+          _chartBar(reviewPercent[0], context)
         ],
       )
     ],
@@ -123,14 +124,16 @@ Widget _reviewNum(List<int> reviewCount) {
   );
 }
 
-Widget _chartBar(double count) {
+Widget _chartBar(double count, BuildContext context) {
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 7),
     decoration: BoxDecoration(
         color: const Color(0xffDB3022),
         borderRadius: BorderRadius.circular(20)),
     height: 10,
-    width: count > 0 ? 14 * count.toDouble() : 7,
+    width: count > 0
+        ? MediaQuery.of(context).size.width * 0.035 * count.toDouble()
+        : MediaQuery.of(context).size.width * 0.018,
   );
 }
 

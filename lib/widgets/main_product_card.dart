@@ -31,7 +31,10 @@ class MainProductCard extends StatelessWidget {
             onTap: () {
               Navigator.of(
                       NavigationService.navigatorKey.currentContext ?? context)
-                  .pushNamed(Routes.productDetailsScreen, arguments: product);
+                  .pushNamed(Routes.productDetailsScreen, arguments: {
+                'product': product,
+                'contextParent': context
+              });
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

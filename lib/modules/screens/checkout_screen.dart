@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/address/address_cubit.dart';
@@ -13,6 +12,7 @@ import 'package:e_commerce_shop_app/utils/helpers/address_helpers.dart';
 import 'package:e_commerce_shop_app/utils/helpers/credit_helpers.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:e_commerce_shop_app/widgets/button_intro.dart';
+import 'package:e_commerce_shop_app/widgets/e_cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -446,7 +446,7 @@ Widget _deliveryCard(Delivery delivery, VoidCallback onTap, bool isChoose) {
     onTap: onTap,
     child: Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
           border: isChoose ? Border.all(color: Colors.red, width: 5) : null,
           borderRadius: BorderRadius.circular(20),
@@ -460,10 +460,9 @@ Widget _deliveryCard(Delivery delivery, VoidCallback onTap, bool isChoose) {
             ),
           ]),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          SizedBox(
-              width: 60, child: CachedNetworkImage(imageUrl: delivery.imgUrl)),
+          SizedBox(width: 60, child: ECachedImage(img: delivery.imgUrl)),
           Text(
             "${delivery.days} - ${delivery.days + 1} days",
             style: ETextStyle.metropolis(color: const Color(0xff9B9B9B)),

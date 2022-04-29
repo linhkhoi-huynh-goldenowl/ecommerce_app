@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/e_cached_image.dart';
 
 class AvatarChangeImage extends StatelessWidget {
   const AvatarChangeImage(
@@ -58,14 +59,22 @@ class AvatarChangeImage extends StatelessWidget {
                     radius: 44,
                   )
                 : (imgUser != ""
-                    ? CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(imgUser),
-                        radius: 44,
+                    ? SizedBox(
+                        width: 70,
+                        height: 70,
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: ECachedImage(img: imgUser)),
                       )
-                    : const CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(
-                            "https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg"),
-                        radius: 44,
+                    : SizedBox(
+                        width: 70,
+                        height: 70,
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Image.asset(
+                              "assets/images/default-avatar.jpg",
+                              fit: BoxFit.cover,
+                            )),
                       )),
             const Positioned(
               child: Icon(

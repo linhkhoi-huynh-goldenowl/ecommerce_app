@@ -73,7 +73,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,
-            submitStatus: AuthSubmitStatus.success));
+            submitStatus: AuthSubmitStatus.success,
+            messageError: ""));
       } else {
         emit(state.copyWith(
             status: AuthenticationStatus.unauthenticated,
@@ -99,7 +100,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,
-            submitStatus: AuthSubmitStatus.success));
+            submitStatus: AuthSubmitStatus.success,
+            messageError: ""));
       } else {
         emit(state.copyWith(
             status: AuthenticationStatus.unauthenticated,
@@ -124,7 +126,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         emit(state.copyWith(
             status: AuthenticationStatus.authenticated,
             eUser: result.data,
-            submitStatus: AuthSubmitStatus.success));
+            submitStatus: AuthSubmitStatus.success,
+            messageError: ""));
       } else {
         emit(state.copyWith(
             status: AuthenticationStatus.unauthenticated,
@@ -140,12 +143,40 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     return false;
   }
 
+  void resetPass(String emailReset) async {
+    try {
+      emit(state.copyWith(resetPassStatus: ResetPassStatus.loading));
+      final XResult<String> res = await Domain().auth.resetPassword(emailReset);
+      if (res.isSuccess) {
+        emit(state.copyWith(resetPassStatus: ResetPassStatus.success));
+
+        emit(state.copyWith(
+            resetPassStatus: ResetPassStatus.initial,
+            messageError: "",
+            emailReset: ""));
+      } else {
+        emit(state.copyWith(
+            resetPassStatus: ResetPassStatus.failure, messageError: res.error));
+      }
+    } catch (_) {
+      emit(state.copyWith(
+          resetPassStatus: ResetPassStatus.failure,
+          messageError: "Something wrong"));
+    }
+  }
+
+  void emailResetChanged(String email) {
+    emit(state.copyWith(emailReset: email));
+  }
+
   void signOut(BuildContext context, VoidCallback navigateLogin) async {
     try {
       await Domain().auth.signOut();
       navigateLogin();
       emit(state.copyWith(
-          status: AuthenticationStatus.unauthenticated, eUser: null));
+          status: AuthenticationStatus.unauthenticated,
+          eUser: null,
+          messageError: ""));
     } on Exception {
       emit(state.copyWith(
           status: AuthenticationStatus.unauthenticated,
