@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-    if: ${{ github.event.pull_request.merged }}
+    if: github.event.pull_request.merged
     timeout-minutes: 2
     runs-on: ubuntu-latest
 
