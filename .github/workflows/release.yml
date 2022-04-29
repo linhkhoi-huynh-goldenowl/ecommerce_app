@@ -6,6 +6,7 @@ on:
       - submitted
 
 jobs:
+ distribute:
     runs-on: ubuntu-latest
 
     steps:
