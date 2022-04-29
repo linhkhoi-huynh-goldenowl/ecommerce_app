@@ -5,9 +5,10 @@ on:
     branches: [ main ]
 
 jobs:
-    distribute:
     if: github.event.pull_request.merged
     timeout-minutes: 2
+    distribute:
+    
     runs-on: ubuntu-latest
 
     steps:
