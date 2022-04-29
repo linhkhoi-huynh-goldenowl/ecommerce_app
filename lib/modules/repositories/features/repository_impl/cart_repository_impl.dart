@@ -1,4 +1,5 @@
 import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
+import 'package:e_commerce_shop_app/modules/models/favorite_product.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository/cart_repository.dart';
 import 'package:e_commerce_shop_app/modules/repositories/provider/cart_provider.dart';
 import 'package:e_commerce_shop_app/utils/helpers/product_helpers.dart';
@@ -10,24 +11,19 @@ class CartRepositoryImpl extends CartRepository {
   List<CartModel> _listCarts = [];
   final CartProvider _cartProvider = CartProvider();
   @override
-  Future<List<CartModel>> addProductToCart(CartModel item) async {
+  Future<XResult<CartModel>> addProductToCart(CartModel item) async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
     item.userId = userId;
     item.id = "$userId-${item.productItem.id}- ${item.size}";
     int indexCart = getIndexContainList(item);
     if (indexCart < 0) {
-      XResult<CartModel> result = await _cartProvider.setProductToCart(item);
-      _listCarts.add(result.data!);
+      return await _cartProvider.setProductToCart(item);
     } else {
       final cartItem = _listCarts[indexCart];
       cartItem.quantity += 1;
-      XResult<CartModel> result =
-          await _cartProvider.setProductToCart(cartItem);
-      _listCarts[indexCart] = result.data!;
+      return await _cartProvider.setProductToCart(cartItem);
     }
-
-    return _listCarts;
   }
 
   @override
@@ -41,45 +37,23 @@ class CartRepositoryImpl extends CartRepository {
   @override
   int getIndexContainList(CartModel item) {
     return _listCarts.indexWhere((element) =>
-        element.productItem.title == item.productItem.title &&
+        element.productItem.id == item.productItem.id &&
         element.size == item.size &&
         element.color == item.color);
   }
 
   @override
-  Future<List<CartModel>> getCarts() async {
-    final pref = await SharedPreferences.getInstance();
-    final userId = pref.getString("userId");
-    XResult<List<CartModel>> result =
-        await _cartProvider.getCartByUser(userId ?? "");
-    _listCarts = result.data ?? [];
-    return _listCarts;
+  Future<XResult<String>> removeCart(CartModel item) async {
+    return await _cartProvider.removeCart(item);
   }
 
   @override
-  Future<List<CartModel>> removeCart(CartModel item) async {
-    await _cartProvider.removeCart(item);
-    _listCarts.removeWhere((element) =>
-        element.size == item.size &&
-        element.productItem.title == item.productItem.title &&
-        element.color == item.color);
-
-    return _listCarts;
+  Future<XResult<CartModel>> removeCartByOne(CartModel item) async {
+    item.quantity -= 1;
+    return await _cartProvider.setProductToCart(item);
   }
 
   @override
-  Future<List<CartModel>> removeCartByOne(CartModel item) async {
-    if (item.quantity < 2) {
-      return await removeCart(item);
-    } else {
-      item.quantity -= 1;
-      XResult<CartModel> result = await _cartProvider.setProductToCart(item);
-      _listCarts[_listCarts.indexOf(item)] = result.data!;
-    }
-
-    return _listCarts;
-  }
-
   @override
   double getTotalPrice([int? salePercent]) {
     double total = 0;
@@ -97,11 +71,43 @@ class CartRepositoryImpl extends CartRepository {
   }
 
   @override
-  Future<List<CartModel>> clearCarts() async {
-    for (var item in _listCarts) {
-      await _cartProvider.removeCart(item);
-    }
-    _listCarts.clear();
+  Future<XResult<String>> clearCarts() async {
+    final pref = await SharedPreferences.getInstance();
+    final userId = pref.getString("userId");
+    return await _cartProvider.removeByUserId(userId!);
+  }
+
+  @override
+  Future<List<CartModel>> setCarts(List<CartModel> carts) async {
+    _listCarts = carts;
     return _listCarts;
+  }
+
+  @override
+  Future<Stream<XResult<List<CartModel>>>> getCartStream() async {
+    final pref = await SharedPreferences.getInstance();
+    final userId = pref.getString("userId");
+    return _cartProvider.snapshotsAllQuery("userId", userId!);
+  }
+
+  @override
+  Future<XResult<String>> reorderToCart(List<CartModel> items) async {
+    for (var item in items) {
+      XResult<CartModel> res = await _cartProvider.setProductToCart(item);
+      if (res.isError) {
+        return XResult.error(res.error);
+      }
+    }
+    return XResult.success("Add complete");
+  }
+
+  @override
+  bool checkContainInFavorite(FavoriteProduct item) {
+    return _listCarts
+        .where((element) =>
+            element.productItem.id == item.productItem.id &&
+            element.size == item.size)
+        .toList()
+        .isNotEmpty;
   }
 }

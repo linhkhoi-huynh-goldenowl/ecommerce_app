@@ -21,12 +21,10 @@ class MainProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 10,
-      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
       ),
+      width: 162,
       child: Stack(
         children: [
           InkWell(
@@ -40,7 +38,8 @@ class MainProductCard extends StatelessWidget {
               children: [
                 ImageProductWidget(
                     imagePath: product.images[0],
-                    width: 162,
+                    isGrid: true,
+                    width: double.maxFinite,
                     height: 200,
                     radius: 20),
                 const SizedBox(
@@ -98,17 +97,19 @@ class MainProductCard extends StatelessWidget {
                   buildWhen: (previous, current) =>
                       previous.status != current.status,
                   builder: (context, state) {
-                    return ButtonCircle(
-                        func: () => BottomSheetApp.showModalFavorite(
-                            context, product, product.colors[0].sizes),
-                        iconPath: "assets/images/icons/heart.png",
-                        iconSize: 16,
-                        iconColor: const Color(0xffDADADA),
-                        fillColor:
-                            Domain().favorite.checkContainTitle(product.title)
-                                ? const Color(0xffDB3022)
-                                : Colors.white,
-                        padding: 12);
+                    return SizedBox(
+                      child: ButtonCircle(
+                          func: () => BottomSheetApp.showModalFavorite(
+                              context, product, product.colors[0].sizes),
+                          iconPath: "assets/images/icons/heart.png",
+                          iconSize: 16,
+                          iconColor: const Color(0xffDADADA),
+                          fillColor:
+                              Domain().favorite.checkContainId(product.id!)
+                                  ? const Color(0xffDB3022)
+                                  : Colors.white,
+                          padding: 12),
+                    );
                   }))
         ],
       ),

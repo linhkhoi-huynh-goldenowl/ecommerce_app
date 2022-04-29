@@ -23,28 +23,34 @@ class ReviewCubit extends Cubit<ReviewState> {
       emit(state.copyWith(status: ReviewStatus.loading));
       final pref = await SharedPreferences.getInstance();
       final userId = pref.getString("userId");
-      var reviews = <ReviewModel>[];
-      if (state.withPhoto) {
-        reviews =
-            await Domain().review.getReviewsFromProductWithImage(productId);
-      } else {
-        reviews = await Domain().review.getReviewsFromProduct(productId);
-      }
-      final total = reviews.length;
-      final reviewCount = ReviewHelper.getReviewDetail(reviews);
-      final avgReview = ReviewHelper.getAvgReviews(reviews);
-      final percentReview = ReviewHelper.getReviewPercent(reviews);
 
-      emit(state.copyWith(
-          status: ReviewStatus.success,
-          reviews: reviews,
-          totalReviews: total,
-          avgReviews: avgReview,
-          reviewCount: reviewCount,
-          reviewPercent: percentReview,
-          userId: userId));
+      XResult<List<ReviewModel>> reviewsRes =
+          await Domain().review.getReviewsFromProduct(productId);
+      if (reviewsRes.isSuccess) {
+        final reviews =
+            await Domain().review.setReviewList(reviewsRes.data ?? []);
+        final total = reviews.length;
+
+        final reviewCount = ReviewHelper.getReviewDetail(reviews);
+        final avgReview = ReviewHelper.getAvgReviews(reviews);
+        final percentReview = ReviewHelper.getReviewPercent(reviews);
+
+        emit(state.copyWith(
+            status: ReviewStatus.success,
+            reviews: reviews,
+            totalReviews: total,
+            avgReviews: avgReview,
+            reviewCount: reviewCount,
+            reviewPercent: percentReview,
+            userId: userId,
+            errMessage: ""));
+      } else {
+        emit(state.copyWith(
+            status: ReviewStatus.failure, errMessage: reviewsRes.error));
+      }
     } catch (_) {
-      emit(state.copyWith(status: ReviewStatus.failure));
+      emit(state.copyWith(
+          status: ReviewStatus.failure, errMessage: "Something wrong"));
     }
   }
 
@@ -52,25 +58,24 @@ class ReviewCubit extends Cubit<ReviewState> {
     try {
       emit(state.copyWith(status: ReviewStatus.loading));
       bool checkImage = !state.withPhoto;
-      var reviews = <ReviewModel>[];
-      if (checkImage) {
-        reviews =
-            await Domain().review.getReviewsFromProductWithImage(productId);
-      } else {
-        reviews = await Domain().review.getReviewsFromProduct(productId);
-      }
+      var reviews =
+          await Domain().review.getReviewsFromProductWithImage(checkImage);
+
       emit(state.copyWith(
           status: ReviewStatus.success,
           withPhoto: checkImage,
-          reviews: reviews));
+          reviews: reviews,
+          errMessage: ""));
     } catch (_) {
-      emit(state.copyWith(status: ReviewStatus.failure));
+      emit(state.copyWith(
+          status: ReviewStatus.failure, errMessage: "Something wrong"));
     }
   }
 
   void addReview(String productId) async {
     try {
-      emit(state.copyWith(addStatus: AddReviewStatus.loading));
+      emit(state.copyWith(
+          addStatus: AddReviewStatus.loading, status: ReviewStatus.loading));
       List<String> pathImageNetwork = [];
       var pathLocal = await Domain().review.getImage();
       for (var path in pathLocal) {
@@ -88,46 +93,89 @@ class ReviewCubit extends Cubit<ReviewState> {
           productId: productId,
           images: pathImageNetwork,
           like: []);
-      var reviews = await Domain().review.addReviewToProduct(reviewModel);
-      if (reviews.isSuccess) {
-        fetchReviewByProduct(productId);
+      XResult<ReviewModel> reviewsRes =
+          await Domain().review.addReviewToProduct(reviewModel);
+      if (reviewsRes.isSuccess) {
         var clearImage = await Domain().review.clearImage();
+        final reviewsAdd =
+            await Domain().review.addReviewToLocal(reviewsRes.data!);
         ProductItem? productItem =
             await Domain().product.getProductById(productId);
         if (productItem != null) {
-          productItem.reviewStars = state.avgReviews.round();
-          productItem.numberReviews = state.reviews.length;
-          await Domain().product.updateProduct(productItem);
-        }
+          final total = reviewsAdd.length;
 
-        emit(state.copyWith(addStatus: AddReviewStatus.success));
-        emit(state.copyWith(
-            addStatus: AddReviewStatus.initial,
-            reviews: reviews.data,
-            imageLocalPaths: clearImage,
-            likeStatus: LikeReviewStatus.initial,
-            reviewContent: "",
-            contentStatus: ContentReviewStatus.initial,
-            starNum: 0,
-            starStatus: StarReviewStatus.initial,
-            imageStatus: ImageStatus.initial));
+          final reviewCount = ReviewHelper.getReviewDetail(reviewsAdd);
+          final avgReview = ReviewHelper.getAvgReviews(reviewsAdd);
+          final percentReview = ReviewHelper.getReviewPercent(reviewsAdd);
+
+          productItem.reviewStars = avgReview.round();
+          productItem.numberReviews = total;
+
+          XResult<ProductItem> productRes =
+              await Domain().product.updateProduct(productItem);
+          if (productRes.isSuccess) {
+            emit(state.copyWith(addStatus: AddReviewStatus.success));
+
+            emit(state.copyWith(
+                totalReviews: total,
+                avgReviews: avgReview,
+                reviewCount: reviewCount,
+                reviewPercent: percentReview,
+                addStatus: AddReviewStatus.initial,
+                imageLocalPaths: clearImage,
+                likeStatus: LikeReviewStatus.initial,
+                reviewContent: "",
+                contentStatus: ContentReviewStatus.initial,
+                starNum: 0,
+                starStatus: StarReviewStatus.initial,
+                imageStatus: ImageStatus.initial,
+                errMessage: "",
+                status: ReviewStatus.success));
+          } else {
+            emit(state.copyWith(
+                addStatus: AddReviewStatus.failure,
+                errMessage: productRes.error,
+                status: ReviewStatus.failure));
+          }
+        } else {
+          emit(state.copyWith(
+              addStatus: AddReviewStatus.failure,
+              errMessage: "Can't get product to update reviews",
+              status: ReviewStatus.failure));
+        }
       } else {
-        emit(state.copyWith(addStatus: AddReviewStatus.failure));
+        emit(state.copyWith(
+            addStatus: AddReviewStatus.failure,
+            errMessage: reviewsRes.error,
+            status: ReviewStatus.failure));
       }
     } catch (_) {
-      emit(state.copyWith(addStatus: AddReviewStatus.failure));
+      emit(state.copyWith(
+          addStatus: AddReviewStatus.failure,
+          errMessage: "Something wrong",
+          status: ReviewStatus.failure));
     }
   }
 
   void likeReview(ReviewModel reviewModel) async {
     try {
       emit(state.copyWith(likeStatus: LikeReviewStatus.loading));
-      final reviews =
+      XResult<ReviewModel> reviewsRes =
           await Domain().review.addLikeToReview(reviewModel, state.userId);
-      emit(state.copyWith(
-          likeStatus: LikeReviewStatus.success, reviews: reviews));
+      if (reviewsRes.isSuccess) {
+        final reviews = await Domain().review.addLikeToLocal(reviewsRes.data!);
+        emit(state.copyWith(
+            likeStatus: LikeReviewStatus.success,
+            reviews: reviews,
+            errMessage: ""));
+      } else {
+        emit(state.copyWith(
+            likeStatus: LikeReviewStatus.failure,
+            errMessage: reviewsRes.error));
+      }
     } catch (_) {
-      emit(state.copyWith(likeStatus: LikeReviewStatus.failure));
+      emit(state.copyWith(
+          likeStatus: LikeReviewStatus.failure, errMessage: "Something wrong"));
     }
   }
 
@@ -176,7 +224,8 @@ class ReviewCubit extends Cubit<ReviewState> {
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageLocalPaths: listImage));
     } catch (_) {
-      emit(state.copyWith(imageStatus: ImageStatus.failure));
+      emit(state.copyWith(
+          imageStatus: ImageStatus.failure, errMessage: "Something wrong"));
     }
   }
 
@@ -189,7 +238,8 @@ class ReviewCubit extends Cubit<ReviewState> {
       emit(state.copyWith(
           imageStatus: ImageStatus.success, imageLocalPaths: listImage));
     } catch (_) {
-      emit(state.copyWith(imageStatus: ImageStatus.failure));
+      emit(state.copyWith(
+          imageStatus: ImageStatus.failure, errMessage: "Something wrong"));
     }
   }
 }

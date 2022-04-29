@@ -3,6 +3,7 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/dialogs/system_dialog.dart';
 import 'package:e_commerce_shop_app/modules/cubit/address/address_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/address.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,7 +13,14 @@ class ShippingAddressScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AddressCubit>(
         create: (BuildContext context) => AddressCubit(),
-        child: BlocBuilder<AddressCubit, AddressState>(
+        child: BlocConsumer<AddressCubit, AddressState>(
+            listenWhen: (previous, current) =>
+                previous.status != current.status,
+            listener: (context, state) {
+              if (state.status == AddressStatus.failure) {
+                AppSnackBar.showSnackBar(context, state.errMessage);
+              }
+            },
             buildWhen: (previous, current) => previous.status != current.status,
             builder: (context, state) {
               return Scaffold(

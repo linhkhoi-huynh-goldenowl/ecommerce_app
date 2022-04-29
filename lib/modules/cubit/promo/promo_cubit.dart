@@ -3,6 +3,8 @@ import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
 import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../repositories/x_result.dart';
+
 part 'promo_state.dart';
 
 class PromoCubit extends Cubit<PromoState> {
@@ -13,10 +15,17 @@ class PromoCubit extends Cubit<PromoState> {
   void fetchPromos() async {
     try {
       emit(state.copyWith(status: PromoStatus.loading));
-      final promos = await Domain().promo.getPromotion();
-      emit(state.copyWith(status: PromoStatus.success, promos: promos));
+      XResult<List<PromoModel>> promosRes = await Domain().promo.getPromotion();
+      if (promosRes.isSuccess) {
+        final promos = await Domain().promo.setPromotion(promosRes.data ?? []);
+        emit(state.copyWith(
+            status: PromoStatus.success,
+            promos: promos,
+            errMessage: promosRes.error));
+      }
     } catch (_) {
-      emit(state.copyWith(status: PromoStatus.failure));
+      emit(state.copyWith(
+          status: PromoStatus.failure, errMessage: "Something wrong"));
     }
   }
 

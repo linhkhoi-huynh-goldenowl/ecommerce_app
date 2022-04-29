@@ -22,8 +22,8 @@ class CarouselWidget extends StatelessWidget {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: 300,
-                  child: Image.asset(entry.value, fit: BoxFit.cover),
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: Image.asset(entry.value, fit: BoxFit.fill),
                 ),
                 Positioned(
                     bottom: 20,

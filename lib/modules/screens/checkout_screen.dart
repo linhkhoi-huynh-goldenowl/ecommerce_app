@@ -434,7 +434,9 @@ Widget _creditCard(CreditCard card) {
         width: 16,
       ),
       Text(
-          "**** **** **** ${card.cardNumber.substring(card.cardNumber.length - 4)}")
+        "**** **** **** ${card.cardNumber.substring(card.cardNumber.length - 4)}",
+        style: ETextStyle.metropolis(fontSize: 14, weight: FontWeight.w600),
+      )
     ],
   );
 }

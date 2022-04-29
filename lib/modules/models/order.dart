@@ -41,7 +41,9 @@ class Order extends BaseModel {
       card: CreditCard.fromJson(parsedJson['card']),
       address: Address.fromJson(parsedJson['address']),
       createdDate: parsedJson['createdDate'],
-      promoModel: PromoModel.fromJson(parsedJson['promoModel']),
+      promoModel: parsedJson['promoModel'] != null
+          ? PromoModel.fromJson(parsedJson['promoModel'])
+          : null,
       listItems: _items,
       status: parsedJson['status'],
       totalAmount: parsedJson['totalAmount'].toDouble(),

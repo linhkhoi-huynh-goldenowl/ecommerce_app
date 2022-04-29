@@ -14,6 +14,13 @@ enum SearchFavoriteStatus {
   failureSearch
 }
 
+enum AddCartStatus {
+  initial,
+  success,
+  failure,
+  loading,
+}
+
 class FavoriteState extends Equatable {
   const FavoriteState(
       {this.gridStatus = GridFavoriteStatus.initialGrid,
@@ -26,7 +33,9 @@ class FavoriteState extends Equatable {
       this.favorites = const <FavoriteProduct>[],
       this.status = FavoriteStatus.initial,
       this.products = const <ProductItem>[],
-      this.isShowCategoryBar = true});
+      this.isShowCategoryBar = true,
+      this.errMessage = "",
+      this.addCartStatus = AddCartStatus.initial});
   final List<FavoriteProduct> favorites;
   final List<ProductItem> products;
   final FavoriteStatus status;
@@ -38,6 +47,8 @@ class FavoriteState extends Equatable {
   final bool isSearch;
   final bool isShowCategoryBar;
   final String categoryName;
+  final String errMessage;
+  final AddCartStatus addCartStatus;
 
   FavoriteState copyWith(
       {FavoriteStatus? status,
@@ -50,7 +61,9 @@ class FavoriteState extends Equatable {
       GridFavoriteStatus? gridStatus,
       SearchFavoriteStatus? searchStatus,
       List<ProductItem>? products,
-      bool? isShowCategoryBar}) {
+      bool? isShowCategoryBar,
+      String? errMessage,
+      AddCartStatus? addCartStatus}) {
     return FavoriteState(
         status: status ?? this.status,
         favorites: favorites ?? this.favorites,
@@ -62,7 +75,9 @@ class FavoriteState extends Equatable {
         gridStatus: gridStatus ?? this.gridStatus,
         searchStatus: searchStatus ?? this.searchStatus,
         products: products ?? this.products,
-        isShowCategoryBar: isShowCategoryBar ?? this.isShowCategoryBar);
+        isShowCategoryBar: isShowCategoryBar ?? this.isShowCategoryBar,
+        errMessage: errMessage ?? this.errMessage,
+        addCartStatus: addCartStatus ?? this.addCartStatus);
   }
 
   @override
@@ -77,6 +92,8 @@ class FavoriteState extends Equatable {
         gridStatus,
         searchStatus,
         products,
-        isShowCategoryBar
+        isShowCategoryBar,
+        errMessage,
+        addCartStatus
       ];
 }

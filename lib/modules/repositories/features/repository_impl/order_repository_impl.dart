@@ -10,28 +10,47 @@ class OrderRepositoryImpl extends OrderRepository {
   List<Order> _listOrders = [];
   final OrderProvider _orderProvider = OrderProvider();
   @override
-  Future<List<Order>> addOrder(Order item) async {
+  Future<XResult<Order>> addOrder(Order item) async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
     item.userId = userId;
     item.createdDate = Timestamp.now();
     item.id = "$userId-${item.createdDate!.toDate().toIso8601String()}";
 
-    XResult<Order> result = await _orderProvider.addOrder(item);
-    _listOrders.add(result.data!);
-
-    return _listOrders;
+    return await _orderProvider.addOrder(item);
   }
 
   @override
-  Future<List<Order>> getOrders() async {
+  Future<List<Order>> getOrdersByCancelled() async {
+    return _listOrders
+        .where((element) => element.status == "Cancelled")
+        .toList();
+  }
+
+  @override
+  Future<List<Order>> getOrdersByDelivered() async {
+    return _listOrders
+        .where((element) => element.status == "Delivered")
+        .toList();
+  }
+
+  @override
+  Future<List<Order>> getOrdersByProcessing() async {
+    return _listOrders
+        .where((element) => element.status == "Processing")
+        .toList();
+  }
+
+  @override
+  Future<Stream<XResult<List<Order>>>> getOrderStream() async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
-    XResult<List<Order>> result = await _orderProvider.getOrderByUser(userId!);
-    _listOrders = result.data ?? [];
-    _listOrders.sort(
-      (a, b) => b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
-    );
+    return _orderProvider.snapshotsAllQuery("userId", userId!);
+  }
+
+  @override
+  Future<List<Order>> setOrder(List<Order> orders) async {
+    _listOrders = orders;
     return _listOrders;
   }
 }

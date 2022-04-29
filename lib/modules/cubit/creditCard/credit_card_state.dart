@@ -24,7 +24,8 @@ class CreditCardState extends Equatable {
       this.status = CreditCardStatus.initial,
       this.typeStatus = CreditCardTypeStatus.initial,
       this.creditCards = const [],
-      this.defaultStatus = CardDefaultStatus.initial});
+      this.defaultStatus = CardDefaultStatus.initial,
+      this.errMessage = ""});
 
   final String nameOnCard;
   bool get isNameOnCard => nameOnCard.length > 2;
@@ -48,6 +49,7 @@ class CreditCardState extends Equatable {
 
   final List<CreditCard> creditCards;
   final CardDefaultStatus defaultStatus;
+  final String errMessage;
 
   CreditCardState copyWith(
       {String? nameOnCard,
@@ -58,7 +60,8 @@ class CreditCardState extends Equatable {
       CreditCardStatus? status,
       CreditCardTypeStatus? typeStatus,
       List<CreditCard>? creditCards,
-      CardDefaultStatus? defaultStatus}) {
+      CardDefaultStatus? defaultStatus,
+      String? errMessage}) {
     return CreditCardState(
         status: status ?? this.status,
         typeStatus: typeStatus ?? this.typeStatus,
@@ -68,7 +71,8 @@ class CreditCardState extends Equatable {
         expireDate: expireDate ?? this.expireDate,
         isDefault: isDefault ?? this.isDefault,
         cvv: cvv ?? this.cvv,
-        defaultStatus: defaultStatus ?? this.defaultStatus);
+        defaultStatus: defaultStatus ?? this.defaultStatus,
+        errMessage: errMessage ?? this.errMessage);
   }
 
   @override
@@ -81,6 +85,7 @@ class CreditCardState extends Equatable {
         cvv,
         expireDate,
         isDefault,
-        defaultStatus
+        defaultStatus,
+        errMessage
       ];
 }

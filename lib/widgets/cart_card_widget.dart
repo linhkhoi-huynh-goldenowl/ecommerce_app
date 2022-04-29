@@ -51,6 +51,7 @@ class CartCardWidget extends StatelessWidget {
                   child: Row(
                     children: [
                       ImageProductWidget(
+                          isGrid: false,
                           imagePath: cartModel.productItem.images[0],
                           width: 104,
                           height: 104,

@@ -9,7 +9,7 @@ class AddressRepositoryImpl extends AddressRepository {
   List<Address> _listAddress = [];
   final AddressProvider _addressProvider = AddressProvider();
   @override
-  Future<List<Address>> addAddress(Address item) async {
+  Future<XResult<Address>> addAddress(Address item) async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
 
@@ -17,43 +17,21 @@ class AddressRepositoryImpl extends AddressRepository {
     item.userId = userId;
     item.id = "$userId-$createdDate";
 
-    XResult<Address> result = await _addressProvider.addAddress(item);
-    _listAddress.add(result.data!);
-
-    return _listAddress;
+    return await _addressProvider.addAddress(item);
   }
 
   @override
-  Future<List<Address>> getAddress() async {
-    final pref = await SharedPreferences.getInstance();
-    final userId = pref.getString("userId");
-    XResult<List<Address>> result =
-        await _addressProvider.getAddressByUser(userId ?? "");
-    _listAddress = result.data ?? [];
-    return _listAddress;
+  Future<XResult<String>> removeAddress(Address item) async {
+    return await _addressProvider.removeAddress(item);
   }
 
   @override
-  Future<List<Address>> removeAddress(Address item) async {
-    await _addressProvider.removeAddress(item);
-    _listAddress.removeWhere(
-        (element) => element.id == item.id && element.userId == item.userId);
-
-    return _listAddress;
-  }
-
-  @override
-  Future<List<Address>> editAddress(Address item) async {
+  Future<XResult<Address>> editAddress(Address item) async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
     item.userId = userId;
-    XResult<Address> result = await _addressProvider.addAddress(item);
 
-    int indexAddress =
-        _listAddress.indexWhere((element) => element.id == result.data!.id);
-    _listAddress[indexAddress] = item;
-
-    return _listAddress;
+    return await _addressProvider.addAddress(item);
   }
 
   @override

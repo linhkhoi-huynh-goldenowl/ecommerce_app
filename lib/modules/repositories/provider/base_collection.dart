@@ -79,6 +79,21 @@ class BaseCollectionReference<T extends BaseModel> {
     }
   }
 
+  Future<XResult<String>> removeByUserId(String id) async {
+    try {
+      final QuerySnapshot<T> query = await ref
+          .where("userId", isEqualTo: id)
+          .get()
+          .timeout(const Duration(seconds: 5));
+      for (var e in query.docs) {
+        ref.doc(e.id).delete().timeout(const Duration(seconds: 5));
+      }
+      return XResult.success(id);
+    } catch (e) {
+      return XResult.exception(e);
+    }
+  }
+
   Future<XResult<List<T>>> query() async {
     try {
       final QuerySnapshot<T> query =

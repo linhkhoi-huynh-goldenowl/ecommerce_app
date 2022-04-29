@@ -64,8 +64,11 @@ class HomeScreen extends ProductCoordinatorBase {
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          return MainProductCard(
-                            product: productSale[index],
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: MainProductCard(
+                              product: productSale[index],
+                            ),
                           );
                         },
                         itemCount:
@@ -90,7 +93,10 @@ class HomeScreen extends ProductCoordinatorBase {
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          return MainProductCard(product: productNew[index]);
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: MainProductCard(product: productNew[index]),
+                          );
                         },
                         itemCount:
                             productNew.length > 3 ? 3 : productNew.length,
