@@ -15,6 +15,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
+### android buildAab
+
+```sh
+[bundle exec] fastlane android buildAab
+```
+
+Build a beta version to the Google Play
+
 ### android beta
 
 ```sh
