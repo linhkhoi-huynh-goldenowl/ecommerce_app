@@ -7,6 +7,8 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../dialogs/system_dialog.dart';
+
 class PaymentScreen extends StatelessWidget {
   const PaymentScreen({Key? key}) : super(key: key);
   @override
@@ -57,18 +59,32 @@ class PaymentScreen extends StatelessWidget {
                             : ListView.builder(
                                 padding: const EdgeInsets.all(16),
                                 itemBuilder: (context, index) {
-                                  return _creditCard(state.creditCards[index],
-                                      () {
-                                    context
-                                        .read<CreditCardCubit>()
-                                        .setDefaultCredit(
-                                            state.creditCards[index]);
-                                  }, () {
-                                    context
-                                        .read<CreditCardCubit>()
-                                        .removeCreditCard(
-                                            state.creditCards[index]);
-                                  });
+                                  return BlocBuilder<CreditCardCubit,
+                                          CreditCardState>(
+                                      buildWhen: (previous, current) =>
+                                          previous.defaultStatus !=
+                                          current.defaultStatus,
+                                      builder: (context, state) {
+                                        return _creditCard(
+                                            state.creditCards[index], () {
+                                          context
+                                              .read<CreditCardCubit>()
+                                              .setDefaultCredit(
+                                                  state.creditCards[index]);
+                                        }, () {
+                                          SystemDialog.dialogYesNo(
+                                              context: context,
+                                              func: () {
+                                                context
+                                                    .read<CreditCardCubit>()
+                                                    .removeCreditCard(state
+                                                        .creditCards[index]);
+                                              },
+                                              title: "Are you sure",
+                                              content:
+                                                  "Do you want to delete this card?");
+                                        });
+                                      });
                                 },
                                 itemCount: state.creditCards.length,
                               ))

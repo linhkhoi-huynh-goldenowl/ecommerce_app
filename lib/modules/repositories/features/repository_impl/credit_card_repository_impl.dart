@@ -45,31 +45,15 @@ class CreditCardRepositoryImpl extends CreditCardRepository {
   }
 
   @override
-  Future<XResult<CreditCard>> setDefaultCard(CreditCard item) async {
-    int indexCreditCardOldDefault =
-        _listCreditCard.indexWhere((element) => element.isDefault == true);
-    if (indexCreditCardOldDefault > -1) {
-      var oldDefault = _listCreditCard[indexCreditCardOldDefault];
-      oldDefault.isDefault = false;
-      XResult<CreditCard> resultOld =
-          await _creditProvider.addCreditCard(oldDefault);
+  Future<XResult<CreditCard>> setDefaultCard(CreditCard itemNew) async {
+    itemNew.isDefault = true;
+    return await _creditProvider.addCreditCard(itemNew);
+  }
 
-      if (resultOld.isSuccess) {
-        final pref = await SharedPreferences.getInstance();
-        final userId = pref.getString("userId");
-        item.userId = userId;
-        item.isDefault = true;
-        return await _creditProvider.addCreditCard(item);
-      } else {
-        return resultOld;
-      }
-    } else {
-      final pref = await SharedPreferences.getInstance();
-      final userId = pref.getString("userId");
-      item.userId = userId;
-      item.isDefault = true;
-      return await _creditProvider.addCreditCard(item);
-    }
+  @override
+  Future<XResult<CreditCard>> setUnDefaultCard(CreditCard itemOld) async {
+    itemOld.isDefault = false;
+    return await _creditProvider.addCreditCard(itemOld);
   }
 
   @override

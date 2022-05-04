@@ -1,5 +1,6 @@
 import 'package:e_commerce_shop_app/modules/cubit/address/address_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
+import 'package:e_commerce_shop_app/modules/cubit/country/country_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/creditCard/credit_card_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product_detail/product_detail_cubit.dart';
@@ -46,6 +47,7 @@ class BottomSheetApp {
                       previous.sizeStatus != current.sizeStatus,
                   builder: (context, state) {
                     return PopupChooseSize(
+                        title: "ADD TO CART",
                         listSize: listSize,
                         stateSize: state.size,
                         selectStatus: state.sizeStatus,
@@ -96,6 +98,7 @@ class BottomSheetApp {
                       previous.sizeStatus != current.sizeStatus,
                   builder: (context, state) {
                     return PopupChooseSize(
+                        title: "ADD TO FAVORITES",
                         listSize: listSize,
                         stateSize: state.size,
                         selectStatus: state.sizeStatus,
@@ -174,9 +177,12 @@ class BottomSheetApp {
         ),
         context: contextParent,
         builder: (context) {
-          return BlocProvider.value(
-              value: BlocProvider.of<AddressCubit>(contextParent),
-              child: const PopupCountries());
+          return MultiBlocProvider(providers: [
+            BlocProvider<CountryCubit>(
+                create: (BuildContext context) => CountryCubit()),
+            BlocProvider.value(
+                value: BlocProvider.of<AddressCubit>(contextParent))
+          ], child: const PopupCountries());
         });
   }
 

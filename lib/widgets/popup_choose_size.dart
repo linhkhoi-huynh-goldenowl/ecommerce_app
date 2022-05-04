@@ -14,13 +14,15 @@ class PopupChooseSize extends StatelessWidget {
       required this.stateSize,
       required this.chooseSize,
       required this.func,
-      required this.selectStatus})
+      required this.selectStatus,
+      required this.title})
       : super(key: key);
   final List<SizeCloth> listSize;
   final String stateSize;
   final SizeStatus selectStatus;
   final Function(String) chooseSize;
   final VoidCallback func;
+  final String title;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -35,62 +37,57 @@ class PopupChooseSize extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-        Expanded(
-            child: ListView(
-          children: [
-            const Text(
-              "Select Size",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Color(0xff222222),
-                  fontFamily: "Metropolis",
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600),
-            ),
-            selectStatus == SizeStatus.initial ||
-                    selectStatus == SizeStatus.selected
-                ? const SizedBox(
-                    height: 33,
-                  )
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        "Please Choose Size",
-                        style: ETextStyle.metropolis(color: Colors.red),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      )
-                    ],
+        const Text(
+          "Select Size",
+          style: TextStyle(
+              color: Color(0xff222222),
+              fontFamily: "Metropolis",
+              fontSize: 18,
+              fontWeight: FontWeight.w600),
+        ),
+        selectStatus == SizeStatus.initial ||
+                selectStatus == SizeStatus.selected
+            ? const SizedBox(
+                height: 33,
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    height: 10,
                   ),
-            Center(
-              child: Wrap(
-                  alignment: WrapAlignment.start,
-                  runSpacing: 20,
-                  spacing: 20,
-                  children: listSize
-                      .map((e) => ButtonChooseSize(
-                          func: () {
-                            chooseSize(e.size);
-                          },
-                          title: e.size,
-                          chooseSize: stateSize))
-                      .toList()),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            LabelTileListWidget(
-                title: "Size info", func: () {}, haveBorderTop: true),
-          ],
-        )),
+                  Text(
+                    "Please Choose Size",
+                    style: ETextStyle.metropolis(color: Colors.red),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  )
+                ],
+              ),
+        Wrap(
+            runSpacing: 20,
+            spacing: 20,
+            children: listSize
+                .map((e) => ButtonChooseSize(
+                    isInStock: e.quantity > 0,
+                    func: () {
+                      chooseSize(e.size);
+                    },
+                    title: e.size,
+                    chooseSize: stateSize))
+                .toList()),
+        const SizedBox(
+          height: 24,
+        ),
+        LabelTileListWidget(
+            title: "Size info", func: () {}, haveBorderTop: true),
+        const SizedBox(
+          height: 28,
+        ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: ButtonIntro(func: func, title: "ADD TO CART"),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ButtonIntro(func: func, title: title),
         )
       ],
     );

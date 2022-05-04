@@ -18,12 +18,17 @@ default_platform(:android)
 platform :android do
   desc "Deploy a beta version to the Google Play"
   lane :beta do
-    gradle(task: "clean bundleRelease",project_dir: '../../android')
-    upload_to_play_store(track: 'beta',
+
+    gb = google_play_track_version_codes(track: 'beta',json_key: 'play_config.json',package_name:'com.goldenowl.e_commerce_shop_app')
     
-	package_name: 'com.goldenowl.e_commerce_shop_app',
-	version_name: '1.0.11+9',
-	json_key: 'play_config.json',aab_paths: ['app-release.aab'])
+    version_updated  =  gb[0].to_i + 1
+
+    upload_to_play_store(track: 'beta',
+                          skip_upload_apk:true,
+                          package_name: 'com.goldenowl.e_commerce_shop_app',
+                          version_code:version_updated,
+                          aab: '../build/app/outputs/bundle/release/app-release.aab',
+                          json_key: 'play_config.json')
   end
   
   desc "Deploy a new version to the Google Play"

@@ -88,13 +88,20 @@ class ProductDetailsScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _dropdownSize(
-                              contextDetail,
-                              state.size,
-                              productItem
-                                  .colors[ProductHelper.getIndexOfColor(
-                                      state.color, productItem.colors)]
-                                  .sizes),
+                          BlocBuilder<ProductDetailCubit, ProductDetailState>(
+                              buildWhen: (previous, current) =>
+                                  previous.color != current.color ||
+                                  previous.size != current.size ||
+                                  previous.sizeStatus != current.sizeStatus,
+                              builder: (contextDetail, state) {
+                                return _dropdownSize(
+                                    contextDetail,
+                                    state.size,
+                                    productItem
+                                        .colors[ProductHelper.getIndexOfColor(
+                                            state.color, productItem.colors)]
+                                        .sizes);
+                              }),
                           _dropdownColor(
                               contextDetail, state.color, productItem.colors),
                           _favoriteButton(
@@ -265,7 +272,7 @@ Widget _dropdownSize(
               enabled: false,
               value: e.size,
               child: Text(
-                "${e.size} - Out slot",
+                "${e.size} - Out stock",
                 style: ETextStyle.metropolis(
                     color: Colors.red, fontSize: 14, weight: FontWeight.w600),
               ),
