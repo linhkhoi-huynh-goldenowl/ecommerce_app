@@ -22,9 +22,10 @@
 ## Table of contents
 
 - [How to Use](#how-to-use)
-- [Code Conventions](#code-conventions)
 - [Dependencies](#depencencies)
 - [Code structure](#code-structure)
+- [Screenshot](#screenshot)
+- [Github action](#github-action)
 
 ## How to Use 
 
@@ -47,73 +48,31 @@
 
 - Code for import data product in ecommerce_app/sheets_app_scripts/code.gs  
  
-
-# Code Conventions
-- [analysis_options.yaml](analysis_options.yaml)
-- [about code analytis flutter](https://medium.com/flutter-community/effective-code-in-your-flutter-app-from-the-beginning-e597444e1273)
-
-In Flutter, Modularization will be done at a file level. While building widgets, we have to make sure they stay independent and re-usable as maximum. Ideally, widgets should be easily extractable into an independent project.
-
-
 # Depencencies
-
-![](resources/images/dependencies.jpg) 
-
-## Helper
-- [logger](https://pub.dev/packages/logger): Small, easy to use and extensible logger which prints beautiful logs.
-- [url_launcher](https://pub.dev/packages/url_launcher): A Flutter plugin for launching a URL in the mobile platform. Supports iOS, Android, web, Windows, macOS, and Linux.
-- [auto_route](https://pub.dev/packages/auto_route): Auto route generator, Manager router
-- [get](https://pub.dev/packages/get): Snackbar, Navigation, Theme, Hellper function
-
-- [intl](https://pub.dev/packages/intl): This package provides internationalization and localization facilities, including message translation, plurals and genders, date/number formatting and parsing, and bidirectional text.
+- [equatable](https://pub.dev/packages/equatable): Simplify Equality Comparisons.
+- [carousel_slider](https://pub.dev/packages/carousel_slider): A carousel slider widget.
+- [intl](https://pub.dev/packages/intl): Provides internationalization and localization facilities, including message translation, plurals and genders, date/number formatting and parsing, and bidirectional text.
+- [image_picker](https://pub.dev/packages/image_picker): A Flutter plugin for iOS and Android for picking images from the image library, and taking new pictures with the camera.
+- [cached_network_image](https://pub.dev/packages/cached_network_image): A flutter library to show images from the internet and keep them in the cache directory.
 - [shared_preferences](https://pub.dev/packages/shared_preferences): Flutter plugin for reading and writing simple key-value pairs. Wraps NSUserDefaults on iOS and SharedPreferences on Android.
-
-- [package_info](https://pub.dev/packages/package_info)
-- [device_info](https://pub.dev/packages/device_info)
 - [permission_handler](https://pub.dev/packages/permission_handler): Permission plugin for Flutter. This plugin provides a cross-platform (iOS, Android) API to request and check permissions.
 
-## HTTP, API
-- [http](https://pub.dev/packages/http): A composable, Future-based library for making HTTP requests.
+## Social Login
+- [google_sign_in](https://pub.dev/packages/google_sign_in): A Flutter plugin for Google Sign In.
+- [flutter_facebook_auth](https://pub.dev/packages/flutter_facebook_auth): The easiest way to add facebook login to your flutter app, get user information, profile picture and more. Web support included.
 
-
-## Flutter Fire
-The official Firebase plugins for Flutter. sign_in, analytics, crashlytics, storage, firestore
-- [Flutter Fire](https://firebase.flutter.dev/)
+## Flutter Firebase
+The official Firebase plugins for Flutter. authentication, storage, firestore.
+- [firebase_core](https://pub.dev/packages/firebase_core): A Flutter plugin to use the Firebase Core API, which enables connecting to multiple Firebase apps.
+- [firebase_auth](https://pub.dev/packages/firebase_auth): Firebase Authentication aims to make building secure authentication systems easy, while improving the sign-in and onboarding experience for end users. 
+- [cloud_firestore](https://pub.dev/packages/cloud_firestore): Cloud Firestore is a flexible, scalable database for mobile, web, and server development from Firebase and Google Cloud.
+- [firebase_storage](https://pub.dev/packages/firebase_storage): Cloud Storage for Firebase is a powerful, simple, and cost-effective object storage service built for Google scale. 
 
 ## State Management
 State Management is still the hottest topic in Flutter Community. There are tons of choices available and it’s super intimidating for a beginner to choose one. Also, all of them have their pros and cons. So, what’s the best approach
-
-![](resources/images/state.png) 
-
-- [provider](https://pub.dev/packages/provider): **A recommended approach**
-
-**Other favorite package**
-- [rxdart](https://pub.dev/packages/rxdart): RxDart adds additional capabilities to Dart Streams and StreamControllers. Using as bloc pattens
 - [flutter_bloc](https://pub.dev/packages/flutter_bloc): Widgets that make it easy to integrate blocs and cubits into Flutter. [Learn more](https://bloclibrary.dev/#/) 
-- [RiverPod](https://pub.dev/packages/riverpod): This project can be considered as a rewrite of provider to make improvements that would be otherwise impossible.
-- [Get](https://pub.dev/packages/get): A simplified reactive state management solution.
-- [stacked](https://pub.dev/packages/stacked): This architecture was initially a version of MVVM.
-- [get](https://pub.dev/packages/get): Getx Ecosystem (State, Router, Dependency management, Theme, Utils)
 
-- [More about state management](https://flutter.dev/docs/development/data-and-backend/state-mgmt/options)
-
-## Flutter Gen
-- [flutter_gen](https://pub.dev/packages/flutter_gen): The Flutter code generator for your assets, fonts, colors, … — Get rid of all String-based APIs.
-
-## Widget
-- [shimmer](https://pub.dev/packages/shimmer): Shimmer loading animation
-- [flutter_html](https://pub.dev/packages/flutter_html)
-- [webview_flutter](https://pub.dev/packages/webview_flutter)
-
-## Image
-- [cached_network_image](https://pub.dev/packages/cached_network_image)
-- [flutter_cache_manager](https://pub.dev/packages/flutter_cache_manager)
-
-## Other favorite package
-- [DIO](https://pub.dev/packages/dio): A powerful Http client for Dart
-- [hive](https://pub.dev/packages/hive), [sqflite](https://pub.dev/packages/sqflite): Flutter plugin for reading and locale data
-
-# Code structure
+## Code structure
 Here is the core folder structure which flutter provides.
 ```
 flutter-app/
@@ -127,31 +86,27 @@ Here is the folder structure we have been using in this project
 
 ```
 lib/
-|- _dev/
-  |- mock/
-  |- view/
-  |- widget/
-
-|- packages/
-|- src/
-  |- data/
+|- config/
+  |- routes/
+  |- styles/
+|- dialogs/
+|- modules/
+  |- cubit/
+  |- models/
+  |- repositories/
+  |- screens/
+|- utils/
+  |- helpers/
   |- services/
-  |- feature/
-    |- dashboard/
-      |- widget/
-      |- controller
-      |- dashboard_screen.dart
-    |- home/
-    |- login/
-  |- plugins/
-  |- routing/
 |- widgets/
-  |- button/
-  |- image/
-  |- view/
 |- main.dart
-|- modules
 ```
 
-## Wiki
-Checkout [wiki](https://github.com/j1mmyto9/flutter-boilerplate/wiki) for more infomation
+## Screenshot
+![screenshot1](https://github.com/linhkhoi-huynh-goldenowl/ecommerce_app/tree/main/assets/images/screenshots/screenshot1.png)
+![screenshot2](https://github.com/linhkhoi-huynh-goldenowl/ecommerce_app/tree/main/assets/images/screenshots/screenshot2.png)
+![screenshot3](https://github.com/linhkhoi-huynh-goldenowl/ecommerce_app/tree/main/assets/images/screenshots/screenshot3.png)
+
+## Github Action
+- Github Action only deploys to google play console when pull request has been merged.
+- Version of file release will auto increase when github action deploy.

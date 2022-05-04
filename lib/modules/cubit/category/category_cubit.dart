@@ -7,10 +7,10 @@ part 'category_state.dart';
 
 class CategoryCubit extends Cubit<CategoryState> {
   CategoryCubit() : super(const CategoryState()) {
-    categoryLoaded();
+    fetchCategory();
   }
 
-  void categoryLoaded() async {
+  void fetchCategory() async {
     try {
       if (state.status == CategoryStatus.initial) {
         emit(state.copyWith(status: CategoryStatus.loading));

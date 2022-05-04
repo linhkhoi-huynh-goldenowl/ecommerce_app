@@ -2,7 +2,7 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:flutter/cupertino.dart';
 
 class SystemDialog {
-  static void dialogYesNo(
+  static void showConfirmDialog(
       {required BuildContext context,
       required VoidCallback func,
       required String title,
