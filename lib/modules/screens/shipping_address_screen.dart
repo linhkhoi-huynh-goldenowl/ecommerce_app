@@ -1,5 +1,6 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
+import 'package:e_commerce_shop_app/dialogs/system_dialog.dart';
 import 'package:e_commerce_shop_app/modules/cubit/address/address_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/address.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
@@ -46,27 +47,42 @@ class ShippingAddressScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 16),
                               itemBuilder: (context, index) {
-                                return _addressCard(state.addresses[index], () {
-                                  context
-                                      .read<AddressCubit>()
-                                      .removeAddress(state.addresses[index]);
-                                }, () {
-                                  context
-                                      .read<AddressCubit>()
-                                      .loadInfoAddressForm(
-                                          state.addresses[index]);
-                                  Navigator.of(context).pushNamed(
-                                      Routes.addAddressScreen,
-                                      arguments: {
-                                        'addressId': state.addresses[index].id,
-                                        'context': context
+                                return BlocBuilder<AddressCubit, AddressState>(
+                                    buildWhen: (previous, current) =>
+                                        previous.defaultStatus !=
+                                        current.defaultStatus,
+                                    builder: (context, state) {
+                                      return _addressCard(
+                                          state.addresses[index], () {
+                                        SystemDialog.dialogYesNo(
+                                            context: context,
+                                            func: () {
+                                              context
+                                                  .read<AddressCubit>()
+                                                  .removeAddress(
+                                                      state.addresses[index]);
+                                            },
+                                            title: "Are you sure",
+                                            content: "Do you want to delete?");
+                                      }, () {
+                                        context
+                                            .read<AddressCubit>()
+                                            .loadInfoAddressForm(
+                                                state.addresses[index]);
+                                        Navigator.of(context).pushNamed(
+                                            Routes.addAddressScreen,
+                                            arguments: {
+                                              'addressId':
+                                                  state.addresses[index].id,
+                                              'context': context
+                                            });
+                                      }, () {
+                                        context
+                                            .read<AddressCubit>()
+                                            .setDefaultAddress(
+                                                state.addresses[index]);
                                       });
-                                }, () {
-                                  context
-                                      .read<AddressCubit>()
-                                      .setDefaultAddress(
-                                          state.addresses[index]);
-                                });
+                                    });
                               },
                               itemCount: state.addresses.length,
                             )

@@ -14,13 +14,15 @@ class PopupChooseSize extends StatelessWidget {
       required this.stateSize,
       required this.chooseSize,
       required this.func,
-      required this.selectStatus})
+      required this.selectStatus,
+      required this.title})
       : super(key: key);
   final List<SizeCloth> listSize;
   final String stateSize;
   final SizeStatus selectStatus;
   final Function(String) chooseSize;
   final VoidCallback func;
+  final String title;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -68,6 +70,7 @@ class PopupChooseSize extends StatelessWidget {
             spacing: 20,
             children: listSize
                 .map((e) => ButtonChooseSize(
+                    isInStock: e.quantity > 0,
                     func: () {
                       chooseSize(e.size);
                     },
@@ -84,7 +87,7 @@ class PopupChooseSize extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ButtonIntro(func: func, title: "ADD TO CART"),
+          child: ButtonIntro(func: func, title: title),
         )
       ],
     );
