@@ -42,8 +42,7 @@ class ProfileScreen extends ProductCoordinatorBase {
                     pinned: true,
                     stretch: true,
                     automaticallyImplyLeading: false,
-                    flexibleSpace: _flexibleSpaceBar(),
-                    actions: [_findButton()]),
+                    flexibleSpace: _flexibleSpaceBar()),
               ];
             },
             body: ListView(

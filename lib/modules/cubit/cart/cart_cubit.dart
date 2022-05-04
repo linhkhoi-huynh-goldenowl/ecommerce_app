@@ -134,6 +134,15 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
+  void cartSearch(String searchInput) async {
+    final carts = await Domain().cart.getCartByName(searchInput);
+    emit(state.copyWith(carts: carts, searchInput: searchInput));
+  }
+
+  void cartOpenSearchBarEvent() async {
+    emit(state.copyWith(isSearch: !state.isSearch));
+  }
+
   void clearCart() async {
     try {
       emit(state.copyWith(status: CartStatus.loading));

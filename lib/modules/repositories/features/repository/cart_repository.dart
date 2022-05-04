@@ -11,7 +11,7 @@ abstract class CartRepository {
   Future<XResult<String>> removeCart(CartModel item);
 
   Future<XResult<CartModel>> removeCartByOne(CartModel item);
-
+  Future<List<CartModel>> getCartByName(String searchName);
   bool checkContainTitle(String title);
   int getIndexContainList(CartModel item);
   double getTotalPrice([int? salePercent]);

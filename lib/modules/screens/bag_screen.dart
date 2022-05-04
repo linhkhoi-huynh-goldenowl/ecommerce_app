@@ -11,6 +11,7 @@ import '../../utils/services/navigator_services.dart';
 import '../../widgets/button_intro.dart';
 import '../../widgets/cart_card_widget.dart';
 import '../../widgets/promo_code_field.dart';
+import '../../widgets/search_text_field.dart';
 
 class BagScreen extends StatelessWidget {
   const BagScreen({Key? key}) : super(key: key);
@@ -40,24 +41,43 @@ class BagScreen extends StatelessWidget {
                       pinned: true,
                       stretch: true,
                       automaticallyImplyLeading: false,
-                      flexibleSpace: _flexibleSpaceBar(),
-                      actions: [_findButton()]),
+                      flexibleSpace: BlocBuilder<CartCubit, CartState>(
+                          buildWhen: (previous, current) =>
+                              previous.isSearch != current.isSearch,
+                          builder: (context, state) {
+                            return _flexibleSpaceBar(
+                                context, state.isSearch, state.searchInput);
+                          }),
+                      actions: [
+                        BlocBuilder<CartCubit, CartState>(
+                            buildWhen: (previous, current) =>
+                                previous.isSearch != current.isSearch,
+                            builder: (context, state) {
+                              return _findButton(context);
+                            })
+                      ]),
                 ];
               },
-              body: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return CartCardWidget(
-                      cartModel: state.carts[index],
-                      addToCart: context.read<CartCubit>().addToCart,
-                      removeByOneCart:
-                          context.read<CartCubit>().removeCartByOne,
-                      addToFavorite: context.read<FavoriteCubit>().addFavorite,
-                      removeCart: context.read<CartCubit>().removeCart,
-                    );
-                  },
-                  itemCount: state.carts.length),
+              body: BlocBuilder<CartCubit, CartState>(
+                  buildWhen: (previous, current) =>
+                      previous.carts != current.carts,
+                  builder: (context, state) {
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          return CartCardWidget(
+                            cartModel: state.carts[index],
+                            addToCart: context.read<CartCubit>().addToCart,
+                            removeByOneCart:
+                                context.read<CartCubit>().removeCartByOne,
+                            addToFavorite:
+                                context.read<FavoriteCubit>().addFavorite,
+                            removeCart: context.read<CartCubit>().removeCart,
+                          );
+                        },
+                        itemCount: state.carts.length);
+                  }),
             ),
             bottomNavigationBar: BottomAppBar(
                 elevation: 0,
@@ -136,34 +156,51 @@ class BagScreen extends StatelessWidget {
   }
 }
 
-Widget _findButton() {
+Widget _findButton(BuildContext context) {
   return IconButton(
-      onPressed: () {}, icon: Image.asset('assets/images/icons/find.png'));
+      onPressed: () {
+        BlocProvider.of<CartCubit>(context).cartOpenSearchBarEvent();
+      },
+      icon: Image.asset('assets/images/icons/find.png'));
 }
 
-Widget _flexibleSpaceBar() {
+Widget _flexibleSpaceBar(
+    BuildContext context, bool isSearch, String searchInput) {
   return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
     var top = constraints.biggest.height;
     return FlexibleSpaceBar(
       titlePadding: EdgeInsets.only(
-          left: top < MediaQuery.of(context).size.height * 0.12 ? 0 : 16,
-          bottom: top < MediaQuery.of(context).size.height * 0.12 ? 15 : 0),
+          right: 40,
+          left: isSearch == false
+              ? top < MediaQuery.of(context).size.height * 0.12
+                  ? 40
+                  : 16
+              : 40,
+          top: isSearch == false ? 0 : 5,
+          bottom: isSearch == false ? 15 : 5),
       centerTitle:
           top < MediaQuery.of(context).size.height * 0.12 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
-          child: Text(
-            "My Bag",
-            textAlign: TextAlign.start,
-            style: ETextStyle.metropolis(
-                weight: top < MediaQuery.of(context).size.height * 0.12
-                    ? FontWeight.w600
-                    : FontWeight.w700,
-                fontSize:
-                    top < MediaQuery.of(context).size.height * 0.12 ? 22 : 27),
-          )),
+          child: isSearch == false
+              ? Text(
+                  "My Bag",
+                  textAlign: TextAlign.start,
+                  style: ETextStyle.metropolis(
+                      weight: top < MediaQuery.of(context).size.height * 0.12
+                          ? FontWeight.w600
+                          : FontWeight.w700,
+                      fontSize: top < MediaQuery.of(context).size.height * 0.12
+                          ? 20
+                          : 26),
+                )
+              : SearchTextField(
+                  initValue: searchInput,
+                  func: (value) {
+                    BlocProvider.of<CartCubit>(context).cartSearch(value);
+                  })),
     );
   });
 }

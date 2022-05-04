@@ -8,37 +8,57 @@ enum CartStatus {
 }
 
 class CartState extends Equatable {
-  const CartState(
-      {this.carts = const <CartModel>[],
-      this.status = CartStatus.initial,
-      this.totalPrice = 0,
-      this.code = "",
-      this.salePercent = 0,
-      this.errMessage = ""});
+  const CartState({
+    this.carts = const <CartModel>[],
+    this.status = CartStatus.initial,
+    this.totalPrice = 0,
+    this.code = "",
+    this.salePercent = 0,
+    this.errMessage = "",
+    this.searchInput = "",
+    this.isSearch = false,
+  });
   final List<CartModel> carts;
   final CartStatus status;
   final double totalPrice;
   final String code;
   final int salePercent;
   final String errMessage;
+  final String searchInput;
+  final bool isSearch;
 
-  CartState copyWith(
-      {CartStatus? status,
-      List<CartModel>? carts,
-      double? totalPrice,
-      String? code,
-      int? salePercent,
-      String? errMessage}) {
+  CartState copyWith({
+    CartStatus? status,
+    List<CartModel>? carts,
+    double? totalPrice,
+    String? code,
+    int? salePercent,
+    String? errMessage,
+    bool? isSearch,
+    String? searchInput,
+    bool? isShowCategoryBar,
+  }) {
     return CartState(
-        status: status ?? this.status,
-        carts: carts ?? this.carts,
-        totalPrice: totalPrice ?? this.totalPrice,
-        code: code ?? this.code,
-        salePercent: salePercent ?? this.salePercent,
-        errMessage: errMessage ?? this.errMessage);
+      status: status ?? this.status,
+      carts: carts ?? this.carts,
+      totalPrice: totalPrice ?? this.totalPrice,
+      code: code ?? this.code,
+      salePercent: salePercent ?? this.salePercent,
+      errMessage: errMessage ?? this.errMessage,
+      searchInput: searchInput ?? this.searchInput,
+      isSearch: isSearch ?? this.isSearch,
+    );
   }
 
   @override
-  List<Object> get props =>
-      [status, carts, totalPrice, code, salePercent, errMessage];
+  List<Object> get props => [
+        status,
+        carts,
+        totalPrice,
+        code,
+        salePercent,
+        errMessage,
+        searchInput,
+        isSearch,
+      ];
 }

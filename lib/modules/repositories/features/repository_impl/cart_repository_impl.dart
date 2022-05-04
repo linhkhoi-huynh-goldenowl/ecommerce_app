@@ -110,4 +110,13 @@ class CartRepositoryImpl extends CartRepository {
         .toList()
         .isNotEmpty;
   }
+
+  @override
+  Future<List<CartModel>> getCartByName(String searchName) async {
+    return _listCarts
+        .where((element) => element.productItem.title
+            .toLowerCase()
+            .contains(searchName.toLowerCase()))
+        .toList();
+  }
 }

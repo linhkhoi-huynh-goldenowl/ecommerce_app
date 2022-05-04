@@ -42,8 +42,17 @@ class OrderCubit extends Cubit<OrderState> {
             (a, b) =>
                 b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
           );
-          await Domain().order.setOrder(orders);
-          selectOption(state.orderSelect);
+          final ordersDeli = await Domain().order.getOrdersByDelivered(orders);
+          final ordersProcess =
+              await Domain().order.getOrdersByProcessing(orders);
+          final ordersCancel =
+              await Domain().order.getOrdersByCancelled(orders);
+          emit(state.copyWith(
+              status: OrderStatus.success,
+              errMessage: "",
+              ordersDeli: ordersDeli,
+              ordersProcess: ordersProcess,
+              ordersCancel: ordersCancel));
         } else {
           emit(state.copyWith(
               status: OrderStatus.failure, errMessage: event.error));
@@ -132,41 +141,6 @@ class OrderCubit extends Cubit<OrderState> {
       emit(state.copyWith(
           submitStatus: OrderSubmitStatus.failure,
           errMessage: "Something wrong"));
-    }
-  }
-
-  void selectOption(OrderSelect select) async {
-    try {
-      emit(state.copyWith(status: OrderStatus.loading));
-      switch (select) {
-        case OrderSelect.delivered:
-          final orders = await Domain().order.getOrdersByDelivered();
-          emit(state.copyWith(
-            orderSelect: select,
-            orders: orders,
-            status: OrderStatus.success,
-          ));
-          break;
-        case OrderSelect.processing:
-          final orders = await Domain().order.getOrdersByProcessing();
-          emit(state.copyWith(
-            orderSelect: select,
-            orders: orders,
-            status: OrderStatus.success,
-          ));
-          break;
-        case OrderSelect.cancelled:
-          final orders = await Domain().order.getOrdersByCancelled();
-          emit(state.copyWith(
-            orderSelect: select,
-            orders: orders,
-            status: OrderStatus.success,
-          ));
-          break;
-      }
-    } catch (_) {
-      emit(state.copyWith(
-          status: OrderStatus.failure, errMessage: "Something wrong"));
     }
   }
 

@@ -10,7 +10,9 @@ enum ReOrderStatus { initial, loading, success, failure }
 
 class OrderState extends Equatable {
   const OrderState(
-      {this.orders = const [],
+      {this.ordersDeli = const [],
+      this.ordersProcess = const [],
+      this.ordersCancel = const [],
       this.status = OrderStatus.initial,
       this.deliveryId = "",
       this.addressStatus = AddressOrderStatus.initial,
@@ -22,7 +24,9 @@ class OrderState extends Equatable {
       this.errMessage = "",
       this.reOrderStatus = ReOrderStatus.initial});
   final OrderStatus status;
-  final List<Order> orders;
+  final List<Order> ordersDeli;
+  final List<Order> ordersProcess;
+  final List<Order> ordersCancel;
   final String deliveryId;
   final double deliPrice;
   final AddressOrderStatus addressStatus;
@@ -34,7 +38,9 @@ class OrderState extends Equatable {
   final ReOrderStatus reOrderStatus;
 
   OrderState copyWith(
-      {List<Order>? orders,
+      {List<Order>? ordersDeli,
+      List<Order>? ordersProcess,
+      List<Order>? ordersCancel,
       OrderStatus? status,
       String? deliveryId,
       AddressOrderStatus? addressStatus,
@@ -47,7 +53,9 @@ class OrderState extends Equatable {
       ReOrderStatus? reOrderStatus}) {
     return OrderState(
         status: status ?? this.status,
-        orders: orders ?? this.orders,
+        ordersDeli: ordersDeli ?? this.ordersDeli,
+        ordersProcess: ordersProcess ?? this.ordersProcess,
+        ordersCancel: ordersCancel ?? this.ordersCancel,
         deliveryId: deliveryId ?? this.deliveryId,
         addressStatus: addressStatus ?? this.addressStatus,
         creditStatus: creditStatus ?? this.creditStatus,
@@ -61,7 +69,6 @@ class OrderState extends Equatable {
 
   @override
   List<Object> get props => [
-        orders,
         status,
         deliveryId,
         addressStatus,
@@ -71,6 +78,9 @@ class OrderState extends Equatable {
         submitStatus,
         orderSelect,
         errMessage,
-        reOrderStatus
+        reOrderStatus,
+        ordersDeli,
+        ordersProcess,
+        ordersCancel
       ];
 }

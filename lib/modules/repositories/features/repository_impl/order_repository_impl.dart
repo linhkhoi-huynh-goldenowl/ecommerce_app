@@ -7,7 +7,6 @@ import '../../provider/order_provider.dart';
 import '../../x_result.dart';
 
 class OrderRepositoryImpl extends OrderRepository {
-  List<Order> _listOrders = [];
   final OrderProvider _orderProvider = OrderProvider();
   @override
   Future<XResult<Order>> addOrder(Order item) async {
@@ -21,24 +20,18 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  Future<List<Order>> getOrdersByCancelled() async {
-    return _listOrders
-        .where((element) => element.status == "Cancelled")
-        .toList();
+  Future<List<Order>> getOrdersByCancelled(List<Order> orders) async {
+    return orders.where((element) => element.status == "Cancelled").toList();
   }
 
   @override
-  Future<List<Order>> getOrdersByDelivered() async {
-    return _listOrders
-        .where((element) => element.status == "Delivered")
-        .toList();
+  Future<List<Order>> getOrdersByDelivered(List<Order> orders) async {
+    return orders.where((element) => element.status == "Delivered").toList();
   }
 
   @override
-  Future<List<Order>> getOrdersByProcessing() async {
-    return _listOrders
-        .where((element) => element.status == "Processing")
-        .toList();
+  Future<List<Order>> getOrdersByProcessing(List<Order> orders) async {
+    return orders.where((element) => element.status == "Processing").toList();
   }
 
   @override
@@ -46,11 +39,5 @@ class OrderRepositoryImpl extends OrderRepository {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
     return _orderProvider.snapshotsAllQuery("userId", userId!);
-  }
-
-  @override
-  Future<List<Order>> setOrder(List<Order> orders) async {
-    _listOrders = orders;
-    return _listOrders;
   }
 }
