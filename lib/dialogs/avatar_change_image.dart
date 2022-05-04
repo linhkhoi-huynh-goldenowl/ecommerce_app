@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,33 +20,33 @@ class AvatarChangeImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onTap: () => showDialog(
-            context: context,
-            builder: (context) {
-              return SimpleDialog(
-                elevation: 11,
-                title: Text(
-                  'Update Image',
-                  textAlign: TextAlign.center,
-                  style: ETextStyle.metropolis(
-                      fontSize: 20, weight: FontWeight.w600),
-                ),
-                children: <Widget>[
-                  SimpleDialogOption(
-                    child: const Text('Image from camera'),
-                    onPressed: funcCamera,
-                  ),
-                  SimpleDialogOption(
-                    child: const Text('Image from gallery'),
-                    onPressed: funcGallery,
-                  ),
-                  SimpleDialogOption(
-                    child: const Text('Cancel'),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              );
-            }),
+        onTap: () {
+          showCupertinoModalPopup(
+              context: context,
+              builder: (context) {
+                return CupertinoActionSheet(
+                    title: const Text('Choose option to change avatar'),
+                    actions: <Widget>[
+                      CupertinoActionSheetAction(
+                        child: const Text('Image from camera'),
+                        onPressed: funcCamera,
+                      ),
+                      CupertinoActionSheetAction(
+                        child: const Text('Image from gallery'),
+                        onPressed: funcGallery,
+                      ),
+                    ],
+                    cancelButton: CupertinoActionSheetAction(
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ));
+              });
+        },
         child: Stack(
           children: [
             imgUrl != ""
