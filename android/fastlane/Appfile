@@ -1,0 +1,2 @@
+json_key_file("D:\INTERN\ecommerce_app\android\play_config.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("com.goldenowl.e_commerce_shop_app") # e.g. com.krausefx.app

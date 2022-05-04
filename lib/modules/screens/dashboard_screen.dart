@@ -6,6 +6,8 @@ import 'package:e_commerce_shop_app/modules/screens/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../cubit/cart/cart_cubit.dart';
+import '../cubit/favorite/favorite_cubit.dart';
 import '../cubit/navigation/navigation_cubit.dart';
 import 'home_screen.dart';
 
@@ -14,8 +16,14 @@ class DashboardScreen extends StatelessWidget {
   static BuildContext? parentContext = GlobalKey().currentContext;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => NavigationCubit(), child: _buildBody());
+    return MultiBlocProvider(providers: [
+      BlocProvider<NavigationCubit>(
+        create: (BuildContext context) => NavigationCubit(),
+      ),
+      BlocProvider<FavoriteCubit>(
+          create: (BuildContext context) => FavoriteCubit()),
+      BlocProvider<CartCubit>(create: (BuildContext context) => CartCubit()),
+    ], child: _buildBody());
   }
 
   Widget _buildBody() {
