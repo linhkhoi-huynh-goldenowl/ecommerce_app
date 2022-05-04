@@ -7,6 +7,12 @@ enum CreditCardStatus {
   loading,
 }
 enum CreditCardTypeStatus { initial, typing, typed, submitting, submitted }
+enum CardDefaultStatus {
+  initial,
+  success,
+  failure,
+  loading,
+}
 
 class CreditCardState extends Equatable {
   const CreditCardState(
@@ -18,6 +24,7 @@ class CreditCardState extends Equatable {
       this.status = CreditCardStatus.initial,
       this.typeStatus = CreditCardTypeStatus.initial,
       this.creditCards = const [],
+      this.defaultStatus = CardDefaultStatus.initial,
       this.errMessage = ""});
 
   final String nameOnCard;
@@ -41,6 +48,7 @@ class CreditCardState extends Equatable {
   final CreditCardTypeStatus typeStatus;
 
   final List<CreditCard> creditCards;
+  final CardDefaultStatus defaultStatus;
   final String errMessage;
 
   CreditCardState copyWith(
@@ -52,6 +60,7 @@ class CreditCardState extends Equatable {
       CreditCardStatus? status,
       CreditCardTypeStatus? typeStatus,
       List<CreditCard>? creditCards,
+      CardDefaultStatus? defaultStatus,
       String? errMessage}) {
     return CreditCardState(
         status: status ?? this.status,
@@ -62,6 +71,7 @@ class CreditCardState extends Equatable {
         expireDate: expireDate ?? this.expireDate,
         isDefault: isDefault ?? this.isDefault,
         cvv: cvv ?? this.cvv,
+        defaultStatus: defaultStatus ?? this.defaultStatus,
         errMessage: errMessage ?? this.errMessage);
   }
 
@@ -75,6 +85,7 @@ class CreditCardState extends Equatable {
         cvv,
         expireDate,
         isDefault,
+        defaultStatus,
         errMessage
       ];
 }

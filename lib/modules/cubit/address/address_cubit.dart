@@ -111,26 +111,44 @@ class AddressCubit extends Cubit<AddressState> {
 
   void setDefaultAddress(Address address) async {
     try {
-      emit(state.copyWith(
-          status: AddressStatus.loading,
-          typeStatus: AddressTypeStatus.submitting));
-      XResult<Address> addressRes =
-          await Domain().address.setDefaultAddress(address);
-      if (addressRes.isSuccess) {
-        emit(state.copyWith(
-            status: AddressStatus.success,
-            typeStatus: AddressTypeStatus.submitted,
-            errMessage: ""));
+      emit(state.copyWith(defaultStatus: AddressDefaultStatus.loading));
+      int indexOldDefault =
+          state.addresses.indexWhere((element) => element.isDefault == true);
+      if (indexOldDefault > -1) {
+        XResult<Address> resOld = await Domain()
+            .address
+            .setUnDefaultAddress(state.addresses[indexOldDefault]);
+        if (resOld.isSuccess) {
+          XResult<Address> resNew =
+              await Domain().address.setDefaultAddress(address);
+          if (resNew.isSuccess) {
+            emit(state.copyWith(
+                defaultStatus: AddressDefaultStatus.success, errMessage: ""));
+          } else {
+            emit(state.copyWith(
+                defaultStatus: AddressDefaultStatus.failure,
+                errMessage: resNew.error));
+          }
+        } else {
+          emit(state.copyWith(
+              defaultStatus: AddressDefaultStatus.failure,
+              errMessage: resOld.error));
+        }
       } else {
-        emit(state.copyWith(
-            status: AddressStatus.failure,
-            typeStatus: AddressTypeStatus.initial,
-            errMessage: addressRes.error));
+        XResult<Address> resNew =
+            await Domain().address.setDefaultAddress(address);
+        if (resNew.isSuccess) {
+          emit(state.copyWith(
+              defaultStatus: AddressDefaultStatus.success, errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              defaultStatus: AddressDefaultStatus.failure,
+              errMessage: resNew.error));
+        }
       }
     } catch (_) {
       emit(state.copyWith(
-          status: AddressStatus.failure,
-          typeStatus: AddressTypeStatus.initial,
+          defaultStatus: AddressDefaultStatus.failure,
           errMessage: "Something not right"));
     }
   }

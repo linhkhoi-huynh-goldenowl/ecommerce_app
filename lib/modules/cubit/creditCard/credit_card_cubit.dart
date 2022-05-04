@@ -94,26 +94,55 @@ class CreditCardCubit extends Cubit<CreditCardState> {
 
   void setDefaultCredit(CreditCard creditCard) async {
     try {
-      emit(state.copyWith(status: CreditCardStatus.loading));
-      XResult<CreditCard> creditRes =
-          await Domain().creditCard.setDefaultCard(creditCard);
-      if (creditRes.isSuccess) {
-        var localUser = await Domain().profile.getProfile();
-        localUser.creditDefault = creditCard.cardNumber;
-        XResult<EUser> resUser = await Domain().profile.saveProfile(localUser);
-        if (resUser.isSuccess) {
-          emit(state.copyWith(status: CreditCardStatus.success));
+      emit(state.copyWith(defaultStatus: CardDefaultStatus.loading));
+      int indexOldDefault =
+          state.creditCards.indexWhere((element) => element.isDefault == true);
+      if (indexOldDefault > -1) {
+        XResult<CreditCard> resOld = await Domain()
+            .creditCard
+            .setUnDefaultCard(state.creditCards[indexOldDefault]);
+        if (resOld.isSuccess) {
+          XResult<CreditCard> resNew =
+              await Domain().creditCard.setDefaultCard(creditCard);
+          if (resNew.isSuccess) {
+            var localUser = await Domain().profile.getProfile();
+            localUser.creditDefault = creditCard.cardNumber;
+            XResult<EUser> resUser =
+                await Domain().profile.saveProfile(localUser);
+            if (resUser.isSuccess) {
+              emit(state.copyWith(defaultStatus: CardDefaultStatus.success));
+            } else {
+              emit(state.copyWith(
+                  defaultStatus: CardDefaultStatus.failure,
+                  errMessage: resUser.error));
+            }
+          } else {
+            emit(state.copyWith(
+                defaultStatus: CardDefaultStatus.failure,
+                errMessage: resNew.error));
+          }
         } else {
           emit(state.copyWith(
-              status: CreditCardStatus.failure, errMessage: resUser.error));
+              defaultStatus: CardDefaultStatus.failure,
+              errMessage: resOld.error));
         }
       } else {
-        emit(state.copyWith(
-            status: CreditCardStatus.failure, errMessage: creditRes.error));
+        XResult<CreditCard> resNew =
+            await Domain().creditCard.setDefaultCard(creditCard);
+        if (resNew.isSuccess) {
+          emit(state.copyWith(
+              defaultStatus: CardDefaultStatus.success,
+              typeStatus: CreditCardTypeStatus.submitted));
+        } else {
+          emit(state.copyWith(
+              defaultStatus: CardDefaultStatus.failure,
+              typeStatus: CreditCardTypeStatus.initial));
+        }
       }
     } catch (_) {
       emit(state.copyWith(
-          status: CreditCardStatus.failure, errMessage: "Something wrong"));
+          defaultStatus: CardDefaultStatus.failure,
+          errMessage: "Something wrong"));
     }
   }
 
@@ -129,7 +158,8 @@ class CreditCardCubit extends Cubit<CreditCardState> {
           XResult<EUser> resUser =
               await Domain().profile.saveProfile(localUser);
           if (resUser.isSuccess) {
-            emit(state.copyWith(status: CreditCardStatus.success));
+            emit(state.copyWith(
+                status: CreditCardStatus.success, errMessage: ""));
           } else {
             emit(state.copyWith(
                 status: CreditCardStatus.failure, errMessage: resUser.error));
