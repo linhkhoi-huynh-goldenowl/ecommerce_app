@@ -11,10 +11,10 @@ part 'product_state.dart';
 
 class ProductCubit extends Cubit<ProductState> {
   ProductCubit() : super(const ProductState()) {
-    productLoaded();
+    fetchProducts();
   }
   StreamSubscription? productSubscription;
-  void productLoaded() async {
+  void fetchProducts() async {
     try {
       emit(state.copyWith(status: ProductStatus.loading));
       final Stream<XResult<List<ProductItem>>> productsStream =
