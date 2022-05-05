@@ -57,6 +57,14 @@ class AuthRepositoryImpl implements AuthRepository {
 
       _saveLocalStorage(_uid!, "email");
       return XResult.success(eUser);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        return XResult.error('Invalid-email.');
+      } else if (e.code == 'email-already-in-use') {
+        return XResult.error('Email was used');
+      } else {
+        return XResult.error("Something was not right");
+      }
     } catch (_) {
       return XResult.error("Something was not right");
     }
@@ -175,7 +183,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<XResult<String>> resetPassword(String email) async {
     try {
-      print(email);
       await _firebaseAuth.sendPasswordResetEmail(email: email);
       return XResult.success("Send complete");
     } on FirebaseAuthException catch (e) {

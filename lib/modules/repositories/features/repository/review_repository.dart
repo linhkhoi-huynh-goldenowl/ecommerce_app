@@ -4,14 +4,12 @@ import '../../x_result.dart';
 
 abstract class ReviewRepository {
   Future<XResult<ReviewModel>> addReviewToProduct(ReviewModel item);
-  Future<List<ReviewModel>> addReviewToLocal(ReviewModel item);
   Future<XResult<ReviewModel>> addLikeToReview(ReviewModel item, String userId);
-  Future<List<ReviewModel>> addLikeToLocal(ReviewModel item);
 
-  Future<XResult<List<ReviewModel>>> getReviewsFromProduct(String productId);
-  Future<XResult<List<ReviewModel>>> getReviewsByUser();
-  Future<List<ReviewModel>> setReviewList(List<ReviewModel> reviews);
-  Future<List<ReviewModel>> getReviewsFromProductWithImage(bool isImage);
+  Stream<XResult<List<ReviewModel>>> getReviewsFromProductStream(
+      String productId);
+  Future<Stream<XResult<List<ReviewModel>>>> getReviewsByUserStream();
+
   Future<List<String>> getImage();
   Future<List<String>> addImageToList(String path);
   Future<List<String>> removeImageToList(String path);

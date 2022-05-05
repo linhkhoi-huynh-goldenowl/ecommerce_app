@@ -8,6 +8,7 @@ import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../dialogs/system_dialog.dart';
+import '../../widgets/loading_widget.dart';
 
 class PaymentScreen extends StatelessWidget {
   const PaymentScreen({Key? key}) : super(key: key);
@@ -53,9 +54,7 @@ class PaymentScreen extends StatelessWidget {
                     ),
                     Expanded(
                         child: state.status == CreditCardStatus.loading
-                            ? const Center(
-                                child: CircularProgressIndicator(),
-                              )
+                            ? const LoadingWidget()
                             : ListView.builder(
                                 padding: const EdgeInsets.all(16),
                                 itemBuilder: (context, index) {

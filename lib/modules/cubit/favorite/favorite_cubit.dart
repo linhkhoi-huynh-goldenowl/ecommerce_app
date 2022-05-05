@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/favorite_product.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
@@ -22,16 +21,11 @@ class FavoriteCubit extends Cubit<FavoriteState> {
   void addFavorite(FavoriteProduct favoriteProduct) async {
     try {
       emit(state.copyWith(status: FavoriteStatus.loading));
-      if (Domain().favorite.checkNotContainInList(favoriteProduct)) {
+      if (checkNotContainInList(favoriteProduct)) {
         XResult<FavoriteProduct> favoritesRes =
             await Domain().favorite.addProductToFavorite(favoriteProduct);
         if (favoritesRes.isSuccess) {
-          final favorites =
-              await Domain().favorite.addFavoriteToLocal(favoritesRes.data!);
-          emit(state.copyWith(
-              status: FavoriteStatus.success,
-              favorites: favorites,
-              errMessage: ""));
+          emit(state.copyWith(status: FavoriteStatus.success, errMessage: ""));
         } else {
           emit(state.copyWith(
               status: FavoriteStatus.failure, errMessage: favoritesRes.error));
@@ -45,31 +39,6 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     }
   }
 
-  void addFavoriteToCart(FavoriteProduct favoriteProduct) async {
-    try {
-      emit(state.copyWith(addCartStatus: AddCartStatus.loading));
-
-      CartModel cartModel = CartModel(
-          productItem: favoriteProduct.productItem,
-          size: favoriteProduct.size,
-          color: favoriteProduct.color ?? "Black",
-          quantity: 1);
-      XResult<CartModel> favoritesRes =
-          await Domain().cart.addProductToCart(cartModel);
-      if (favoritesRes.isSuccess) {
-        emit(state.copyWith(
-            addCartStatus: AddCartStatus.success, errMessage: ""));
-      } else {
-        emit(state.copyWith(
-            addCartStatus: AddCartStatus.failure,
-            errMessage: favoritesRes.error));
-      }
-    } catch (_) {
-      emit(state.copyWith(
-          addCartStatus: AddCartStatus.failure, errMessage: "Something wrong"));
-    }
-  }
-
   void removeFavorite(FavoriteProduct favoriteProduct) async {
     try {
       emit(state.copyWith(status: FavoriteStatus.loading));
@@ -78,12 +47,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           await Domain().favorite.removeFavorite(favoriteProduct);
 
       if (favoritesRes.isSuccess) {
-        final favorites =
-            await Domain().favorite.removeFavoriteToLocal(favoriteProduct);
-        emit(state.copyWith(
-            status: FavoriteStatus.success,
-            favorites: favorites,
-            errMessage: ""));
+        emit(state.copyWith(status: FavoriteStatus.success, errMessage: ""));
       } else {
         emit(state.copyWith(
             status: FavoriteStatus.failure, errMessage: favoritesRes.error));
@@ -97,19 +61,23 @@ class FavoriteCubit extends Cubit<FavoriteState> {
   void fetchFavorite() async {
     try {
       emit(state.copyWith(status: FavoriteStatus.loading));
-      XResult<List<FavoriteProduct>> favoritesRes =
-          await Domain().favorite.getFavorites();
-      if (favoritesRes.isSuccess) {
-        final favorites =
-            await Domain().favorite.setFavorites(favoritesRes.data!);
-        emit(state.copyWith(
-            status: FavoriteStatus.success,
-            favorites: favorites,
-            errMessage: ""));
-      } else {
-        emit(state.copyWith(
-            status: FavoriteStatus.failure, errMessage: favoritesRes.error));
-      }
+      final Stream<XResult<List<FavoriteProduct>>> favoriteStream =
+          await Domain().favorite.getFavoritesStream();
+
+      favoriteSubscription = favoriteStream.listen((event) async {
+        emit(state.copyWith(status: FavoriteStatus.loading));
+        if (event.isSuccess) {
+          emit(state.copyWith(
+              status: FavoriteStatus.success,
+              favorites: event.data,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: FavoriteStatus.failure,
+              favorites: [],
+              errMessage: event.error));
+        }
+      });
     } catch (_) {
       emit(state.copyWith(
           status: FavoriteStatus.failure, errMessage: "Something wrong"));
@@ -123,87 +91,46 @@ class FavoriteCubit extends Cubit<FavoriteState> {
   }
 
   void favoriteLoadGridLayout() async {
-    try {
-      emit(state.copyWith(
-          gridStatus: GridFavoriteStatus.loadingGrid,
-          status: FavoriteStatus.loading));
-      emit(state.copyWith(
-          isGridLayout: !state.isGridLayout,
-          gridStatus: GridFavoriteStatus.successGrid,
-          status: FavoriteStatus.success,
-          errMessage: ""));
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridFavoriteStatus.failureGrid,
-          errMessage: "Something wrong"));
-    }
+    emit(state.copyWith(isGridLayout: !state.isGridLayout));
   }
 
   void favoriteOpenSearchBarEvent() async {
-    try {
-      emit(state.copyWith(gridStatus: GridFavoriteStatus.loadingGrid));
-      emit(state.copyWith(
-          isSearch: !state.isSearch,
-          gridStatus: GridFavoriteStatus.successGrid,
-          errMessage: ""));
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridFavoriteStatus.failureGrid,
-          errMessage: "Something wrong"));
-    }
+    emit(state.copyWith(isSearch: !state.isSearch));
   }
 
   void favoriteOpenCategoryBarEvent() async {
-    try {
-      emit(state.copyWith(gridStatus: GridFavoriteStatus.loadingGrid));
-      emit(state.copyWith(
-          isShowCategoryBar: !state.isShowCategoryBar,
-          gridStatus: GridFavoriteStatus.successGrid,
-          errMessage: ""));
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridFavoriteStatus.failureGrid,
-          errMessage: "Something wrong"));
+    emit(state.copyWith(isShowCategoryBar: !state.isShowCategoryBar));
+  }
+
+  void favoriteSearch(String searchName) {
+    emit(state.copyWith(searchInput: searchName));
+  }
+
+  void filterFavoriteCategory(String categoryName) {
+    if (categoryName == state.categoryName) {
+      emit(state.copyWith(categoryName: ""));
+    } else {
+      emit(state.copyWith(categoryName: categoryName));
     }
   }
 
-  void favoriteSort(
-      {String? searchName,
-      ChooseSort? chooseSort,
-      String? categoryName}) async {
-    try {
-      emit(state.copyWith(gridStatus: GridFavoriteStatus.loadingGrid));
+  void filterFavoriteType(ChooseSort chooseSort) {
+    emit(state.copyWith(sort: chooseSort));
+  }
 
-      if (categoryName == state.categoryName) {
-        var favorites = await Domain().favorite.getFavoritesFilter(
-            searchName: searchName ?? state.searchInput,
-            chooseSort: chooseSort ?? state.sort);
+  bool checkContainId(String id) {
+    return state.favorites
+        .where((element) => element.productItem.id == id)
+        .toList()
+        .isNotEmpty;
+  }
 
-        emit(state.copyWith(
-            sort: chooseSort ?? state.sort,
-            categoryName: "",
-            searchInput: searchName ?? state.searchInput,
-            favorites: favorites,
-            gridStatus: GridFavoriteStatus.successGrid,
-            errMessage: ""));
-      } else {
-        var favorites = await Domain().favorite.getFavoritesFilter(
-            searchName: searchName ?? state.searchInput,
-            categoryName: categoryName ?? state.categoryName,
-            chooseSort: chooseSort ?? state.sort);
-
-        emit(state.copyWith(
-            sort: chooseSort ?? state.sort,
-            categoryName: categoryName ?? state.categoryName,
-            searchInput: searchName ?? state.searchInput,
-            favorites: favorites,
-            gridStatus: GridFavoriteStatus.successGrid,
-            errMessage: ""));
-      }
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridFavoriteStatus.failureGrid,
-          errMessage: "Something wrong"));
-    }
+  bool checkNotContainInList(FavoriteProduct item) {
+    return state.favorites
+        .where((element) =>
+            element.productItem.id == item.productItem.id &&
+            element.size == item.size)
+        .toList()
+        .isEmpty;
   }
 }

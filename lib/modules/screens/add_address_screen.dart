@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/button_intro.dart';
+import '../../widgets/loading_widget.dart';
 
 class AddAddressScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -35,50 +36,7 @@ class AddAddressScreen extends StatelessWidget {
           buildWhen: (previous, current) => previous.status != current.status,
           builder: (context, state) {
             return Scaffold(
-              bottomNavigationBar: BottomAppBar(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: BlocBuilder<AddressCubit, AddressState>(
-                      buildWhen: (previous, current) =>
-                          previous.typeStatus != current.typeStatus,
-                      builder: (context, state) {
-                        return state.typeStatus == AddressTypeStatus.submitting
-                            ? const Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : ButtonIntro(
-                                func: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    addressId != null
-                                        ? context
-                                            .read<AddressCubit>()
-                                            .editAddress(Address(
-                                                id: addressId,
-                                                fullName: state.fullName,
-                                                address: state.address,
-                                                city: state.city,
-                                                region: state.region,
-                                                zipCode: state.zipCode,
-                                                country: state.country,
-                                                isDefault: state.isDefault))
-                                        : context
-                                            .read<AddressCubit>()
-                                            .addAddress(Address(
-                                                fullName: state.fullName,
-                                                address: state.address,
-                                                city: state.city,
-                                                region: state.region,
-                                                zipCode: state.zipCode,
-                                                country: state.country,
-                                                isDefault: false));
-
-                                    _formKey.currentState!.reset();
-                                  }
-                                },
-                                title: 'SAVE ADDRESS');
-                      }),
-                ),
-              ),
+              bottomNavigationBar: _bottomBar(),
               appBar: AppBar(
                 centerTitle: true,
                 title: Text(
@@ -103,6 +61,48 @@ class AddAddressScreen extends StatelessWidget {
               body: _addressForm(context),
             );
           }),
+    );
+  }
+
+  Widget _bottomBar() {
+    return BottomAppBar(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: BlocBuilder<AddressCubit, AddressState>(
+            buildWhen: (previous, current) =>
+                previous.typeStatus != current.typeStatus,
+            builder: (context, state) {
+              return state.typeStatus == AddressTypeStatus.submitting
+                  ? const LoadingWidget()
+                  : ButtonIntro(
+                      func: () async {
+                        if (_formKey.currentState!.validate()) {
+                          addressId != null
+                              ? context.read<AddressCubit>().editAddress(
+                                  Address(
+                                      id: addressId,
+                                      fullName: state.fullName,
+                                      address: state.address,
+                                      city: state.city,
+                                      region: state.region,
+                                      zipCode: state.zipCode,
+                                      country: state.country,
+                                      isDefault: state.isDefault))
+                              : context.read<AddressCubit>().addAddress(Address(
+                                  fullName: state.fullName,
+                                  address: state.address,
+                                  city: state.city,
+                                  region: state.region,
+                                  zipCode: state.zipCode,
+                                  country: state.country,
+                                  isDefault: false));
+
+                          _formKey.currentState!.reset();
+                        }
+                      },
+                      title: 'SAVE ADDRESS');
+            }),
+      ),
     );
   }
 

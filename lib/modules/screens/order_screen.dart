@@ -1,11 +1,13 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/modules/cubit/order/order_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/order.dart';
+import 'package:e_commerce_shop_app/widgets/flexible_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/styles/text_style.dart';
+import '../../utils/helpers/show_snackbar.dart';
 import '../../widgets/sliver_app_bar_delegate.dart';
 
 class OrderScreen extends StatelessWidget {
@@ -20,119 +22,104 @@ class OrderScreen extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    return BlocBuilder<OrderCubit, OrderState>(
-      buildWhen: (previous, current) => previous.status != current.status,
-      builder: (context, state) {
-        switch (state.status) {
-          case OrderStatus.failure:
-            return const Scaffold(
-              body: Center(child: Text('Failed To Get orders')),
-            );
-
-          case OrderStatus.success:
-            return GestureDetector(
-                onTap: () {
-                  FocusScopeNode currentFocus = FocusScope.of(context);
-                  if (!currentFocus.hasPrimaryFocus &&
-                      currentFocus.focusedChild != null) {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  }
-                },
-                child: Scaffold(
-                  body: DefaultTabController(
-                    length: 3,
-                    child: NestedScrollView(
-                      headerSliverBuilder: (context, value) {
-                        return [
-                          SliverAppBar(
-                              shadowColor: Colors.white,
-                              elevation: 5,
-                              backgroundColor: const Color(0xffF9F9F9),
-                              expandedHeight: 110.0,
-                              pinned: true,
-                              stretch: true,
-                              leading: _leadingButton(context),
-                              flexibleSpace: _flexibleSpaceBar(),
-                              actions: [_findButton()]),
-                          SliverPersistentHeader(
-                              pinned: true,
-                              delegate: SliverAppBarDelegate(
-                                child: PreferredSize(
-                                    preferredSize: const Size.fromHeight(60.0),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      color: const Color(0xffF9F9F9),
-                                      height: 60,
-                                      child: TabBar(
-                                        indicatorSize:
-                                            TabBarIndicatorSize.label,
-                                        labelColor: const Color(0xffFFFFFF),
-                                        unselectedLabelColor:
-                                            const Color(0xff222222),
-                                        indicatorColor: Colors.transparent,
-                                        isScrollable: false,
-                                        labelPadding: EdgeInsets.zero,
-                                        indicator: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(25),
-                                            color: const Color(0xff222222)),
-                                        tabs: [
-                                          _tabButton("Delivered"),
-                                          _tabButton("Processing"),
-                                          _tabButton("Cancelled"),
-                                        ],
-                                      ),
-                                    )),
-                              ))
-                        ];
-                      },
-                      body: TabBarView(
-                        children: [
-                          BlocBuilder<OrderCubit, OrderState>(
-                              buildWhen: (previous, current) =>
-                                  previous.ordersDeli != current.ordersDeli,
-                              builder: (context, state) {
-                                return state.ordersDeli.isEmpty
-                                    ? const Center(
-                                        child: Text("No Orders"),
-                                      )
-                                    : _displayListView(
-                                        state.ordersDeli, context);
-                              }),
-                          BlocBuilder<OrderCubit, OrderState>(
-                              buildWhen: (previous, current) =>
-                                  previous.ordersProcess !=
-                                  current.ordersProcess,
-                              builder: (context, state) {
-                                return state.ordersProcess.isEmpty
-                                    ? const Center(
-                                        child: Text("No Orders"),
-                                      )
-                                    : _displayListView(
-                                        state.ordersProcess, context);
-                              }),
-                          BlocBuilder<OrderCubit, OrderState>(
-                              buildWhen: (previous, current) =>
-                                  previous.ordersCancel != current.ordersCancel,
-                              builder: (context, state) {
-                                return state.ordersCancel.isEmpty
-                                    ? const Center(
-                                        child: Text("No Orders"),
-                                      )
-                                    : _displayListView(
-                                        state.ordersCancel, context);
-                              })
-                        ],
-                      ),
-                    ),
-                  ),
-                ));
-
-          default:
-            return const Center(child: CircularProgressIndicator());
+    return BlocListener<OrderCubit, OrderState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == OrderStatus.failure) {
+          AppSnackBar.showSnackBar(context, state.errMessage);
         }
       },
+      child: GestureDetector(
+          onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus &&
+                currentFocus.focusedChild != null) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+          },
+          child: Scaffold(
+            body: DefaultTabController(
+              length: 3,
+              child: NestedScrollView(
+                headerSliverBuilder: (context, value) {
+                  return [
+                    SliverAppBar(
+                        shadowColor: Colors.white,
+                        elevation: 5,
+                        backgroundColor: const Color(0xffF9F9F9),
+                        expandedHeight: 110.0,
+                        pinned: true,
+                        stretch: true,
+                        leading: _leadingButton(context),
+                        flexibleSpace: const FlexibleAppBar(title: "My Orders"),
+                        actions: [_findButton()]),
+                    SliverPersistentHeader(
+                        pinned: true,
+                        delegate: SliverAppBarDelegate(
+                          child: PreferredSize(
+                              preferredSize: const Size.fromHeight(60.0),
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                color: const Color(0xffF9F9F9),
+                                height: 60,
+                                child: TabBar(
+                                  indicatorSize: TabBarIndicatorSize.label,
+                                  labelColor: const Color(0xffFFFFFF),
+                                  unselectedLabelColor: const Color(0xff222222),
+                                  indicatorColor: Colors.transparent,
+                                  isScrollable: false,
+                                  labelPadding: EdgeInsets.zero,
+                                  indicator: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: const Color(0xff222222)),
+                                  tabs: [
+                                    _tabButton("Delivered"),
+                                    _tabButton("Processing"),
+                                    _tabButton("Cancelled"),
+                                  ],
+                                ),
+                              )),
+                        ))
+                  ];
+                },
+                body: TabBarView(
+                  children: [
+                    BlocBuilder<OrderCubit, OrderState>(
+                        buildWhen: (previous, current) =>
+                            previous.ordersDeli != current.ordersDeli,
+                        builder: (context, state) {
+                          return state.ordersDeli.isEmpty
+                              ? const Center(
+                                  child: Text("No Orders"),
+                                )
+                              : _displayListView(state.ordersDeli, context);
+                        }),
+                    BlocBuilder<OrderCubit, OrderState>(
+                        buildWhen: (previous, current) =>
+                            previous.ordersProcess != current.ordersProcess,
+                        builder: (context, state) {
+                          return state.ordersProcess.isEmpty
+                              ? const Center(
+                                  child: Text("No Orders"),
+                                )
+                              : _displayListView(state.ordersProcess, context);
+                        }),
+                    BlocBuilder<OrderCubit, OrderState>(
+                        buildWhen: (previous, current) =>
+                            previous.ordersCancel != current.ordersCancel,
+                        builder: (context, state) {
+                          return state.ordersCancel.isEmpty
+                              ? const Center(
+                                  child: Text("No Orders"),
+                                )
+                              : _displayListView(state.ordersCancel, context);
+                        })
+                  ],
+                ),
+              ),
+            ),
+          )),
     );
   }
 }
@@ -161,33 +148,6 @@ Widget _leadingButton(BuildContext context) {
 Widget _findButton() {
   return IconButton(
       onPressed: () {}, icon: Image.asset('assets/images/icons/find.png'));
-}
-
-Widget _flexibleSpaceBar() {
-  return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-    var top = constraints.biggest.height;
-    return FlexibleSpaceBar(
-      titlePadding: EdgeInsets.only(
-          left: top < MediaQuery.of(context).size.height * 0.13 ? 0 : 16,
-          bottom: top < MediaQuery.of(context).size.height * 0.13 ? 12 : 0),
-      centerTitle:
-          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
-      title: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: 1,
-          child: Text(
-            "My Orders",
-            textAlign: TextAlign.start,
-            style: ETextStyle.metropolis(
-                weight: top < MediaQuery.of(context).size.height * 0.13
-                    ? FontWeight.w600
-                    : FontWeight.w700,
-                fontSize:
-                    top < MediaQuery.of(context).size.height * 0.13 ? 22 : 27),
-          )),
-    );
-  });
 }
 
 Widget _orderCard(Order order, VoidCallback func) {

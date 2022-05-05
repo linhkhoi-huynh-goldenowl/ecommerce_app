@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -11,24 +13,33 @@ class ReviewUserCubit extends Cubit<ReviewUserState> {
   ReviewUserCubit() : super(const ReviewUserState()) {
     fetchReviewByProduct();
   }
+  StreamSubscription? reviewSubscription;
+  @override
+  Future<void> close() async {
+    reviewSubscription?.cancel();
+    await Domain().review.clearImage();
+    return super.close();
+  }
 
   void fetchReviewByProduct() async {
     try {
       emit(state.copyWith(status: ReviewUserStatus.loading));
-      XResult<List<ReviewModel>> reviewsRes =
-          await Domain().review.getReviewsByUser();
-      if (reviewsRes.isSuccess) {
-        final reviews =
-            await Domain().review.setReviewList(reviewsRes.data ?? []);
 
-        emit(state.copyWith(
-            status: ReviewUserStatus.success,
-            reviews: reviews,
-            errMessage: ""));
-      } else {
-        emit(state.copyWith(
-            status: ReviewUserStatus.failure, errMessage: reviewsRes.error));
-      }
+      final Stream<XResult<List<ReviewModel>>> reviewStream =
+          await Domain().review.getReviewsByUserStream();
+
+      reviewSubscription = reviewStream.listen((event) async {
+        emit(state.copyWith(status: ReviewUserStatus.loading));
+        if (event.isSuccess) {
+          emit(state.copyWith(
+              status: ReviewUserStatus.success,
+              reviews: event.data,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: ReviewUserStatus.failure, errMessage: event.error));
+        }
+      });
     } catch (_) {
       emit(state.copyWith(
           status: ReviewUserStatus.failure, errMessage: "Something wrong"));

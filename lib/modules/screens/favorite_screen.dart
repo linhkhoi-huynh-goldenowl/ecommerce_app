@@ -1,15 +1,15 @@
+import 'package:e_commerce_shop_app/widgets/flexible_bar_with_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../config/styles/text_style.dart';
+import '../../utils/helpers/show_snackbar.dart';
 import '../../widgets/favorite_card_grid.dart';
 import '../../widgets/favorite_card_list.dart';
 import '../../widgets/filter_bar_widget.dart';
-import '../../widgets/search_text_field.dart';
+import '../../widgets/loading_widget.dart';
 import '../../widgets/sliver_app_bar_delegate.dart';
 import '../cubit/category/category_cubit.dart';
 import '../cubit/favorite/favorite_cubit.dart';
-import '../cubit/product/product_cubit.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
@@ -52,7 +52,13 @@ class _FavoriteScreenState extends State<FavoriteScreen>
   }
 
   Widget _buildBody(BuildContext context) {
-    return BlocBuilder<FavoriteCubit, FavoriteState>(
+    return BlocConsumer<FavoriteCubit, FavoriteState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == FavoriteStatus.failure) {
+          AppSnackBar.showSnackBar(context, state.errMessage);
+        }
+      },
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         switch (state.status) {
@@ -86,18 +92,25 @@ class _FavoriteScreenState extends State<FavoriteScreen>
                               automaticallyImplyLeading: false,
                               leading: null,
                               actions: [_findButton(context)],
-                              flexibleSpace:
-                                  BlocBuilder<FavoriteCubit, FavoriteState>(
-                                      buildWhen: (previous, current) =>
-                                          previous.gridStatus !=
-                                          current.gridStatus,
-                                      builder: (context, state) {
-                                        return _flexibleSpaceBar(
-                                            context,
-                                            "Favorites",
-                                            state.isSearch,
-                                            state.searchInput);
-                                      })),
+                              flexibleSpace: BlocBuilder<FavoriteCubit,
+                                      FavoriteState>(
+                                  buildWhen: (previous, current) =>
+                                      previous.isSearch != current.isSearch ||
+                                      previous.searchInput !=
+                                          current.searchInput ||
+                                      previous.categoryName !=
+                                          current.categoryName,
+                                  builder: (context, state) {
+                                    return FlexibleBarWithSearch(
+                                      title: "Favorites",
+                                      isSearch: state.isSearch,
+                                      searchInput: state.searchInput,
+                                      func: (value) {
+                                        BlocProvider.of<FavoriteCubit>(context)
+                                            .favoriteSearch(value);
+                                      },
+                                    );
+                                  })),
                           AnimatedBuilder(
                             animation: _controller,
                             builder: (context, child) {
@@ -110,8 +123,13 @@ class _FavoriteScreenState extends State<FavoriteScreen>
                                         child: BlocBuilder<FavoriteCubit,
                                                 FavoriteState>(
                                             buildWhen: (previous, current) =>
-                                                previous.gridStatus !=
-                                                current.gridStatus,
+                                                previous.isShowCategoryBar !=
+                                                    current.isShowCategoryBar ||
+                                                previous.categoryName !=
+                                                    current.categoryName ||
+                                                previous.sort != current.sort ||
+                                                previous.isGridLayout !=
+                                                    current.isGridLayout,
                                             builder: (context, state) {
                                               return FilterBarWidget(
                                                 height:
@@ -133,9 +151,12 @@ class _FavoriteScreenState extends State<FavoriteScreen>
                                                 applyGrid: BlocProvider.of<
                                                         FavoriteCubit>(context)
                                                     .favoriteLoadGridLayout,
-                                                applySort: context
+                                                applySortCategory: context
                                                     .read<FavoriteCubit>()
-                                                    .favoriteSort,
+                                                    .filterFavoriteCategory,
+                                                applySortChooseSort: context
+                                                    .read<FavoriteCubit>()
+                                                    .filterFavoriteType,
                                                 chooseSort: state.sort,
                                                 isGridLayout:
                                                     state.isGridLayout,
@@ -148,28 +169,24 @@ class _FavoriteScreenState extends State<FavoriteScreen>
                       },
                       body: BlocBuilder<FavoriteCubit, FavoriteState>(
                           buildWhen: (previous, current) =>
-                              previous.gridStatus != current.gridStatus,
+                              previous.favoritesListToShow !=
+                                  current.favoritesListToShow ||
+                              previous.isGridLayout != current.isGridLayout,
                           builder: (context, state) {
-                            return state.searchStatus ==
-                                        SearchProductStatus.loadingSearch ||
-                                    state.gridStatus ==
-                                        GridProductStatus.loadingGrid
+                            return state.favoritesListToShow.isEmpty
                                 ? const Center(
-                                    child: CircularProgressIndicator(),
+                                    child: Text("No favorites"),
                                   )
-                                : state.favorites.isEmpty
-                                    ? const Center(
-                                        child: Text("No favorites"),
-                                      )
-                                    : state.isGridLayout
-                                        ? _displayGridView(
-                                            state.favorites, context)
-                                        : _displayListView(state.favorites);
+                                : state.isGridLayout
+                                    ? _displayGridView(
+                                        state.favoritesListToShow, context)
+                                    : _displayListView(
+                                        state.favoritesListToShow);
                           }))),
             );
 
           default:
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingWidget();
         }
       },
     );
@@ -211,46 +228,4 @@ Widget _findButton(BuildContext context) {
         BlocProvider.of<FavoriteCubit>(context).favoriteOpenSearchBarEvent();
       },
       icon: Image.asset('assets/images/icons/find.png'));
-}
-
-Widget _flexibleSpaceBar(BuildContext context, String categoryName,
-    bool isSearch, String searchInput) {
-  return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-    var top = constraints.biggest.height;
-    return FlexibleSpaceBar(
-      titlePadding: EdgeInsets.only(
-          right: 40,
-          left: isSearch == false
-              ? top < MediaQuery.of(context).size.height * 0.13
-                  ? 40
-                  : 16
-              : 40,
-          top: isSearch == false ? 0 : 5,
-          bottom: isSearch == false ? 15 : 5),
-      centerTitle:
-          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
-      title: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: 1,
-          child: isSearch == false
-              ? Text(
-                  "Favorites",
-                  textAlign: TextAlign.start,
-                  style: ETextStyle.metropolis(
-                      weight: top < MediaQuery.of(context).size.height * 0.13
-                          ? FontWeight.w600
-                          : FontWeight.w700,
-                      fontSize: top < MediaQuery.of(context).size.height * 0.13
-                          ? 20
-                          : 26),
-                )
-              : SearchTextField(
-                  initValue: searchInput,
-                  func: (value) {
-                    BlocProvider.of<FavoriteCubit>(context)
-                        .favoriteSort(searchName: value);
-                  })),
-    );
-  });
 }

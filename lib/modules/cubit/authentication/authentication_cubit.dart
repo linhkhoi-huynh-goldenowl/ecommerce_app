@@ -75,13 +75,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
             eUser: result.data,
             submitStatus: AuthSubmitStatus.success,
             messageError: ""));
+        return true;
       } else {
         emit(state.copyWith(
             status: AuthenticationStatus.unauthenticated,
             messageError: result.error,
             submitStatus: AuthSubmitStatus.error));
+        return false;
       }
-      return true;
     } on Exception {
       emit(state.copyWith(
           status: AuthenticationStatus.unauthenticated,

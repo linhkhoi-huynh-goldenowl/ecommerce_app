@@ -20,24 +20,11 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  Future<List<Order>> getOrdersByCancelled(List<Order> orders) async {
-    return orders.where((element) => element.status == "Cancelled").toList();
-  }
-
-  @override
-  Future<List<Order>> getOrdersByDelivered(List<Order> orders) async {
-    return orders.where((element) => element.status == "Delivered").toList();
-  }
-
-  @override
-  Future<List<Order>> getOrdersByProcessing(List<Order> orders) async {
-    return orders.where((element) => element.status == "Processing").toList();
-  }
-
-  @override
-  Future<Stream<XResult<List<Order>>>> getOrderStream() async {
+  Future<Stream<XResult<List<Order>>>> getOrderStream(
+      String statusOrder) async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
-    return _orderProvider.snapshotsAllQuery("userId", userId!);
+    return _orderProvider.snapshotsAllQueryTwoCondition(
+        "userId", userId!, "status", statusOrder);
   }
 }

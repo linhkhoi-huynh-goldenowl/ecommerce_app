@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../modules/cubit/review/review_cubit.dart';
+import 'loading_widget.dart';
 
 class PopupReview extends StatelessWidget {
   const PopupReview({Key? key, required this.productId}) : super(key: key);
@@ -45,9 +46,7 @@ class PopupReview extends StatelessWidget {
                 builder: (context, state) {
                   switch (state.addStatus) {
                     case AddReviewStatus.loading:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const LoadingWidget();
                     case AddReviewStatus.success:
                       return ButtonIntro(
                           func: () {}, title: "SEND SUCCESSFULLY");

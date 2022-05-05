@@ -37,6 +37,68 @@ class FavoriteState extends Equatable {
       this.errMessage = "",
       this.addCartStatus = AddCartStatus.initial});
   final List<FavoriteProduct> favorites;
+
+  List<FavoriteProduct> get favoritesListToShow {
+    List<FavoriteProduct> favoritesList = favorites;
+    favoritesList = favoritesList
+        .where((element) => element.productItem.title
+            .toLowerCase()
+            .contains(searchInput.toLowerCase()))
+        .toList();
+    if (categoryName != "") {
+      favoritesList = favoritesList
+          .where((element) => element.productItem.categoryName
+              .toLowerCase()
+              .contains(categoryName.toLowerCase()))
+          .toList();
+    }
+    switch (sort) {
+      case ChooseSort.popular:
+        {
+          favoritesList = favoritesList
+              .where((element) => element.productItem.isPopular)
+              .toList();
+          break;
+        }
+      case ChooseSort.newest:
+        {
+          var favoritesNews = favoritesList;
+          favoritesNews.sort((b, a) => a.productItem.createdDate
+              .toDate()
+              .compareTo(b.productItem.createdDate.toDate()));
+          favoritesList = favoritesNews;
+          break;
+        }
+
+      case ChooseSort.review:
+        {
+          var favoritesReview = favoritesList;
+          favoritesReview.sort((b, a) =>
+              a.productItem.reviewStars.compareTo(b.productItem.reviewStars));
+          favoritesList = favoritesReview;
+          break;
+        }
+      case ChooseSort.priceLowest:
+        {
+          var favoritesLow = favoritesList;
+          favoritesLow.sort((a, b) => a.productItem.colors[0].sizes[0].price
+              .compareTo(b.productItem.colors[0].sizes[0].price));
+          favoritesList = favoritesLow;
+          break;
+        }
+      case ChooseSort.priceHighest:
+        {
+          var favoritesHigh = favoritesList;
+          favoritesHigh.sort((b, a) => a.productItem.colors[0].sizes[0].price
+              .compareTo(b.productItem.colors[0].sizes[0].price));
+          favoritesList = favoritesHigh;
+          break;
+        }
+    }
+
+    return favoritesList;
+  }
+
   final List<ProductItem> products;
   final FavoriteStatus status;
   final GridFavoriteStatus gridStatus;

@@ -18,60 +18,128 @@ part 'order_state.dart';
 
 class OrderCubit extends Cubit<OrderState> {
   OrderCubit() : super(const OrderState()) {
-    fetchOrder();
+    fetchOrderDelivered();
+    fetchOrderProcessing();
+    fetchOrderCancelled();
   }
-  StreamSubscription? orderSubscription;
+  StreamSubscription? orderDeliveredSubscription;
+  StreamSubscription? orderProcessingSubscription;
+  StreamSubscription? orderCancelledSubscription;
   @override
   Future<void> close() {
-    orderSubscription?.cancel();
+    orderDeliveredSubscription?.cancel();
+    orderProcessingSubscription?.cancel();
+    orderCancelledSubscription?.cancel();
     return super.close();
   }
 
-  void fetchOrder() async {
+  void fetchOrderDelivered() async {
     try {
-      emit(state.copyWith(status: OrderStatus.loading));
+      emit(state.copyWith(statusDelivered: OrderDeliveredStatus.loading));
 
       final Stream<XResult<List<Order>>> orderStream =
-          await Domain().order.getOrderStream();
+          await Domain().order.getOrderStream("Delivered");
 
-      orderSubscription = orderStream.listen((event) async {
-        emit(state.copyWith(status: OrderStatus.loading));
+      orderDeliveredSubscription = orderStream.listen((event) async {
+        emit(state.copyWith(statusDelivered: OrderDeliveredStatus.loading));
         if (event.isSuccess) {
           final orders = event.data!;
           orders.sort(
             (a, b) =>
                 b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
           );
-          final ordersDeli = await Domain().order.getOrdersByDelivered(orders);
-          final ordersProcess =
-              await Domain().order.getOrdersByProcessing(orders);
-          final ordersCancel =
-              await Domain().order.getOrdersByCancelled(orders);
+
           emit(state.copyWith(
-              status: OrderStatus.success,
+              statusDelivered: OrderDeliveredStatus.success,
               errMessage: "",
-              ordersDeli: ordersDeli,
-              ordersProcess: ordersProcess,
-              ordersCancel: ordersCancel));
+              ordersDeli: orders));
         } else {
           emit(state.copyWith(
-              status: OrderStatus.failure, errMessage: event.error));
+              statusDelivered: OrderDeliveredStatus.failure,
+              errMessage: event.error));
         }
       });
     } catch (_) {
       emit(state.copyWith(
-          status: OrderStatus.failure, errMessage: "Something wrong"));
+          statusDelivered: OrderDeliveredStatus.failure,
+          errMessage: "Something wrong"));
     }
   }
 
-  void setDelivery(String id, double price) {
+  void fetchOrderProcessing() async {
+    try {
+      emit(state.copyWith(statusProcessing: OrderProcessingStatus.loading));
+
+      final Stream<XResult<List<Order>>> orderStream =
+          await Domain().order.getOrderStream("Processing");
+
+      orderProcessingSubscription = orderStream.listen((event) async {
+        emit(state.copyWith(statusProcessing: OrderProcessingStatus.loading));
+        if (event.isSuccess) {
+          final orders = event.data!;
+          orders.sort(
+            (a, b) =>
+                b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
+          );
+
+          emit(state.copyWith(
+              statusProcessing: OrderProcessingStatus.success,
+              errMessage: "",
+              ordersProcess: orders));
+        } else {
+          emit(state.copyWith(
+              statusProcessing: OrderProcessingStatus.failure,
+              errMessage: event.error));
+        }
+      });
+    } catch (_) {
+      emit(state.copyWith(
+          statusProcessing: OrderProcessingStatus.failure,
+          errMessage: "Something wrong"));
+    }
+  }
+
+  void fetchOrderCancelled() async {
+    try {
+      emit(state.copyWith(statusCancelled: OrderCancelledStatus.loading));
+
+      final Stream<XResult<List<Order>>> orderStream =
+          await Domain().order.getOrderStream("Cancelled");
+
+      orderCancelledSubscription = orderStream.listen((event) async {
+        emit(state.copyWith(statusCancelled: OrderCancelledStatus.loading));
+        if (event.isSuccess) {
+          final orders = event.data!;
+          orders.sort(
+            (a, b) =>
+                b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
+          );
+
+          emit(state.copyWith(
+              statusCancelled: OrderCancelledStatus.success,
+              errMessage: "",
+              ordersCancel: orders));
+        } else {
+          emit(state.copyWith(
+              statusCancelled: OrderCancelledStatus.failure,
+              errMessage: event.error));
+        }
+      });
+    } catch (_) {
+      emit(state.copyWith(
+          statusCancelled: OrderCancelledStatus.failure,
+          errMessage: "Something wrong"));
+    }
+  }
+
+  void setDelivery(Delivery delivery) {
     try {
       emit(state.copyWith(status: OrderStatus.loading));
 
       emit(state.copyWith(
           status: OrderStatus.success,
-          deliPrice: price,
-          deliveryId: id,
+          deliPrice: delivery.shipPrice,
+          deliveryId: delivery.id,
           deliveryStatus: DeliveryOrderStatus.selected,
           errMessage: ""));
     } catch (_) {
@@ -98,15 +166,9 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   void addOrder(List<CartModel> listItems, CreditCard card, Address address,
-      double totalPrice, String deliveryId, String promoId) async {
+      double totalPrice, PromoModel? promoModel, Delivery delivery) async {
     try {
       emit(state.copyWith(submitStatus: OrderSubmitStatus.loading));
-
-      Delivery delivery = await Domain().delivery.getDeliveryById(deliveryId);
-      PromoModel? promoModel;
-      if (promoId != "") {
-        promoModel = await Domain().promo.getPromoById(promoId);
-      }
 
       double totalAmount = totalPrice + delivery.shipPrice;
 

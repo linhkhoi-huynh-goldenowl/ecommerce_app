@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import '../../utils/helpers/product_helpers.dart';
 import '../../widgets/color_size_widget.dart';
 import '../../widgets/image_product_widget.dart';
+import '../../widgets/loading_widget.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   const OrderDetailScreen({
@@ -202,11 +203,7 @@ class OrderDetailScreen extends StatelessWidget {
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.43,
                             child: state.reOrderStatus == ReOrderStatus.loading
-                                ? const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.black,
-                                    ),
-                                  )
+                                ? const LoadingWidget()
                                 : _buttonReorder(() {
                                     BlocProvider.of<OrderCubit>(context)
                                         .reOrder(order.listItems, context);

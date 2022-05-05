@@ -4,6 +4,8 @@ import 'package:e_commerce_shop_app/widgets/button_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/loading_widget.dart';
+
 class LandingScreen extends StatelessWidget {
   const LandingScreen({Key? key}) : super(key: key);
 
@@ -21,14 +23,10 @@ class LandingScreen extends StatelessWidget {
         onWillPop: () async => false,
         child: Scaffold(
             body: (state.status == AuthenticationStatus.unKnow)
-                ? _buildLoading()
+                ? const LoadingWidget()
                 : _buildBtn(context)),
       ),
     );
-  }
-
-  Widget _buildLoading() {
-    return const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildBtn(BuildContext context) {

@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../x_result.dart';
 
 class AddressRepositoryImpl extends AddressRepository {
-  List<Address> _listAddress = [];
   final AddressProvider _addressProvider = AddressProvider();
   @override
   Future<XResult<Address>> addAddress(Address item) async {
@@ -51,11 +50,5 @@ class AddressRepositoryImpl extends AddressRepository {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
     return _addressProvider.snapshotsAllQuery("userId", userId!);
-  }
-
-  @override
-  Future<List<Address>> setAddress(List<Address> addresses) async {
-    _listAddress = addresses;
-    return _listAddress;
   }
 }

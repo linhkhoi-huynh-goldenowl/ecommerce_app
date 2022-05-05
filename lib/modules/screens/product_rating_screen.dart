@@ -4,6 +4,7 @@ import 'package:e_commerce_shop_app/modules/cubit/review/review_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/review_model.dart';
 import 'package:e_commerce_shop_app/utils/helpers/review_helpers.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
+import 'package:e_commerce_shop_app/widgets/flexible_app_bar.dart';
 import 'package:e_commerce_shop_app/widgets/review_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:intl/intl.dart';
 
 import '../../config/routes/router.dart';
 import '../../widgets/e_cached_image.dart';
+import '../../widgets/loading_widget.dart';
 import '../../widgets/star_bar.dart';
 import '../cubit/product_detail/product_detail_cubit.dart';
 
@@ -42,7 +44,7 @@ class ProductRatingScreen extends StatelessWidget {
             switch (state.status) {
               case ReviewStatus.loading:
                 return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
+                  body: LoadingWidget(),
                 );
               case ReviewStatus.success:
                 return Scaffold(
@@ -61,7 +63,9 @@ class ProductRatingScreen extends StatelessWidget {
                                 pinned: true,
                                 stretch: true,
                                 leading: _leadingButton(context),
-                                flexibleSpace: _flexibleSpaceBar()),
+                                flexibleSpace: const FlexibleAppBar(
+                                  title: "Rating and reviews",
+                                )),
                           ];
                         },
                         body: ListView(
@@ -84,29 +88,39 @@ class ProductRatingScreen extends StatelessWidget {
                             const SizedBox(
                               height: 20,
                             ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const ClampingScrollPhysics(),
-                              padding: const EdgeInsets.only(bottom: 100),
-                              itemBuilder: (context, index) {
-                                return BlocBuilder<ReviewCubit, ReviewState>(
-                                  buildWhen: (previous, current) =>
-                                      previous.likeStatus != current.likeStatus,
-                                  builder: (context, stateLike) {
-                                    bool wasLike = ReviewHelper.checkLike(
-                                        state.reviews[index].like,
-                                        stateLike.userId);
-                                    return _reviewComment(
-                                      state.reviews[index],
-                                      wasLike,
-                                      () => context
-                                          .read<ReviewCubit>()
-                                          .likeReview(stateLike.reviews[index]),
+                            BlocBuilder<ReviewCubit, ReviewState>(
+                              buildWhen: (previous, current) =>
+                                  previous.reviewsToShow !=
+                                  current.reviewsToShow,
+                              builder: (context, state) {
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const ClampingScrollPhysics(),
+                                  padding: const EdgeInsets.only(bottom: 100),
+                                  itemBuilder: (context, index) {
+                                    return BlocBuilder<ReviewCubit,
+                                        ReviewState>(
+                                      buildWhen: (previous, current) =>
+                                          previous.likeStatus !=
+                                          current.likeStatus,
+                                      builder: (context, stateLike) {
+                                        bool wasLike = ReviewHelper.checkLike(
+                                            state.reviewsToShow[index].like,
+                                            stateLike.userId);
+                                        return _reviewComment(
+                                          state.reviewsToShow[index],
+                                          wasLike,
+                                          () => context
+                                              .read<ReviewCubit>()
+                                              .likeReview(stateLike
+                                                  .reviewsToShow[index]),
+                                        );
+                                      },
                                     );
                                   },
+                                  itemCount: state.reviewsToShow.length,
                                 );
                               },
-                              itemCount: state.reviews.length,
                             )
                           ],
                         ),
@@ -164,33 +178,6 @@ class ProductRatingScreen extends StatelessWidget {
           }),
     );
   }
-}
-
-Widget _flexibleSpaceBar() {
-  return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-    var top = constraints.biggest.height;
-    return FlexibleSpaceBar(
-      titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
-      centerTitle:
-          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
-      title: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: 1,
-          child: Text(
-            top < MediaQuery.of(context).size.height * 0.13
-                ? "Rating and reviews"
-                : "Rating&Reviews",
-            textAlign: TextAlign.start,
-            style: ETextStyle.metropolis(
-                weight: top < MediaQuery.of(context).size.height * 0.13
-                    ? FontWeight.w600
-                    : FontWeight.w700,
-                fontSize:
-                    top < MediaQuery.of(context).size.height * 0.13 ? 18 : 27),
-          )),
-    );
-  });
 }
 
 Widget _reviewButton(BuildContext context, String productId) {

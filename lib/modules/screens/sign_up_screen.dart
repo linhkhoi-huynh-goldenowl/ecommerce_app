@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../config/routes/router.dart';
+import '../../widgets/loading_widget.dart';
 import '../../widgets/social_button.dart';
 import '../cubit/sign_up/sign_up_cubit.dart';
 
@@ -117,9 +118,7 @@ class SignUpScreen extends StatelessWidget {
                       previous.submitStatus != current.submitStatus,
                   builder: (context, stateAuth) {
                     return stateAuth.submitStatus == AuthSubmitStatus.loading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
+                        ? const LoadingWidget()
                         : ButtonIntro(
                             func: () async {
                               if (_formKey.currentState!.validate()) {

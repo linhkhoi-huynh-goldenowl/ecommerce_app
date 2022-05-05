@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/styles/text_style.dart';
+import '../../widgets/loading_widget.dart';
 import '../../widgets/text_field_widget.dart';
 import '../cubit/profile/profile_cubit.dart';
 
@@ -51,7 +52,7 @@ class SettingScreen extends StatelessWidget {
                   leading: _leadingButton(context),
                   actions: [
                     state.saveStatus == SaveStatus.loading
-                        ? const CircularProgressIndicator()
+                        ? const LoadingWidget()
                         : _saveButton(context, state.formKey)
                   ],
                   elevation: 0,
@@ -215,7 +216,7 @@ class SettingScreen extends StatelessWidget {
                 ),
               );
             default:
-              return const Center(child: CircularProgressIndicator());
+              return const LoadingWidget();
           }
         });
   }

@@ -2,6 +2,7 @@ import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
+import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product_detail/product_detail_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/color_cloth.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
@@ -18,8 +19,8 @@ import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/loading_widget.dart';
 import '../cubit/cart/cart_cubit.dart';
-import '../repositories/domain.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   const ProductDetailsScreen(
@@ -36,6 +37,9 @@ class ProductDetailsScreen extends StatelessWidget {
                 ProductDetailCubit(category: productItem.categoryName),
           ),
           BlocProvider.value(
+            value: BlocProvider.of<ProductCubit>(contextParent),
+          ),
+          BlocProvider.value(
             value: BlocProvider.of<CartCubit>(contextParent),
           ),
           BlocProvider.value(
@@ -46,7 +50,6 @@ class ProductDetailsScreen extends StatelessWidget {
             buildWhen: (previous, current) =>
                 previous.color != current.color ||
                 previous.size != current.size ||
-                previous.relatedStatus != current.relatedStatus ||
                 previous.numReview != current.numReview,
             builder: (contextDetail, state) {
               return Scaffold(
@@ -192,30 +195,45 @@ class ProductDetailsScreen extends StatelessWidget {
                               style: ETextStyle.metropolis(
                                   weight: FontWeight.w600),
                             ),
-                            Text(
-                              "${state.relatedList.length} items",
-                              style: ETextStyle.metropolis(
-                                  color: const Color(0xff9B9B9B)),
+                            BlocBuilder<ProductCubit, ProductState>(
+                              buildWhen: (previous, current) =>
+                                  previous.productSaleList !=
+                                  current.productSaleList,
+                              builder: (context, state) {
+                                return Text(
+                                  "${state.productSaleList.length} items",
+                                  style: ETextStyle.metropolis(
+                                      color: const Color(0xff9B9B9B)),
+                                );
+                              },
                             )
                           ],
                         )),
-                    state.relatedStatus == RelatedStatus.loading
-                        ? const Center(child: CircularProgressIndicator())
-                        : SizedBox(
-                            height: 300,
-                            child: ListView.builder(
+                    SizedBox(
+                      height: 300,
+                      child: BlocBuilder<ProductCubit, ProductState>(
+                        buildWhen: (previous, current) =>
+                            previous.statusSale != current.statusSale,
+                        builder: (context, state) {
+                          if (state.statusSale == ProductSaleStatus.loading) {
+                            return const LoadingWidget();
+                          } else {
+                            return ListView.builder(
                               padding: const EdgeInsets.only(left: 16),
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 16),
                                   child: MainProductCard(
-                                      product: state.relatedList[index]),
+                                      product: state.productSaleList[index]),
                                 );
                               },
-                              itemCount: state.relatedList.length,
-                            ),
-                          ),
+                              itemCount: state.productSaleList.length,
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -304,9 +322,10 @@ Widget _favoriteButton(ProductItem productItem, List<SizeCloth> listSize) {
             iconPath: "assets/images/icons/heart.png",
             iconSize: 16,
             iconColor: const Color(0xffDADADA),
-            fillColor: Domain().favorite.checkContainId(productItem.id!)
-                ? const Color(0xffDB3022)
-                : Colors.white,
+            fillColor:
+                context.read<FavoriteCubit>().checkContainId(productItem.id!)
+                    ? const Color(0xffDB3022)
+                    : Colors.white,
             padding: 12);
       });
 }

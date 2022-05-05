@@ -14,15 +14,14 @@ class FilterBarWidget extends StatelessWidget {
       required this.isGridLayout,
       required this.applyGrid,
       required this.chooseCategory,
-      required this.applySort,
       required this.showCategory,
-      required this.height})
+      required this.height,
+      required this.applySortCategory,
+      required this.applySortChooseSort})
       : super(key: key);
   final ChooseSort chooseSort;
-  final Function(
-      {String? categoryName,
-      ChooseSort? chooseSort,
-      String? searchName}) applySort;
+  final Function(String categoryName) applySortCategory;
+  final Function(ChooseSort chooseSort) applySortChooseSort;
   final Function applyGrid;
   final bool isGridLayout;
   final String chooseCategory;
@@ -43,20 +42,17 @@ class FilterBarWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
       child: Column(
         children: [
-          _sortCategory(applySort, chooseCategory, height),
-          _sortFilter(context, chooseSort, applySort, isGridLayout, applyGrid,
-              showCategory)
+          _sortCategory(applySortCategory, chooseCategory, height),
+          _sortFilter(context, chooseSort, applySortChooseSort, isGridLayout,
+              applyGrid, showCategory)
         ],
       ),
     );
   }
 }
 
-Widget _sortCategory(
-    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
-        applySort,
-    String chooseCategory,
-    double height) {
+Widget _sortCategory(Function(String categoryName) applySortCategory,
+    String chooseCategory, double height) {
   return SizedBox(
       height: height,
       child: BlocBuilder<CategoryCubit, CategoryState>(
@@ -74,7 +70,7 @@ Widget _sortCategory(
                         currentFocus.focusedChild != null) {
                       FocusManager.instance.primaryFocus?.unfocus();
                     }
-                    applySort(categoryName: state.categories[i]);
+                    applySortCategory(state.categories[i]);
                   },
                   title: state.categories[i],
                 );
@@ -86,8 +82,7 @@ Widget _sortCategory(
 Widget _sortFilter(
     BuildContext context,
     ChooseSort chooseSort,
-    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
-        applySort,
+    Function(ChooseSort chooseSort) applySortChooseSort,
     bool isGridLayout,
     Function applyGrid,
     Function showCategory) {
@@ -109,7 +104,7 @@ Widget _sortFilter(
                 "Filter",
               )),
           SortBottomWidget(
-            applySort: applySort,
+            applySortChooseSort: applySortChooseSort,
             chooseSort: chooseSort,
           ),
           IconButton(

@@ -1,6 +1,9 @@
 part of 'order_cubit.dart';
 
 enum OrderStatus { initial, loading, success, failure }
+enum OrderDeliveredStatus { initial, loading, success, failure }
+enum OrderProcessingStatus { initial, loading, success, failure }
+enum OrderCancelledStatus { initial, loading, success, failure }
 enum AddressOrderStatus { initial, selected, unselected }
 enum CreditOrderStatus { initial, selected, unselected }
 enum DeliveryOrderStatus { initial, selected, unselected }
@@ -14,6 +17,9 @@ class OrderState extends Equatable {
       this.ordersProcess = const [],
       this.ordersCancel = const [],
       this.status = OrderStatus.initial,
+      this.statusDelivered = OrderDeliveredStatus.initial,
+      this.statusProcessing = OrderProcessingStatus.initial,
+      this.statusCancelled = OrderCancelledStatus.initial,
       this.deliveryId = "",
       this.addressStatus = AddressOrderStatus.initial,
       this.creditStatus = CreditOrderStatus.initial,
@@ -24,6 +30,9 @@ class OrderState extends Equatable {
       this.errMessage = "",
       this.reOrderStatus = ReOrderStatus.initial});
   final OrderStatus status;
+  final OrderDeliveredStatus statusDelivered;
+  final OrderProcessingStatus statusProcessing;
+  final OrderCancelledStatus statusCancelled;
   final List<Order> ordersDeli;
   final List<Order> ordersProcess;
   final List<Order> ordersCancel;
@@ -42,6 +51,9 @@ class OrderState extends Equatable {
       List<Order>? ordersProcess,
       List<Order>? ordersCancel,
       OrderStatus? status,
+      OrderDeliveredStatus? statusDelivered,
+      OrderProcessingStatus? statusProcessing,
+      OrderCancelledStatus? statusCancelled,
       String? deliveryId,
       AddressOrderStatus? addressStatus,
       CreditOrderStatus? creditStatus,
@@ -53,6 +65,9 @@ class OrderState extends Equatable {
       ReOrderStatus? reOrderStatus}) {
     return OrderState(
         status: status ?? this.status,
+        statusDelivered: statusDelivered ?? this.statusDelivered,
+        statusProcessing: statusProcessing ?? this.statusProcessing,
+        statusCancelled: statusCancelled ?? this.statusCancelled,
         ordersDeli: ordersDeli ?? this.ordersDeli,
         ordersProcess: ordersProcess ?? this.ordersProcess,
         ordersCancel: ordersCancel ?? this.ordersCancel,
@@ -81,6 +96,9 @@ class OrderState extends Equatable {
         reOrderStatus,
         ordersDeli,
         ordersProcess,
-        ordersCancel
+        ordersCancel,
+        statusDelivered,
+        statusProcessing,
+        statusCancelled
       ];
 }

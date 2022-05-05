@@ -35,11 +35,9 @@ class AddressCubit extends Cubit<AddressState> {
               addresses: [],
               errMessage: event.error));
         } else {
-          var listAddress = await Domain().address.setAddress(event.data ?? []);
-
           emit(state.copyWith(
               status: AddressStatus.success,
-              addresses: listAddress,
+              addresses: event.data,
               errMessage: ""));
         }
       });

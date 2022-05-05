@@ -22,7 +22,7 @@ class CartProvider extends BaseCollectionReference<CartModel> {
   }
 
   Future<XResult<List<CartModel>>> getCartByUser(String id) async {
-    final XResult<List<CartModel>> res = await queryWhereId('userId', id);
+    final XResult<List<CartModel>> res = await queryWhereEqual('userId', id);
 
     return res;
   }

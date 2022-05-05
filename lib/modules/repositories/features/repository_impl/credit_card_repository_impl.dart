@@ -6,7 +6,6 @@ import '../../x_result.dart';
 import '../repository/credit_card_repository.dart';
 
 class CreditCardRepositoryImpl extends CreditCardRepository {
-  List<CreditCard> _listCreditCard = [];
   final CreditCardProvider _creditProvider = CreditCardProvider();
   @override
   Future<XResult<CreditCard>> addCreditCard(CreditCard item) async {
@@ -17,26 +16,7 @@ class CreditCardRepositoryImpl extends CreditCardRepository {
     item.userId = userId;
     item.id = "$userId-$createdDate";
 
-    XResult<CreditCard> result = await _creditProvider.addCreditCard(item);
-    if (result.isSuccess) {
-      if (item.isDefault == true) {
-        //====>change old default
-        int indexCreditCardOldDefault =
-            _listCreditCard.indexWhere((element) => element.isDefault == true);
-        if (indexCreditCardOldDefault > -1) {
-          var oldDefault = _listCreditCard[indexCreditCardOldDefault];
-          oldDefault.isDefault = false;
-          return _creditProvider.addCreditCard(oldDefault);
-        } else {
-          return result;
-        }
-        //change done<====
-      } else {
-        return result;
-      }
-    } else {
-      return result;
-    }
+    return await _creditProvider.addCreditCard(item);
   }
 
   @override
@@ -61,11 +41,5 @@ class CreditCardRepositoryImpl extends CreditCardRepository {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
     return _creditProvider.snapshotsAllQuery("userId", userId!);
-  }
-
-  @override
-  Future<List<CreditCard>> setCreditCards(List<CreditCard> creditCards) async {
-    _listCreditCard = creditCards;
-    return _listCreditCard;
   }
 }

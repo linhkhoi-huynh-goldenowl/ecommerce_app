@@ -22,7 +22,7 @@ class AddressProvider extends BaseCollectionReference<Address> {
   }
 
   Future<XResult<List<Address>>> getAddressByUser(String id) async {
-    final XResult<List<Address>> res = await queryWhereId('userId', id);
+    final XResult<List<Address>> res = await queryWhereEqual('userId', id);
 
     return res;
   }

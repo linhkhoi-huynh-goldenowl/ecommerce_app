@@ -7,6 +7,8 @@ import 'package:e_commerce_shop_app/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'loading_widget.dart';
+
 class PopupCredit extends StatelessWidget {
   PopupCredit({Key? key}) : super(key: key);
   final FocusNode focusCardNumber = FocusNode();
@@ -37,9 +39,7 @@ class PopupCredit extends StatelessWidget {
                         previous.typeStatus != current.typeStatus,
                     builder: (context, state) {
                       if (state.typeStatus == CreditCardTypeStatus.submitting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const LoadingWidget();
                       } else {
                         return ButtonIntro(
                             func: () {

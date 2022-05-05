@@ -8,6 +8,7 @@ import 'package:e_commerce_shop_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/loading_widget.dart';
 import '../cubit/category/category_cubit.dart';
 import 'base_screens/product_coordinator_base.dart';
 
@@ -57,7 +58,8 @@ Widget _buildBody() {
                           func: (value) {
                             BlocProvider.of<CategoryCubit>(context)
                                 .categorySearch(value);
-                          }),
+                          },
+                        ),
                 ),
                 body: NestedScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -90,9 +92,8 @@ Widget _buildBody() {
                                                         BlocProvider.of<
                                                                     ProductCubit>(
                                                                 context)
-                                                            .productSort(
-                                                                categoryName:
-                                                                    "");
+                                                            .filterProductCategory(
+                                                                "");
                                                         Navigator.of(context)
                                                             .pushNamed(Routes
                                                                 .shopCategoryScreen);
@@ -126,8 +127,8 @@ Widget _buildBody() {
                               title: state.categories[index],
                               func: () {
                                 BlocProvider.of<ProductCubit>(context)
-                                    .productSort(
-                                        categoryName: state.categories[index]);
+                                    .filterProductCategory(
+                                        state.categories[index]);
                                 Navigator.of(context)
                                     .pushNamed(Routes.shopCategoryScreen);
                               },
@@ -136,7 +137,7 @@ Widget _buildBody() {
                           itemCount: state.categories.length),
                 ));
           default:
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingWidget();
         }
       });
 }

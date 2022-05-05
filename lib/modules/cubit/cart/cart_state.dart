@@ -19,6 +19,17 @@ class CartState extends Equatable {
     this.isSearch = false,
   });
   final List<CartModel> carts;
+  List<CartModel> get cartsListToShow {
+    List<CartModel> cartsShow = carts;
+    if (searchInput != "") {
+      cartsShow = cartsShow
+          .where((element) => element.title.contains(searchInput.toLowerCase()))
+          .toList();
+    }
+
+    return cartsShow;
+  }
+
   final CartStatus status;
   final double totalPrice;
   final String code;

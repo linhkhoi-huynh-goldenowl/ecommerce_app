@@ -1,5 +1,6 @@
 import 'package:e_commerce_shop_app/modules/cubit/profile/profile_cubit.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
+import 'package:e_commerce_shop_app/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,20 +22,21 @@ class ButtonChangePassword extends StatelessWidget {
           ),
           context: context,
           builder: (BuildContext context) {
-            return BlocConsumer<ProfileCubit, ProfileState>(
-                listenWhen: (previous, current) =>
-                    previous.savePassStatus != current.savePassStatus,
-                listener: (context, state) {
-                  if (state.savePassStatus == SavePassStatus.success) {
-                    AppSnackBar.showSnackBar(context, "Save successfully");
-                    Navigator.pop(context);
-                  }
-                  if (state.savePassStatus == SavePassStatus.failure) {
-                    AppSnackBar.showSnackBar(context, state.savePassMessage);
-                  }
-                },
-                builder: (context, state) {
-                  return Padding(
+            return BlocProvider.value(
+              value: BlocProvider.of<ProfileCubit>(context),
+              child: BlocListener<ProfileCubit, ProfileState>(
+                  listenWhen: (previous, current) =>
+                      previous.savePassStatus != current.savePassStatus,
+                  listener: (context, state) {
+                    if (state.savePassStatus == SavePassStatus.success) {
+                      AppSnackBar.showSnackBar(context, "Save successfully");
+                      Navigator.pop(context);
+                    }
+                    if (state.savePassStatus == SavePassStatus.failure) {
+                      AppSnackBar.showSnackBar(context, state.savePassMessage);
+                    }
+                  },
+                  child: Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Form(
                       key: _formKey,
@@ -67,14 +69,21 @@ class ButtonChangePassword extends StatelessWidget {
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 16),
-                                child: TextFieldWidget(
-                                  labelText: "Old Password",
-                                  validatorText: "",
-                                  isValid: state.isValidOldPassword,
-                                  func: (value) => context
-                                      .read<ProfileCubit>()
-                                      .settingOldPasswordChanged(value),
-                                  isPassword: true,
+                                child: BlocBuilder<ProfileCubit, ProfileState>(
+                                  buildWhen: (previous, current) =>
+                                      previous.isValidOldPassword !=
+                                      current.isValidOldPassword,
+                                  builder: (context, state) {
+                                    return TextFieldWidget(
+                                      labelText: "Old Password",
+                                      validatorText: "",
+                                      isValid: state.isValidOldPassword,
+                                      func: (value) => context
+                                          .read<ProfileCubit>()
+                                          .settingOldPasswordChanged(value),
+                                      isPassword: true,
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(
@@ -97,19 +106,25 @@ class ButtonChangePassword extends StatelessWidget {
                               const SizedBox(
                                 height: 18,
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: TextFieldWidget(
-                                  labelText: "New Password",
-                                  validatorText:
-                                      "Password must than 6 character",
-                                  isValid: state.isValidNewPassword,
-                                  func: (value) => context
-                                      .read<ProfileCubit>()
-                                      .settingNewPasswordChanged(value),
-                                  isPassword: true,
-                                ),
+                              BlocBuilder<ProfileCubit, ProfileState>(
+                                buildWhen: (previous, current) =>
+                                    previous.newPassword != current.newPassword,
+                                builder: (context, state) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: TextFieldWidget(
+                                      labelText: "New Password",
+                                      validatorText:
+                                          "Password must than 6 character",
+                                      isValid: state.isValidNewPassword,
+                                      func: (value) => context
+                                          .read<ProfileCubit>()
+                                          .settingNewPasswordChanged(value),
+                                      isPassword: true,
+                                    ),
+                                  );
+                                },
                               ),
                               const SizedBox(
                                 height: 24,
@@ -117,15 +132,23 @@ class ButtonChangePassword extends StatelessWidget {
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 16),
-                                child: TextFieldWidget(
-                                  labelText: "Repeat New Password",
-                                  validatorText:
-                                      "Repeat password must equal new password",
-                                  isValid: state.isValidConfirmPassword,
-                                  func: (value) => context
-                                      .read<ProfileCubit>()
-                                      .settingConfirmNewPasswordChanged(value),
-                                  isPassword: true,
+                                child: BlocBuilder<ProfileCubit, ProfileState>(
+                                  buildWhen: (previous, current) =>
+                                      previous.newPasswordConfirm !=
+                                      current.newPasswordConfirm,
+                                  builder: (context, state) {
+                                    return TextFieldWidget(
+                                      labelText: "Repeat New Password",
+                                      validatorText:
+                                          "Repeat password must equal new password",
+                                      isValid: state.isValidConfirmPassword,
+                                      func: (value) => context
+                                          .read<ProfileCubit>()
+                                          .settingConfirmNewPasswordChanged(
+                                              value),
+                                      isPassword: true,
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(
@@ -134,18 +157,35 @@ class ButtonChangePassword extends StatelessWidget {
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 16),
-                                child: ButtonIntro(
-                                    func: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        context
-                                            .read<ProfileCubit>()
-                                            .changePassword(
-                                                state.email,
-                                                state.oldPassword,
-                                                state.newPasswordConfirm);
-                                      }
-                                    },
-                                    title: "SAVE PASSWORD"),
+                                child: BlocBuilder<ProfileCubit, ProfileState>(
+                                  buildWhen: (previous, current) =>
+                                      previous.oldPassword !=
+                                          current.oldPassword ||
+                                      previous.newPasswordConfirm !=
+                                          current.newPasswordConfirm ||
+                                      previous.savePassStatus !=
+                                          current.savePassStatus,
+                                  builder: (context, state) {
+                                    if (state.savePassStatus ==
+                                        SavePassStatus.loading) {
+                                      return const LoadingWidget();
+                                    } else {
+                                      return ButtonIntro(
+                                          func: () {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              context
+                                                  .read<ProfileCubit>()
+                                                  .changePassword(
+                                                      state.email,
+                                                      state.oldPassword,
+                                                      state.newPasswordConfirm);
+                                            }
+                                          },
+                                          title: "SAVE PASSWORD");
+                                    }
+                                  },
+                                ),
                               ),
                               const SizedBox(
                                 height: 32,
@@ -155,8 +195,8 @@ class ButtonChangePassword extends StatelessWidget {
                         ],
                       ),
                     ),
-                  );
-                });
+                  )),
+            );
           },
         );
       },

@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 
 class SortBottomWidget extends StatelessWidget {
   const SortBottomWidget(
-      {Key? key, required this.chooseSort, required this.applySort})
+      {Key? key, required this.chooseSort, required this.applySortChooseSort})
       : super(key: key);
   final ChooseSort chooseSort;
-  final Function(
-      {String? categoryName,
-      ChooseSort? chooseSort,
-      String? searchName}) applySort;
+  final Function(ChooseSort chooseSort) applySortChooseSort;
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
@@ -23,7 +20,7 @@ class SortBottomWidget extends StatelessWidget {
               currentFocus.focusedChild != null) {
             FocusManager.instance.primaryFocus?.unfocus();
           }
-          _showModal(context, chooseSort, applySort);
+          _showModal(context, chooseSort, applySortChooseSort);
         },
         icon: const ImageIcon(AssetImage("assets/images/icons/range.png")),
         label: Text(
@@ -40,11 +37,8 @@ class SortBottomWidget extends StatelessWidget {
   }
 }
 
-void _showModal(
-    BuildContext context,
-    ChooseSort stateSort,
-    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
-        applySort) {
+void _showModal(BuildContext context, ChooseSort stateSort,
+    Function(ChooseSort chooseSort) applySortChooseSort) {
   showModalBottomSheet<void>(
     constraints: const BoxConstraints(maxHeight: 375),
     shape: const RoundedRectangleBorder(
@@ -71,16 +65,16 @@ void _showModal(
           const SizedBox(
             height: 16,
           ),
-          _sortSelection(
-              context, ChooseSort.popular, stateSort, "Popular", applySort),
-          _sortSelection(
-              context, ChooseSort.newest, stateSort, "Newest", applySort),
+          _sortSelection(context, ChooseSort.popular, stateSort, "Popular",
+              applySortChooseSort),
+          _sortSelection(context, ChooseSort.newest, stateSort, "Newest",
+              applySortChooseSort),
           _sortSelection(context, ChooseSort.review, stateSort,
-              "Customer review", applySort),
+              "Customer review", applySortChooseSort),
           _sortSelection(context, ChooseSort.priceLowest, stateSort,
-              "Price: lowest to high", applySort),
+              "Price: lowest to high", applySortChooseSort),
           _sortSelection(context, ChooseSort.priceHighest, stateSort,
-              "Price: highest to low", applySort),
+              "Price: highest to low", applySortChooseSort),
         ],
       );
     },
@@ -92,11 +86,10 @@ Widget _sortSelection(
     ChooseSort chooseSort,
     ChooseSort stateSort,
     String title,
-    Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
-        applySort) {
+    Function(ChooseSort) applySortChooseSort) {
   return InkWell(
     onTap: () {
-      applySort(chooseSort: chooseSort);
+      applySortChooseSort(chooseSort);
       Navigator.pop(context);
     },
     child: Container(
