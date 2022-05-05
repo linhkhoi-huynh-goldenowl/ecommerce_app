@@ -1,4 +1,6 @@
-class CountriesName {
+import '../repository/country_repository.dart';
+
+class CountryRepositoryImpl implements CountryRepository {
   final List<String> _countries = [
     'Afghanistan',
     'Albania',
@@ -195,5 +197,16 @@ class CountriesName {
     'Zambia',
     'Zimbabwe',
   ];
-  List<String> get countries => _countries;
+  @override
+  Future<List<String>> getCountries() async {
+    return _countries;
+  }
+
+  @override
+  Future<List<String>> getCountryByName(String searchName) async {
+    return _countries
+        .where((element) =>
+            element.toLowerCase().contains(searchName.toLowerCase().trim()))
+        .toList();
+  }
 }
