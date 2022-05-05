@@ -32,8 +32,10 @@ class ShopProductCard extends StatelessWidget {
                 onTap: () {
                   Navigator.of(NavigationService.navigatorKey.currentContext ??
                           context)
-                      .pushNamed(Routes.productDetailsScreen,
-                          arguments: productItem);
+                      .pushNamed(Routes.productDetailsScreen, arguments: {
+                    'product': productItem,
+                    'contextParent': context
+                  });
                 },
                 child: Container(
                   decoration: BoxDecoration(

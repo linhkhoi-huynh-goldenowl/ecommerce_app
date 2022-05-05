@@ -31,8 +31,15 @@ class BottomSheetApp {
         ),
         context: contextParent,
         builder: (context) {
-          return BlocProvider.value(
-              value: BlocProvider.of<ProductDetailCubit>(contextParent),
+          return MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: BlocProvider.of<ProductDetailCubit>(contextParent),
+                ),
+                BlocProvider.value(
+                  value: BlocProvider.of<CartCubit>(contextParent),
+                ),
+              ],
               child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
                   buildWhen: (previous, current) =>
                       previous.color != current.color ||
@@ -75,9 +82,16 @@ class BottomSheetApp {
         ),
         context: context,
         builder: (_) {
-          return BlocProvider<ProductDetailCubit>(
-              create: (BuildContext context) =>
-                  ProductDetailCubit(category: product.categoryName),
+          return MultiBlocProvider(
+              providers: [
+                BlocProvider<ProductDetailCubit>(
+                  create: (BuildContext context) =>
+                      ProductDetailCubit(category: product.categoryName),
+                ),
+                BlocProvider.value(
+                  value: BlocProvider.of<FavoriteCubit>(context),
+                ),
+              ],
               child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
                   buildWhen: (previous, current) =>
                       previous.size != current.size ||

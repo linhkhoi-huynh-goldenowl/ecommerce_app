@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
+import '../config/routes/router.dart';
+
 class CarouselProductWidget extends StatelessWidget {
   CarouselProductWidget({Key? key, required this.imgList}) : super(key: key);
 
@@ -12,7 +14,13 @@ class CarouselProductWidget extends StatelessWidget {
     return CarouselSlider(
       items: imgList
           .map((entry) => InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed(Routes.photoViewScreen, arguments: {
+                    'paths': imgList,
+                    'index': imgList.indexWhere((element) => element == entry)
+                  });
+                },
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Image.network(entry, fit: BoxFit.fitHeight),

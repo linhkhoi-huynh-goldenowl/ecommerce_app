@@ -61,7 +61,8 @@ class ProfileCubit extends Cubit<ProfileState> {
               notificationNewArrivals: profile.notificationNewArrivals,
               notificationSale: profile.notificationSale,
               shippingAddress: profile.shippingAddress,
-              orderCount: profile.orderCount));
+              orderCount: profile.orderCount,
+              reviewCount: profile.reviewCount));
         } else {
           emit(state.copyWith(
               status: ProfileStatus.failure,
@@ -94,7 +95,8 @@ class ProfileCubit extends Cubit<ProfileState> {
               shippingAddress: state.shippingAddress,
               notificationSale: state.notificationSale,
               notificationNewArrivals: state.notificationNewArrivals,
-              notificationDelivery: state.notificationDelivery);
+              notificationDelivery: state.notificationDelivery,
+              reviewCount: state.reviewCount);
 
           await Domain().profile.saveProfile(user);
           emit(state.copyWith(
@@ -114,6 +116,7 @@ class ProfileCubit extends Cubit<ProfileState> {
             name: state.name,
             imageUrl: state.imageUrl,
             orderCount: state.orderCount,
+            reviewCount: state.reviewCount,
             dateOfBirth: state.dateOfBirth,
             creditDefault: state.creditNumber,
             shippingAddress: state.shippingAddress,

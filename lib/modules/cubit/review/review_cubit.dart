@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/services/firebase_storage.dart';
 import '../../../utils/services/image_picker_services.dart';
+import '../../models/e_user.dart';
 import '../../repositories/domain.dart';
 import '../../repositories/x_result.dart';
 import 'package:path/path.dart' as p;
@@ -114,23 +115,34 @@ class ReviewCubit extends Cubit<ReviewState> {
           XResult<ProductItem> productRes =
               await Domain().product.updateProduct(productItem);
           if (productRes.isSuccess) {
-            emit(state.copyWith(addStatus: AddReviewStatus.success));
+            var localUser = await Domain().profile.getProfile();
+            localUser.reviewCount = localUser.reviewCount + 1;
+            XResult<EUser> resUser =
+                await Domain().profile.saveProfile(localUser);
+            if (resUser.isSuccess) {
+              emit(state.copyWith(addStatus: AddReviewStatus.success));
 
-            emit(state.copyWith(
-                totalReviews: total,
-                avgReviews: avgReview,
-                reviewCount: reviewCount,
-                reviewPercent: percentReview,
-                addStatus: AddReviewStatus.initial,
-                imageLocalPaths: clearImage,
-                likeStatus: LikeReviewStatus.initial,
-                reviewContent: "",
-                contentStatus: ContentReviewStatus.initial,
-                starNum: 0,
-                starStatus: StarReviewStatus.initial,
-                imageStatus: ImageStatus.initial,
-                errMessage: "",
-                status: ReviewStatus.success));
+              emit(state.copyWith(
+                  totalReviews: total,
+                  avgReviews: avgReview,
+                  reviewCount: reviewCount,
+                  reviewPercent: percentReview,
+                  addStatus: AddReviewStatus.initial,
+                  imageLocalPaths: clearImage,
+                  likeStatus: LikeReviewStatus.initial,
+                  reviewContent: "",
+                  contentStatus: ContentReviewStatus.initial,
+                  starNum: 0,
+                  starStatus: StarReviewStatus.initial,
+                  imageStatus: ImageStatus.initial,
+                  errMessage: "",
+                  status: ReviewStatus.success));
+            } else {
+              emit(state.copyWith(
+                  addStatus: AddReviewStatus.failure,
+                  errMessage: resUser.error,
+                  status: ReviewStatus.failure));
+            }
           } else {
             emit(state.copyWith(
                 addStatus: AddReviewStatus.failure,

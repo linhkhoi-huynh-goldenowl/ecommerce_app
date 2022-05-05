@@ -8,6 +8,7 @@ class ReviewModel extends BaseModel {
   final List<String> images;
   Timestamp? createdDate;
   String? accountName;
+  String? accountId;
   String? accountAvatar;
   List<String> like;
 
@@ -15,6 +16,7 @@ class ReviewModel extends BaseModel {
       {String? id,
       this.accountName,
       this.accountAvatar,
+      this.accountId,
       required this.comment,
       required this.star,
       required this.productId,
@@ -33,6 +35,7 @@ class ReviewModel extends BaseModel {
         createdDate: parsedJson['createdDate'],
         images: parsedJson['images'].cast<String>(),
         accountName: parsedJson['accountName'],
+        accountId: parsedJson['accountId'],
         accountAvatar: parsedJson['accountAvatar']);
   }
 
@@ -47,6 +50,7 @@ class ReviewModel extends BaseModel {
       'images': images,
       'accountName': accountName,
       'accountAvatar': accountAvatar,
+      'accountId': accountId
     };
   }
 }
