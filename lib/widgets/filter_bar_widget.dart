@@ -15,19 +15,19 @@ class FilterBarWidget extends StatelessWidget {
       required this.applyGrid,
       required this.chooseCategory,
       required this.applySort,
-      required this.isVisible,
-      required this.showCategory})
+      required this.showCategory,
+      required this.height})
       : super(key: key);
   final ChooseSort chooseSort;
   final Function(
       {String? categoryName,
       ChooseSort? chooseSort,
       String? searchName}) applySort;
-  final bool isVisible;
   final Function applyGrid;
   final bool isGridLayout;
   final String chooseCategory;
   final Function showCategory;
+  final double height;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,7 +43,7 @@ class FilterBarWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
       child: Column(
         children: [
-          _sortCategory(applySort, chooseCategory, isVisible),
+          _sortCategory(applySort, chooseCategory, height),
           _sortFilter(context, chooseSort, applySort, isGridLayout, applyGrid,
               showCategory)
         ],
@@ -56,11 +56,9 @@ Widget _sortCategory(
     Function({String? categoryName, ChooseSort? chooseSort, String? searchName})
         applySort,
     String chooseCategory,
-    bool isVisible) {
-  return AnimatedContainer(
-      curve: Curves.decelerate,
-      height: isVisible ? 50 : 0,
-      duration: const Duration(milliseconds: 500),
+    double height) {
+  return SizedBox(
+      height: height,
       child: BlocBuilder<CategoryCubit, CategoryState>(
         buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {

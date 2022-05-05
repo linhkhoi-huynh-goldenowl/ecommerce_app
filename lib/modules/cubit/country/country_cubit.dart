@@ -7,10 +7,10 @@ part 'country_state.dart';
 
 class CountryCubit extends Cubit<CountryState> {
   CountryCubit() : super(const CountryState()) {
-    countryLoaded();
+    fetchCountry();
   }
 
-  void countryLoaded() async {
+  void fetchCountry() async {
     try {
       if (state.status == CountryStatus.initial) {
         emit(state.copyWith(status: CountryStatus.loading));

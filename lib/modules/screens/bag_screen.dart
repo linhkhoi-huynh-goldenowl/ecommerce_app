@@ -11,7 +11,6 @@ import '../../utils/services/navigator_services.dart';
 import '../../widgets/button_intro.dart';
 import '../../widgets/cart_card_widget.dart';
 import '../../widgets/promo_code_field.dart';
-import '../../widgets/search_text_field.dart';
 
 class BagScreen extends StatelessWidget {
   const BagScreen({Key? key}) : super(key: key);
@@ -171,36 +170,23 @@ Widget _flexibleSpaceBar(
     var top = constraints.biggest.height;
     return FlexibleSpaceBar(
       titlePadding: EdgeInsets.only(
-          right: 40,
-          left: isSearch == false
-              ? top < MediaQuery.of(context).size.height * 0.12
-                  ? 40
-                  : 16
-              : 40,
-          top: isSearch == false ? 0 : 5,
-          bottom: isSearch == false ? 15 : 5),
+          left: top < MediaQuery.of(context).size.height * 0.13 ? 0 : 16,
+          bottom: top < MediaQuery.of(context).size.height * 0.13 ? 15 : 0),
       centerTitle:
-          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
+          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
-          child: isSearch == false
-              ? Text(
-                  "My Bag",
-                  textAlign: TextAlign.start,
-                  style: ETextStyle.metropolis(
-                      weight: top < MediaQuery.of(context).size.height * 0.12
-                          ? FontWeight.w600
-                          : FontWeight.w700,
-                      fontSize: top < MediaQuery.of(context).size.height * 0.12
-                          ? 20
-                          : 26),
-                )
-              : SearchTextField(
-                  initValue: searchInput,
-                  func: (value) {
-                    BlocProvider.of<CartCubit>(context).cartSearch(value);
-                  })),
+          child: Text(
+            "My Bag",
+            textAlign: TextAlign.start,
+            style: ETextStyle.metropolis(
+                weight: top < MediaQuery.of(context).size.height * 0.13
+                    ? FontWeight.w600
+                    : FontWeight.w700,
+                fontSize:
+                    top < MediaQuery.of(context).size.height * 0.13 ? 22 : 27),
+          )),
     );
   });
 }
