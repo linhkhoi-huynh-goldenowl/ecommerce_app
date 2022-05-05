@@ -15,24 +15,6 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: '3.1'
-<<<<<<< HEAD
-=======
-
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '2.10.4'
-  
-
-      - name: Build app flutter
-        run: |
-          flutter pub get
-          flutter build appbundle
->>>>>>> 199a36818adab80d52c07255bc5affcb80c181da
           
       - name: Install bundle
         working-directory: android
