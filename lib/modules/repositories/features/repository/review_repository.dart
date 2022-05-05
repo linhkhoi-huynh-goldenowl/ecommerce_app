@@ -9,6 +9,7 @@ abstract class ReviewRepository {
   Future<List<ReviewModel>> addLikeToLocal(ReviewModel item);
 
   Future<XResult<List<ReviewModel>>> getReviewsFromProduct(String productId);
+  Future<XResult<List<ReviewModel>>> getReviewsByUser();
   Future<List<ReviewModel>> setReviewList(List<ReviewModel> reviews);
   Future<List<ReviewModel>> getReviewsFromProductWithImage(bool isImage);
   Future<List<String>> getImage();

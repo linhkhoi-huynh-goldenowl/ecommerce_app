@@ -7,9 +7,11 @@ import 'package:e_commerce_shop_app/modules/screens/landing_page.dart';
 import 'package:e_commerce_shop_app/modules/screens/dashboard_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/order_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/payment_screen.dart';
+import 'package:e_commerce_shop_app/modules/screens/photo_view_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/product_details_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/product_rating_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/profile_screen.dart';
+import 'package:e_commerce_shop_app/modules/screens/reset_pass_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/setting_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/shipping_address_screen.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +38,10 @@ class Routes {
   static const String orderSuccessScreen = "/OrderSuccessScreen";
   static const String orderScreen = "/OrderScreen";
   static const String orderDetailScreen = "/OrderDetailScreen";
+  static const String resetPassScreen = "/ResetPassScreen";
+  static const String promoListScreen = "/PromoListScreen";
+  static const String reviewListScreen = "/ReviewListSCreen";
+  static const String photoViewScreen = "/PhotoViewScreen";
 }
 
 class AppRouter {
@@ -123,12 +129,31 @@ class AppRouter {
                   contextParent: contextParent,
                   productId: productId,
                 ));
-      case Routes.productDetailsScreen:
+      case Routes.resetPassScreen:
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (BuildContext context) => ResetPassScreen());
+      case Routes.photoViewScreen:
         {
-          final product = settings.arguments as ProductItem;
+          final argumentPhoto = settings.arguments as Map;
+          final List<String> paths = argumentPhoto['paths'];
+          final int index = argumentPhoto['index'];
           return MaterialPageRoute(
               settings: settings,
-              builder: (BuildContext context) => ProductDetailsScreen(
+              builder: (BuildContext context) => PhotoViewScreen(
+                    galleryItems: paths,
+                    initialIndex: index,
+                  ));
+        }
+      case Routes.productDetailsScreen:
+        {
+          final argumentDetail = settings.arguments as Map;
+          final BuildContext contextParent = argumentDetail['contextParent'];
+          final ProductItem product = argumentDetail['product'];
+          return MaterialPageRoute(
+              settings: settings,
+              builder: (_) => ProductDetailsScreen(
+                    contextParent: contextParent,
                     productItem: product,
                   ));
         }

@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/profile/profile_cubit.dart';
+import 'package:e_commerce_shop_app/widgets/e_cached_image.dart';
 import 'package:e_commerce_shop_app/widgets/profile_info_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,17 +51,24 @@ class ProfileScreen extends ProductCoordinatorBase {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      state.imageUrl != ""
-                          ? CircleAvatar(
-                              backgroundImage:
-                                  CachedNetworkImageProvider(state.imageUrl),
-                              radius: 34,
-                            )
-                          : const CircleAvatar(
-                              backgroundImage: CachedNetworkImageProvider(
-                                  "https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg"),
-                              radius: 44,
-                            ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(NavigationService
+                                      .navigatorKey.currentContext ??
+                                  context)
+                              .pushNamed(Routes.photoViewScreen, arguments: {
+                            'paths': [state.imageUrl],
+                            'index': 0
+                          });
+                        },
+                        child: SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: ECachedImage(img: state.imageUrl)),
+                        ),
+                      ),
                       const SizedBox(
                         width: 16,
                       ),
@@ -122,11 +129,15 @@ class ProfileScreen extends ProductCoordinatorBase {
                 ProfileInfoButton(
                     title: "Promo codes",
                     subTitle: "You have special promo codes",
-                    func: () {}),
+                    func: () {
+                      Navigator.of(context).pushNamed(Routes.promoListScreen);
+                    }),
                 ProfileInfoButton(
                     title: "My reviews",
-                    subTitle: "Reviews for 4 items",
-                    func: () {}),
+                    subTitle: "Reviews for ${state.reviewCount} items",
+                    func: () {
+                      Navigator.of(context).pushNamed(Routes.reviewListScreen);
+                    }),
                 ProfileInfoButton(
                     title: "Settings",
                     subTitle: "Notification, password",

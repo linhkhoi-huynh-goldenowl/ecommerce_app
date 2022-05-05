@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/review/review_cubit.dart';
@@ -10,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../config/routes/router.dart';
+import '../../widgets/e_cached_image.dart';
 import '../../widgets/star_bar.dart';
 import '../cubit/product_detail/product_detail_cubit.dart';
 
@@ -321,17 +322,24 @@ Widget _reviewComment(
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
                         itemBuilder: (context, index) {
-                          return Container(
-                            width: 104,
-                            height: 104,
-                            margin: const EdgeInsets.only(right: 16),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                    reviewModel.images[index]),
-                                fit: BoxFit.fill,
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                  Routes.photoViewScreen,
+                                  arguments: {
+                                    'paths': reviewModel.images,
+                                    'index': index
+                                  });
+                            },
+                            child: Container(
+                              width: 104,
+                              height: 104,
+                              margin: const EdgeInsets.only(right: 16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
                               ),
+                              child:
+                                  ECachedImage(img: reviewModel.images[index]),
                             ),
                           );
                         },
@@ -347,18 +355,13 @@ Widget _reviewComment(
           ),
         ),
         Positioned(
-          child: reviewModel.accountAvatar != "" ||
-                  reviewModel.accountAvatar != null
-              ? CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                      reviewModel.accountAvatar ?? ""),
-                  radius: 20,
-                )
-              : const CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                      "https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg"),
-                  radius: 20,
-                ),
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: ECachedImage(img: reviewModel.accountAvatar ?? "")),
+          ),
         )
       ],
     ),

@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_shop_app/widgets/e_cached_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageProductWidget extends StatelessWidget {
@@ -17,18 +17,17 @@ class ImageProductWidget extends StatelessWidget {
   final bool isGrid;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
-      decoration: BoxDecoration(
+      child: ClipRRect(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(radius),
             bottomLeft: Radius.circular(radius),
             bottomRight: isGrid ? Radius.circular(radius) : Radius.zero,
             topRight: isGrid ? Radius.circular(radius) : Radius.zero,
           ),
-          image: DecorationImage(
-              image: CachedNetworkImageProvider(imagePath), fit: BoxFit.cover)),
+          child: ECachedImage(img: imagePath)),
     );
   }
 }

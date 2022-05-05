@@ -18,17 +18,30 @@ import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../cubit/cart/cart_cubit.dart';
 import '../repositories/domain.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  const ProductDetailsScreen({required this.productItem, Key? key})
+  const ProductDetailsScreen(
+      {required this.productItem, Key? key, required this.contextParent})
       : super(key: key);
   final ProductItem productItem;
+  final BuildContext contextParent;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProductDetailCubit>(
-        create: (BuildContext context) =>
-            ProductDetailCubit(category: productItem.categoryName),
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<ProductDetailCubit>(
+            create: (BuildContext context) =>
+                ProductDetailCubit(category: productItem.categoryName),
+          ),
+          BlocProvider.value(
+            value: BlocProvider.of<CartCubit>(contextParent),
+          ),
+          BlocProvider.value(
+            value: BlocProvider.of<FavoriteCubit>(contextParent),
+          ),
+        ],
         child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
             buildWhen: (previous, current) =>
                 previous.color != current.color ||

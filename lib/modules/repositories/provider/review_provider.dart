@@ -22,4 +22,10 @@ class ReviewProvider extends BaseCollectionReference<ReviewModel> {
 
     return res;
   }
+
+  Future<XResult<List<ReviewModel>>> getReviewByUser(String id) async {
+    final XResult<List<ReviewModel>> res = await queryWhereId('accountId', id);
+
+    return res;
+  }
 }

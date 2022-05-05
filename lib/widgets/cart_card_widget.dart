@@ -39,8 +39,10 @@ class CartCardWidget extends StatelessWidget {
                 onTap: () {
                   Navigator.of(NavigationService.navigatorKey.currentContext ??
                           context)
-                      .pushNamed(Routes.productDetailsScreen,
-                          arguments: cartModel.productItem);
+                      .pushNamed(Routes.productDetailsScreen, arguments: {
+                    'product': cartModel.productItem,
+                    'contextParent': context
+                  });
                 },
                 child: Container(
                   height: 104,
