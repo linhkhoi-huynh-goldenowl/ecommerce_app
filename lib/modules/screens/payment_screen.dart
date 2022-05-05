@@ -72,7 +72,7 @@ class PaymentScreen extends StatelessWidget {
                                               .setDefaultCredit(
                                                   state.creditCards[index]);
                                         }, () {
-                                          SystemDialog.dialogYesNo(
+                                          SystemDialog.showConfirmDialog(
                                               context: context,
                                               func: () {
                                                 context

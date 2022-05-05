@@ -173,21 +173,21 @@ Widget _flexibleSpaceBar() {
     return FlexibleSpaceBar(
       titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
       centerTitle:
-          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
+          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
           child: Text(
-            top < MediaQuery.of(context).size.height * 0.12
+            top < MediaQuery.of(context).size.height * 0.13
                 ? "Rating and reviews"
                 : "Rating&Reviews",
             textAlign: TextAlign.start,
             style: ETextStyle.metropolis(
-                weight: top < MediaQuery.of(context).size.height * 0.12
+                weight: top < MediaQuery.of(context).size.height * 0.13
                     ? FontWeight.w600
                     : FontWeight.w700,
                 fontSize:
-                    top < MediaQuery.of(context).size.height * 0.12 ? 18 : 27),
+                    top < MediaQuery.of(context).size.height * 0.13 ? 18 : 27),
           )),
     );
   });

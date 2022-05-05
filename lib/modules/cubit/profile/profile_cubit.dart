@@ -15,7 +15,7 @@ part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileState(dateOfBirth: DateTime(1950))) {
-    profileLoaded();
+    fetchProfile();
     setLoginType();
   }
   StreamSubscription? profileSubscription;
@@ -34,7 +34,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void profileLoaded() async {
+  void fetchProfile() async {
     try {
       emit(state.copyWith(status: ProfileStatus.loading));
       final pref = await SharedPreferences.getInstance();

@@ -14,8 +14,8 @@ jobs:
         
       - uses: actions/setup-ruby@v1
         with:
-          ruby-version: '3.1'
-          
+          ruby-version: '2.6'
+      
       - name: Install bundle
         working-directory: android
         run: |

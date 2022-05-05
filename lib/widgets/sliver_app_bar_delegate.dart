@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final PreferredSize child;
-
   SliverAppBarDelegate({required this.child});
 
   @override

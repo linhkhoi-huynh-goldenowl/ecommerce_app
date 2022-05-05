@@ -9,8 +9,37 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../widgets/filter_bar_widget.dart';
 import '../../widgets/main_product_card.dart';
 
-class ShopCategoryScreen extends StatelessWidget {
+class ShopCategoryScreen extends StatefulWidget {
   const ShopCategoryScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ShopCategoryScreen> createState() => _ShopCategoryScreenState();
+}
+
+class _ShopCategoryScreenState extends State<ShopCategoryScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late Animation<double> _animationCategory;
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _animation = Tween<double>(begin: 50, end: 100).animate(
+        (CurvedAnimation(parent: _controller, curve: Curves.decelerate)));
+    _animationCategory = Tween<double>(begin: 0, end: 50).animate(
+        (CurvedAnimation(parent: _controller, curve: Curves.decelerate)));
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,32 +97,49 @@ class ShopCategoryScreen extends StatelessWidget {
                                   state.isSearch,
                                   state.searchInput);
                             })),
-                    SliverPersistentHeader(
-                        pinned: true,
-                        delegate: SliverAppBarDelegate(
-                          child: PreferredSize(
-                              preferredSize: const Size.fromHeight(100),
-                              child: BlocBuilder<ProductCubit, ProductState>(
-                                  buildWhen: (previous, current) =>
-                                      previous.gridStatus != current.gridStatus,
-                                  builder: (context, state) {
-                                    return FilterBarWidget(
-                                      showCategory:
-                                          BlocProvider.of<ProductCubit>(context)
-                                              .productOpenCategoryBarEvent,
-                                      isVisible: state.isShowCategoryBar,
-                                      chooseCategory: state.categoryName,
-                                      applyGrid:
-                                          BlocProvider.of<ProductCubit>(context)
-                                              .productLoadGridLayout,
-                                      applySort: context
-                                          .read<ProductCubit>()
-                                          .productSort,
-                                      chooseSort: state.sort,
-                                      isGridLayout: state.isGridLayout,
-                                    );
-                                  })),
-                        )),
+                    AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, child) {
+                        return SliverPersistentHeader(
+                            pinned: true,
+                            delegate: SliverAppBarDelegate(
+                              child: PreferredSize(
+                                  preferredSize:
+                                      Size.fromHeight(_animation.value),
+                                  child:
+                                      BlocBuilder<ProductCubit, ProductState>(
+                                          buildWhen: (previous, current) =>
+                                              previous.gridStatus !=
+                                              current.gridStatus,
+                                          builder: (context, state) {
+                                            return FilterBarWidget(
+                                              height: _animationCategory.value,
+                                              showCategory: () async {
+                                                BlocProvider.of<ProductCubit>(
+                                                        context)
+                                                    .productOpenCategoryBarEvent();
+                                                if (state.isShowCategoryBar) {
+                                                  await _controller.reverse();
+                                                } else {
+                                                  await _controller.forward();
+                                                }
+                                              },
+                                              chooseCategory:
+                                                  state.categoryName,
+                                              applyGrid:
+                                                  BlocProvider.of<ProductCubit>(
+                                                          context)
+                                                      .productLoadGridLayout,
+                                              applySort: context
+                                                  .read<ProductCubit>()
+                                                  .productSort,
+                                              chooseSort: state.sort,
+                                              isGridLayout: state.isGridLayout,
+                                            );
+                                          })),
+                            ));
+                      },
+                    ),
                   ];
                 },
                 body: BlocBuilder<ProductCubit, ProductState>(
@@ -187,14 +233,14 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
       titlePadding: EdgeInsets.only(
           right: 40,
           left: isSearch == false
-              ? top < MediaQuery.of(context).size.height * 0.12
+              ? top < MediaQuery.of(context).size.height * 0.13
                   ? 40
                   : 16
               : 40,
           top: isSearch == false ? 0 : 5,
           bottom: isSearch == false ? 15 : 5),
       centerTitle:
-          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
+          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
       title: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: 1,
@@ -202,7 +248,7 @@ Widget _flexibleSpaceBar(BuildContext context, String categoryName,
               ? Text(
                   categoryName,
                   style: ETextStyle.metropolis(
-                      weight: top < MediaQuery.of(context).size.height * 0.12
+                      weight: top < MediaQuery.of(context).size.height * 0.13
                           ? FontWeight.w600
                           : FontWeight.w700,
                       fontSize: 20),
