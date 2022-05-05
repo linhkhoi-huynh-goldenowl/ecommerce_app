@@ -54,7 +54,7 @@ class ShippingAddressScreen extends StatelessWidget {
                                     builder: (context, state) {
                                       return _addressCard(
                                           state.addresses[index], () {
-                                        SystemDialog.dialogYesNo(
+                                        SystemDialog.showConfirmDialog(
                                             context: context,
                                             func: () {
                                               context

@@ -8,7 +8,7 @@ part 'product_detail_state.dart';
 class ProductDetailCubit extends Cubit<ProductDetailState> {
   ProductDetailCubit({required this.category})
       : super(const ProductDetailState()) {
-    setRelatedList();
+    fetchRelatedProducts();
   }
   final String category;
   void chooseSize(String size) async {
@@ -27,7 +27,7 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
     emit(state.copyWith(color: color, size: ""));
   }
 
-  void setRelatedList() async {
+  void fetchRelatedProducts() async {
     try {
       emit(state.copyWith(relatedStatus: RelatedStatus.loading));
       final relatedList =
