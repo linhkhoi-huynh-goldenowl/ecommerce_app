@@ -4,8 +4,8 @@ import 'package:e_commerce_shop_app/dialogs/sort_bottom_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../modules/cubit/product/product_cubit.dart';
-import 'category_button_chip.dart';
+import '../../modules/cubit/product/product_cubit.dart';
+import '../buttons/category_button_chip.dart';
 
 class FilterBarWidget extends StatelessWidget {
   const FilterBarWidget(

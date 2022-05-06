@@ -3,24 +3,34 @@ import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/promo/promo_cubit.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
-import 'package:e_commerce_shop_app/widgets/flexible_bar_with_search.dart';
+import 'package:e_commerce_shop_app/widgets/appbars/flexible_bar_with_search.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
+import 'package:e_commerce_shop_app/widgets/dismiss_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../config/styles/text_style.dart';
 import '../../dialogs/bottom_sheet_app.dart';
 import '../../utils/services/navigator_services.dart';
-import '../../widgets/button_intro.dart';
-import '../../widgets/cart_card_widget.dart';
-import '../../widgets/promo_code_field.dart';
+import '../../widgets/buttons/button_intro.dart';
+import '../../widgets/cards/cart_card_widget.dart';
+import '../../widgets/textfields/promo_code_field.dart';
+import '../cubit/product/product_cubit.dart';
 
 class BagScreen extends StatelessWidget {
   const BagScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PromoCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<PromoCubit>(
+          create: (BuildContext context) => PromoCubit(),
+        ),
+        BlocProvider<ProductCubit>(
+          create: (BuildContext context) => ProductCubit(),
+        ),
+      ],
       child: BlocListener<CartCubit, CartState>(
           listenWhen: (previous, current) => previous.status != current.status,
           listener: (context, state) {
@@ -29,14 +39,7 @@ class BagScreen extends StatelessWidget {
             }
           },
           child: Scaffold(
-            body: GestureDetector(
-              onTap: () {
-                FocusScopeNode currentFocus = FocusScope.of(context);
-                if (!currentFocus.hasPrimaryFocus &&
-                    currentFocus.focusedChild != null) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                }
-              },
+            body: DismissKeyboard(
               child: NestedScrollView(
                 physics: const BouncingScrollPhysics(),
                 headerSliverBuilder:
@@ -101,7 +104,9 @@ Widget _bagAppBar() {
             buildWhen: (previous, current) =>
                 previous.isSearch != current.isSearch,
             builder: (context, state) {
-              return _findButton(context);
+              return ButtonFind(func: () {
+                BlocProvider.of<CartCubit>(context).cartOpenSearchBarEvent();
+              });
             })
       ]);
 }
@@ -193,12 +198,4 @@ Widget _bottomBar() {
               )
             ],
           )));
-}
-
-Widget _findButton(BuildContext context) {
-  return IconButton(
-      onPressed: () {
-        BlocProvider.of<CartCubit>(context).cartOpenSearchBarEvent();
-      },
-      icon: Image.asset('assets/images/icons/find.png'));
 }

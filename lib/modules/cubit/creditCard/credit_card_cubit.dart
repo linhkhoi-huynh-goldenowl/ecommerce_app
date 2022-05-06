@@ -100,6 +100,20 @@ class CreditCardCubit extends Cubit<CreditCardState> {
                 errMessage: creditRes.error));
           }
         }
+      } else {
+        XResult<CreditCard> creditRes =
+            await Domain().creditCard.addCreditCard(creditCard);
+        if (creditRes.isSuccess) {
+          emit(state.copyWith(
+              status: CreditCardStatus.success,
+              typeStatus: CreditCardTypeStatus.submitted,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: CreditCardStatus.failure,
+              typeStatus: CreditCardTypeStatus.initial,
+              errMessage: creditRes.error));
+        }
       }
     } catch (_) {
       emit(state.copyWith(
@@ -145,13 +159,17 @@ class CreditCardCubit extends Cubit<CreditCardState> {
         XResult<CreditCard> resNew =
             await Domain().creditCard.setDefaultCard(creditCard);
         if (resNew.isSuccess) {
-          emit(state.copyWith(
-              defaultStatus: CardDefaultStatus.success,
-              typeStatus: CreditCardTypeStatus.submitted));
+          XResult<EUser> resUser =
+              await changeDefaultCardProfile(creditCard.cardNumber);
+          if (resUser.isSuccess) {
+            emit(state.copyWith(defaultStatus: CardDefaultStatus.success));
+          } else {
+            emit(state.copyWith(
+                defaultStatus: CardDefaultStatus.failure,
+                errMessage: resUser.error));
+          }
         } else {
-          emit(state.copyWith(
-              defaultStatus: CardDefaultStatus.failure,
-              typeStatus: CreditCardTypeStatus.initial));
+          emit(state.copyWith(defaultStatus: CardDefaultStatus.failure));
         }
       }
     } catch (_) {
@@ -168,7 +186,7 @@ class CreditCardCubit extends Cubit<CreditCardState> {
           await Domain().creditCard.removeCreditCard(creditCard);
       if (creditRes.isSuccess) {
         if (creditCard.isDefault == true) {
-          XResult<EUser> resUser = await changeDefaultCardProfile(null);
+          XResult<EUser> resUser = await changeDefaultCardProfile("");
           if (resUser.isSuccess) {
             emit(state.copyWith(
                 status: CreditCardStatus.success, errMessage: ""));

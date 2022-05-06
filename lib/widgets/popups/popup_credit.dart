@@ -2,12 +2,12 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/creditCard/credit_card_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
 import 'package:e_commerce_shop_app/utils/services/text_format_credit.dart';
-import 'package:e_commerce_shop_app/widgets/button_intro.dart';
-import 'package:e_commerce_shop_app/widgets/text_field_widget.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_intro.dart';
+import 'package:e_commerce_shop_app/widgets/textfields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'loading_widget.dart';
+import '../loading_widget.dart';
 
 class PopupCredit extends StatelessWidget {
   PopupCredit({Key? key}) : super(key: key);

@@ -15,7 +15,7 @@ class SystemDialog {
             title,
             style: ETextStyle.metropolis(),
           ),
-          content: Text(content, style: ETextStyle.metropolis()),
+          content: Text(content, maxLines: 2, style: ETextStyle.metropolis()),
           actions: [
             CupertinoDialogAction(
                 child: Text("No", style: ETextStyle.metropolis()),

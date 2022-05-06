@@ -9,9 +9,9 @@ import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../dialogs/bottom_sheet_app.dart';
-import '../modules/cubit/favorite/favorite_cubit.dart';
-import 'button_circle.dart';
+import '../../dialogs/bottom_sheet_app.dart';
+import '../../modules/cubit/favorite/favorite_cubit.dart';
+import '../buttons/button_circle.dart';
 
 class ShopProductCard extends StatelessWidget {
   const ShopProductCard({Key? key, required this.productItem})
@@ -123,7 +123,10 @@ class ShopProductCard extends StatelessWidget {
                   builder: (context, state) {
                     return ButtonCircle(
                         func: () => BottomSheetApp.showModalFavorite(
-                            context, productItem, productItem.colors[0].sizes),
+                            context,
+                            productItem,
+                            productItem.colors[0].sizes,
+                            productItem.colors[0].color),
                         iconPath: "assets/images/icons/heart.png",
                         iconSize: 16,
                         iconColor: const Color(0xffDADADA),

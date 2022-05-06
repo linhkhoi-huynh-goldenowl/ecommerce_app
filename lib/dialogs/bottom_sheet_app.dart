@@ -9,11 +9,11 @@ import 'package:e_commerce_shop_app/modules/cubit/review/review_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/modules/models/size_cloth.dart';
-import 'package:e_commerce_shop_app/widgets/popup_choose_size.dart';
-import 'package:e_commerce_shop_app/widgets/popup_countries.dart';
-import 'package:e_commerce_shop_app/widgets/popup_credit.dart';
-import 'package:e_commerce_shop_app/widgets/popup_promo.dart';
-import 'package:e_commerce_shop_app/widgets/popup_review.dart';
+import 'package:e_commerce_shop_app/widgets/popups/popup_choose_size.dart';
+import 'package:e_commerce_shop_app/widgets/popups/popup_countries.dart';
+import 'package:e_commerce_shop_app/widgets/popups/popup_credit.dart';
+import 'package:e_commerce_shop_app/widgets/popups/popup_promo.dart';
+import 'package:e_commerce_shop_app/widgets/popups/popup_review.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -72,8 +72,8 @@ class BottomSheetApp {
         });
   }
 
-  static void showModalFavorite(
-      BuildContext context, ProductItem product, List<SizeCloth> listSize) {
+  static void showModalFavorite(BuildContext context, ProductItem product,
+      List<SizeCloth> listSize, String color) {
     showModalBottomSheet<void>(
         constraints:
             const BoxConstraints(maxHeight: 375, minWidth: double.infinity),
@@ -109,7 +109,9 @@ class BottomSheetApp {
                           if (state.size != "") {
                             context.read<FavoriteCubit>().addFavorite(
                                 FavoriteProduct(
-                                    productItem: product, size: state.size));
+                                    productItem: product,
+                                    size: state.size,
+                                    color: color));
                             Navigator.pop(context);
                           } else {
                             context

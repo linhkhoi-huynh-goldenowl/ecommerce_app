@@ -1,13 +1,16 @@
 import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_shop_app/widgets/flexible_bar_with_search.dart';
-import 'package:e_commerce_shop_app/widgets/shop_product_card.dart';
+import 'package:e_commerce_shop_app/widgets/appbars/flexible_bar_with_search.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
+import 'package:e_commerce_shop_app/widgets/cards/shop_product_card.dart';
+import 'package:e_commerce_shop_app/widgets/dismiss_keyboard.dart';
 import 'package:e_commerce_shop_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/filter_bar_widget.dart';
+import '../../widgets/buttons/button_leading.dart';
+import '../../widgets/appbars/filter_bar_widget.dart';
 import '../../widgets/loading_widget.dart';
-import '../../widgets/main_product_card.dart';
+import '../../widgets/cards/main_product_card.dart';
 
 class ShopCategoryScreen extends StatefulWidget {
   const ShopCategoryScreen({Key? key}) : super(key: key);
@@ -53,128 +56,18 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
             );
 
           case ProductStatus.success:
-            return GestureDetector(
-              onTap: () {
-                FocusScopeNode currentFocus = FocusScope.of(context);
-                if (!currentFocus.hasPrimaryFocus &&
-                    currentFocus.focusedChild != null) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                }
-              },
+            return DismissKeyboard(
               child: Scaffold(
                   body: NestedScrollView(
                 physics: const BouncingScrollPhysics(),
                 headerSliverBuilder:
                     (BuildContext context, bool innerBoxIsScrolled) {
                   return <Widget>[
-                    SliverAppBar(
-                        shadowColor: Colors.white,
-                        elevation: 5,
-                        backgroundColor: const Color(0xffF9F9F9),
-                        expandedHeight: 100.0,
-                        pinned: true,
-                        leading: _leadingButton(context),
-                        actions: [_findButton(context)],
-                        flexibleSpace: BlocBuilder<ProductCubit, ProductState>(
-                            buildWhen: (previous, current) =>
-                                previous.isSearch != current.isSearch ||
-                                previous.searchInput != current.searchInput ||
-                                previous.categoryName != current.categoryName,
-                            builder: (context, state) {
-                              return FlexibleBarWithSearch(
-                                title: state.type == TypeList.newest
-                                    ? ("New - " +
-                                        (state.categoryName == ""
-                                            ? "All products"
-                                            : state.categoryName))
-                                    : state.type == TypeList.sale
-                                        ? "Sale - " +
-                                            (state.categoryName == ""
-                                                ? "All products"
-                                                : state.categoryName)
-                                        : "" + state.categoryName == ""
-                                            ? "All products"
-                                            : state.categoryName,
-                                isSearch: state.isSearch,
-                                searchInput: state.searchInput,
-                                func: (value) {
-                                  BlocProvider.of<ProductCubit>(context)
-                                      .productSearch(value);
-                                },
-                              );
-                            })),
-                    AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return SliverPersistentHeader(
-                            pinned: true,
-                            delegate: SliverAppBarDelegate(
-                              child: PreferredSize(
-                                  preferredSize:
-                                      Size.fromHeight(_animation.value),
-                                  child:
-                                      BlocBuilder<ProductCubit, ProductState>(
-                                          buildWhen: (previous, current) =>
-                                              previous.isShowCategoryBar !=
-                                                  current.isShowCategoryBar ||
-                                              previous.categoryName !=
-                                                  current.categoryName ||
-                                              previous.sort != current.sort ||
-                                              previous.isGridLayout !=
-                                                  current.isGridLayout,
-                                          builder: (context, state) {
-                                            return FilterBarWidget(
-                                              height: _animationCategory.value,
-                                              showCategory: () async {
-                                                BlocProvider.of<ProductCubit>(
-                                                        context)
-                                                    .productOpenCategoryBarEvent();
-                                                if (state.isShowCategoryBar) {
-                                                  await _controller.reverse();
-                                                } else {
-                                                  await _controller.forward();
-                                                }
-                                              },
-                                              chooseCategory:
-                                                  state.categoryName,
-                                              applyGrid:
-                                                  BlocProvider.of<ProductCubit>(
-                                                          context)
-                                                      .productLoadGridLayout,
-                                              applySortCategory: context
-                                                  .read<ProductCubit>()
-                                                  .filterProductCategory,
-                                              applySortChooseSort: context
-                                                  .read<ProductCubit>()
-                                                  .filterProductType,
-                                              chooseSort: state.sort,
-                                              isGridLayout: state.isGridLayout,
-                                            );
-                                          })),
-                            ));
-                      },
-                    ),
+                    _appBar(),
+                    _filterBar(),
                   ];
                 },
-                body: BlocBuilder<ProductCubit, ProductState>(
-                    buildWhen: (previous, current) =>
-                        previous.productListToShow !=
-                            current.productListToShow ||
-                        previous.isGridLayout != current.isGridLayout,
-                    builder: (context, state) {
-                      if (state.productListToShow.isEmpty) {
-                        return const Center(
-                          child: Text("No products"),
-                        );
-                      } else {
-                        if (state.isGridLayout) {
-                          return _displayGridView(
-                              state.productListToShow, context);
-                        } else {
-                          return _displayListView(state.productListToShow);
-                        }
-                      }
-                    }),
+                body: _showItemList(),
               )),
             );
 
@@ -184,49 +77,139 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
       },
     );
   }
-}
 
-GridView _displayGridView(List productItems, BuildContext context) {
-  return GridView.builder(
-    shrinkWrap: true,
-    padding: const EdgeInsets.only(top: 32, left: 16),
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
-      childAspectRatio: 0.6,
-    ),
-    itemBuilder: (BuildContext context, int index) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 16),
-        child: MainProductCard(product: productItems[index]),
-      );
-    },
-    itemCount: productItems.length,
-  );
-}
+  Widget _showItemList() {
+    return BlocBuilder<ProductCubit, ProductState>(
+        buildWhen: (previous, current) =>
+            previous.productListToShow != current.productListToShow ||
+            previous.isGridLayout != current.isGridLayout,
+        builder: (context, state) {
+          if (state.productListToShow.isEmpty) {
+            return const Center(
+              child: Text("No products"),
+            );
+          } else {
+            if (state.isGridLayout) {
+              return _displayGridView(state.productListToShow, context);
+            } else {
+              return _displayListView(state.productListToShow);
+            }
+          }
+        });
+  }
 
-ListView _displayListView(List productItems) {
-  return ListView.builder(
+  Widget _appBar() {
+    return SliverAppBar(
+        shadowColor: Colors.white,
+        elevation: 5,
+        backgroundColor: const Color(0xffF9F9F9),
+        expandedHeight: 100.0,
+        pinned: true,
+        leading: const ButtonLeading(),
+        actions: [
+          ButtonFind(func: () {
+            BlocProvider.of<ProductCubit>(context).productOpenSearchBarEvent();
+          })
+        ],
+        flexibleSpace: BlocBuilder<ProductCubit, ProductState>(
+            buildWhen: (previous, current) =>
+                previous.isSearch != current.isSearch ||
+                previous.searchInput != current.searchInput ||
+                previous.categoryName != current.categoryName,
+            builder: (context, state) {
+              return FlexibleBarWithSearch(
+                title: state.type == TypeList.newest
+                    ? ("New - " +
+                        (state.categoryName == ""
+                            ? "All products"
+                            : state.categoryName))
+                    : state.type == TypeList.sale
+                        ? "Sale - " +
+                            (state.categoryName == ""
+                                ? "All products"
+                                : state.categoryName)
+                        : "" + state.categoryName == ""
+                            ? "All products"
+                            : state.categoryName,
+                isSearch: state.isSearch,
+                searchInput: state.searchInput,
+                func: (value) {
+                  BlocProvider.of<ProductCubit>(context).productSearch(value);
+                },
+              );
+            }));
+  }
+
+  Widget _filterBar() {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return SliverPersistentHeader(
+            pinned: true,
+            delegate: SliverAppBarDelegate(
+              child: PreferredSize(
+                  preferredSize: Size.fromHeight(_animation.value),
+                  child: BlocBuilder<ProductCubit, ProductState>(
+                      buildWhen: (previous, current) =>
+                          previous.isShowCategoryBar !=
+                              current.isShowCategoryBar ||
+                          previous.categoryName != current.categoryName ||
+                          previous.sort != current.sort ||
+                          previous.isGridLayout != current.isGridLayout,
+                      builder: (context, state) {
+                        return FilterBarWidget(
+                          height: _animationCategory.value,
+                          showCategory: () async {
+                            BlocProvider.of<ProductCubit>(context)
+                                .productOpenCategoryBarEvent();
+                            if (state.isShowCategoryBar) {
+                              await _controller.reverse();
+                            } else {
+                              await _controller.forward();
+                            }
+                          },
+                          chooseCategory: state.categoryName,
+                          applyGrid: BlocProvider.of<ProductCubit>(context)
+                              .productLoadGridLayout,
+                          applySortCategory: context
+                              .read<ProductCubit>()
+                              .filterProductCategory,
+                          applySortChooseSort:
+                              context.read<ProductCubit>().filterProductType,
+                          chooseSort: state.sort,
+                          isGridLayout: state.isGridLayout,
+                        );
+                      })),
+            ));
+      },
+    );
+  }
+
+  GridView _displayGridView(List productItems, BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      padding: const EdgeInsets.only(top: 32, left: 16),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
+        childAspectRatio: 0.6,
+      ),
       itemBuilder: (BuildContext context, int index) {
-        return ShopProductCard(
-          productItem: productItems[index],
+        return Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: MainProductCard(product: productItems[index]),
         );
       },
-      itemCount: productItems.length);
-}
+      itemCount: productItems.length,
+    );
+  }
 
-Widget _leadingButton(BuildContext context) {
-  return IconButton(
-    icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-    onPressed: () {
-      Navigator.pop(context);
-    },
-  );
-}
-
-Widget _findButton(BuildContext context) {
-  return IconButton(
-      onPressed: () {
-        BlocProvider.of<ProductCubit>(context).productOpenSearchBarEvent();
-      },
-      icon: Image.asset('assets/images/icons/find.png'));
+  ListView _displayListView(List productItems) {
+    return ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return ShopProductCard(
+            productItem: productItems[index],
+          );
+        },
+        itemCount: productItems.length);
+  }
 }

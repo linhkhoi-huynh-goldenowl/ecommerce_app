@@ -1,7 +1,7 @@
-import 'package:e_commerce_shop_app/widgets/search_text_field.dart';
+import 'package:e_commerce_shop_app/widgets/textfields/search_text_field.dart';
 import 'package:flutter/material.dart';
 
-import '../config/styles/text_style.dart';
+import '../../config/styles/text_style.dart';
 
 class FlexibleBarWithSearch extends StatelessWidget {
   const FlexibleBarWithSearch({
@@ -45,8 +45,8 @@ class FlexibleBarWithSearch extends StatelessWidget {
                             : FontWeight.w700,
                         fontSize:
                             top < MediaQuery.of(context).size.height * 0.13
-                                ? 20
-                                : 26),
+                                ? 22
+                                : 25),
                   )
                 : SearchTextField(
                     initValue: searchInput,

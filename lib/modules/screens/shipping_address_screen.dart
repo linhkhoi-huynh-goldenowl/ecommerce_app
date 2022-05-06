@@ -4,6 +4,7 @@ import 'package:e_commerce_shop_app/dialogs/system_dialog.dart';
 import 'package:e_commerce_shop_app/modules/cubit/address/address_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/address.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_leading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,7 +16,7 @@ class ShippingAddressScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AddressCubit>(
         create: (BuildContext context) => AddressCubit(),
-        child: BlocConsumer<AddressCubit, AddressState>(
+        child: BlocListener<AddressCubit, AddressState>(
             listenWhen: (previous, current) =>
                 previous.status != current.status,
             listener: (context, state) {
@@ -23,99 +24,97 @@ class ShippingAddressScreen extends StatelessWidget {
                 AppSnackBar.showSnackBar(context, state.errMessage);
               }
             },
-            buildWhen: (previous, current) => previous.status != current.status,
-            builder: (context, state) {
-              return Scaffold(
-                  appBar: AppBar(
-                      backgroundColor: const Color(0xffF9F9F9),
-                      centerTitle: true,
-                      leading: _leadingButton(context),
-                      title: Text(
-                        "Shipping Address",
-                        style: ETextStyle.metropolis(
-                            weight: FontWeight.w600, fontSize: 20),
-                      )),
-                  floatingActionButton: _addButton(() {
-                    context.read<AddressCubit>().resetAddressForm();
-                    Navigator.of(context).pushNamed(Routes.addAddressScreen,
-                        arguments: {'context': context});
-                  }),
-                  body: state.status == AddressStatus.loading
-                      ? const LoadingWidget()
-                      : (state.addresses.isNotEmpty
-                          ? ListView.builder(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 16),
-                              itemBuilder: (context, index) {
-                                return BlocBuilder<AddressCubit, AddressState>(
-                                    buildWhen: (previous, current) =>
-                                        previous.defaultStatus !=
-                                        current.defaultStatus,
-                                    builder: (context, state) {
-                                      return _addressCard(
-                                          state.addresses[index], () {
-                                        SystemDialog.showConfirmDialog(
-                                            context: context,
-                                            func: () {
-                                              context
-                                                  .read<AddressCubit>()
-                                                  .removeAddress(
-                                                      state.addresses[index]);
-                                            },
-                                            title: "Are you sure",
-                                            content: "Do you want to delete?");
-                                      }, () {
-                                        context
-                                            .read<AddressCubit>()
-                                            .loadInfoAddressForm(
-                                                state.addresses[index]);
-                                        Navigator.of(context).pushNamed(
-                                            Routes.addAddressScreen,
-                                            arguments: {
-                                              'addressId':
-                                                  state.addresses[index].id,
-                                              'context': context
-                                            });
-                                      }, () {
-                                        context
-                                            .read<AddressCubit>()
-                                            .setDefaultAddress(
-                                                state.addresses[index]);
-                                      });
-                                    });
-                              },
-                              itemCount: state.addresses.length,
-                            )
-                          : Center(
-                              child: Text("Please Add Shipping Address",
-                                  style: ETextStyle.metropolis(fontSize: 22)),
-                            )));
-            }));
+            child: Scaffold(
+                appBar: _appBar(),
+                floatingActionButton: _addButton(),
+                body: _showAddressList())));
+  }
+
+  Widget _showAddressList() {
+    return BlocBuilder<AddressCubit, AddressState>(
+      buildWhen: (previous, current) => previous.status != current.status,
+      builder: (context, state) {
+        return state.status == AddressStatus.loading
+            ? const LoadingWidget()
+            : (state.addresses.isNotEmpty
+                ? ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
+                    itemBuilder: (context, index) {
+                      return BlocBuilder<AddressCubit, AddressState>(
+                          buildWhen: (previous, current) =>
+                              previous.defaultStatus != current.defaultStatus,
+                          builder: (context, stateDefault) {
+                            return _addressCard(stateDefault.addresses[index],
+                                () {
+                              SystemDialog.showConfirmDialog(
+                                  context: context,
+                                  func: () {
+                                    context.read<AddressCubit>().removeAddress(
+                                        stateDefault.addresses[index]);
+                                  },
+                                  title: "Are you sure",
+                                  content: "Do you want to delete?");
+                            }, () {
+                              context.read<AddressCubit>().loadInfoAddressForm(
+                                  stateDefault.addresses[index]);
+                              Navigator.of(context).pushNamed(
+                                  Routes.addAddressScreen,
+                                  arguments: {
+                                    'addressId':
+                                        stateDefault.addresses[index].id,
+                                    'context': context
+                                  });
+                            }, () {
+                              context.read<AddressCubit>().setDefaultAddress(
+                                  stateDefault.addresses[index]);
+                            });
+                          });
+                    },
+                    itemCount: state.addresses.length,
+                  )
+                : Center(
+                    child: Text("Please Add Shipping Address",
+                        style: ETextStyle.metropolis(fontSize: 22)),
+                  ));
+      },
+    );
+  }
+
+  AppBar _appBar() {
+    return AppBar(
+        backgroundColor: const Color(0xffF9F9F9),
+        centerTitle: true,
+        leading: const ButtonLeading(),
+        title: Text(
+          "Shipping Address",
+          style: ETextStyle.metropolis(weight: FontWeight.w600, fontSize: 20),
+        ));
   }
 }
 
-Widget _addButton(VoidCallback func) {
-  return SizedBox(
-    width: 50,
-    child: RawMaterialButton(
-      fillColor: Colors.black,
-      onPressed: func,
-      elevation: 5,
-      child: const Icon(
-        Icons.add,
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.all(10),
-      shape: const CircleBorder(),
-    ),
-  );
-}
-
-Widget _leadingButton(BuildContext context) {
-  return IconButton(
-    icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-    onPressed: () {
-      Navigator.pop(context);
+Widget _addButton() {
+  return BlocBuilder<AddressCubit, AddressState>(
+    buildWhen: (previous, current) => previous.status != current.status,
+    builder: (context, state) {
+      return SizedBox(
+        width: 50,
+        child: RawMaterialButton(
+          fillColor: Colors.black,
+          onPressed: () {
+            context.read<AddressCubit>().resetAddressForm();
+            Navigator.of(context).pushNamed(Routes.addAddressScreen,
+                arguments: {'context': context});
+          },
+          elevation: 5,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          padding: const EdgeInsets.all(10),
+          shape: const CircleBorder(),
+        ),
+      );
     },
   );
 }

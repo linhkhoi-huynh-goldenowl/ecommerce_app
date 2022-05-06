@@ -129,6 +129,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     return state.favorites
         .where((element) =>
             element.productItem.id == item.productItem.id &&
+            element.color == item.color &&
             element.size == item.size)
         .toList()
         .isEmpty;

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../config/styles/text_style.dart';
-import '../widgets/button_intro.dart';
-import '../widgets/text_field_widget.dart';
+import '../widgets/buttons/button_intro.dart';
+import '../widgets/textfields/text_field_widget.dart';
 
 class ButtonChangePassword extends StatelessWidget {
   ButtonChangePassword({Key? key}) : super(key: key);

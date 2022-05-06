@@ -177,14 +177,14 @@ class AddressCubit extends Cubit<AddressState> {
 
   void loadInfoAddressForm(Address address) async {
     emit(state.copyWith(
-      typeStatus: AddressTypeStatus.initial,
-      fullName: address.fullName,
-      address: address.address,
-      city: address.city,
-      region: address.region,
-      zipCode: address.zipCode,
-      country: address.country,
-    ));
+        typeStatus: AddressTypeStatus.initial,
+        fullName: address.fullName,
+        address: address.address,
+        city: address.city,
+        region: address.region,
+        zipCode: address.zipCode,
+        country: address.country,
+        isDefault: address.isDefault));
   }
 
   void resetAddressForm() async {

@@ -4,14 +4,14 @@ import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
-import 'package:e_commerce_shop_app/widgets/button_circle.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_circle.dart';
 import 'package:e_commerce_shop_app/widgets/price_text.dart';
 import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'chip_label.dart';
-import 'image_product_widget.dart';
+import '../chip_label.dart';
+import '../image_product_widget.dart';
 
 class MainProductCard extends StatelessWidget {
   const MainProductCard({Key? key, required this.product}) : super(key: key);
@@ -103,7 +103,10 @@ class MainProductCard extends StatelessWidget {
                     return SizedBox(
                       child: ButtonCircle(
                           func: () => BottomSheetApp.showModalFavorite(
-                              context, product, product.colors[0].sizes),
+                              context,
+                              product,
+                              product.colors[0].sizes,
+                              product.colors[0].color),
                           iconPath: "assets/images/icons/heart.png",
                           iconSize: 16,
                           iconColor: const Color(0xffDADADA),

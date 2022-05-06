@@ -2,12 +2,12 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/promo/promo_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
-import 'package:e_commerce_shop_app/widgets/promo_code_field.dart';
+import 'package:e_commerce_shop_app/widgets/textfields/promo_code_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../utils/helpers/promo_helpers.dart';
-import 'e_cached_image.dart';
+import '../../utils/helpers/promo_helpers.dart';
+import '../e_cached_image.dart';
 
 class PopupPromo extends StatelessWidget {
   const PopupPromo({Key? key, this.code}) : super(key: key);

@@ -8,6 +8,7 @@ class ETextStyle {
       TextDecoration? decoration,
       double? letterSpacing}) {
     return TextStyle(
+        overflow: TextOverflow.ellipsis,
         letterSpacing: letterSpacing,
         color: color,
         fontSize: fontSize,
