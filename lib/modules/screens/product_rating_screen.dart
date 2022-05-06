@@ -92,10 +92,7 @@ class ProductRatingScreen extends StatelessWidget {
                       ),
                     ]),
                   )),
-              Positioned(
-                  right: 16,
-                  bottom: 32,
-                  child: _reviewButton(context, productId))
+              Positioned(right: 16, bottom: 32, child: _reviewButton(productId))
             ],
           ),
         ),
@@ -179,27 +176,32 @@ class ProductRatingScreen extends StatelessWidget {
         ));
   }
 
-  Widget _reviewButton(BuildContext context, String productId) {
-    return ElevatedButton.icon(
-      icon: const ImageIcon(
-        AssetImage("assets/images/icons/write.png"),
-        color: Colors.white,
-        size: 11,
-      ),
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
-        primary: const Color(0xffDB3022),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
-        elevation: 5,
-      ),
-      onPressed: () {
-        BottomSheetApp.showModalReview(context, productId);
+  Widget _reviewButton(String productId) {
+    return BlocBuilder<ReviewCubit, ReviewState>(
+      buildWhen: (previous, current) => previous.status != current.status,
+      builder: (context, state) {
+        return ElevatedButton.icon(
+          icon: const ImageIcon(
+            AssetImage("assets/images/icons/write.png"),
+            color: Colors.white,
+            size: 11,
+          ),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+            primary: const Color(0xffDB3022),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            elevation: 5,
+          ),
+          onPressed: () {
+            BottomSheetApp.showModalReview(context, productId);
+          },
+          label: Text("Write a review",
+              style: ETextStyle.metropolis(
+                  fontSize: 11, color: const Color(0xffFFFFFF))),
+        );
       },
-      label: Text("Write a review",
-          style: ETextStyle.metropolis(
-              fontSize: 11, color: const Color(0xffFFFFFF))),
     );
   }
 

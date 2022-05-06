@@ -5,7 +5,6 @@ import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
 import 'package:e_commerce_shop_app/modules/models/order.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
-import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/button_leading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +70,6 @@ class OrderDetailScreen extends StatelessWidget {
         backgroundColor: const Color(0xffF9F9F9),
         centerTitle: true,
         leading: const ButtonLeading(),
-        actions: [ButtonFind(func: () {})],
         title: Text(
           "Order Details",
           style: ETextStyle.metropolis(weight: FontWeight.w600, fontSize: 18),

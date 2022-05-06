@@ -51,16 +51,16 @@ class OrderScreen extends StatelessWidget {
   }
 
   Widget _appBar() {
-    return SliverAppBar(
-        shadowColor: Colors.white,
-        elevation: 5,
-        backgroundColor: const Color(0xffF9F9F9),
-        expandedHeight: 110.0,
-        pinned: true,
-        stretch: true,
-        leading: const ButtonLeading(),
-        flexibleSpace: const FlexibleAppBar(title: "My Orders"),
-        actions: [ButtonFind(func: () {})]);
+    return const SliverAppBar(
+      shadowColor: Colors.white,
+      elevation: 5,
+      backgroundColor: Color(0xffF9F9F9),
+      expandedHeight: 110.0,
+      pinned: true,
+      stretch: true,
+      leading: ButtonLeading(),
+      flexibleSpace: FlexibleAppBar(title: "My Orders"),
+    );
   }
 
   Widget _tabBarHeader() {
