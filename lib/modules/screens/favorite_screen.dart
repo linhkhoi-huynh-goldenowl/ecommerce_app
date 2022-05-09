@@ -1,11 +1,14 @@
-import 'package:e_commerce_shop_app/widgets/flexible_bar_with_search.dart';
+import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_shop_app/widgets/appbars/flexible_bar_with_search.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
+import 'package:e_commerce_shop_app/widgets/dismiss_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../utils/helpers/show_snackbar.dart';
-import '../../widgets/favorite_card_grid.dart';
-import '../../widgets/favorite_card_list.dart';
-import '../../widgets/filter_bar_widget.dart';
+import '../../widgets/cards/favorite_card_grid.dart';
+import '../../widgets/cards/favorite_card_list.dart';
+import '../../widgets/appbars/filter_bar_widget.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/sliver_app_bar_delegate.dart';
 import '../cubit/category/category_cubit.dart';
@@ -45,8 +48,15 @@ class _FavoriteScreenState extends State<FavoriteScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<CategoryCubit>(
-      create: (BuildContext context) => CategoryCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CategoryCubit>(
+          create: (BuildContext context) => CategoryCubit(),
+        ),
+        BlocProvider<ProductCubit>(
+          create: (BuildContext context) => ProductCubit(),
+        ),
+      ],
       child: _buildBody(context),
     );
   }
@@ -68,121 +78,18 @@ class _FavoriteScreenState extends State<FavoriteScreen>
             );
 
           case FavoriteStatus.success:
-            return GestureDetector(
-              onTap: () {
-                FocusScopeNode currentFocus = FocusScope.of(context);
-                if (!currentFocus.hasPrimaryFocus &&
-                    currentFocus.focusedChild != null) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                }
-              },
+            return DismissKeyboard(
               child: Scaffold(
                   body: NestedScrollView(
                       physics: const BouncingScrollPhysics(),
                       headerSliverBuilder:
                           (BuildContext context, bool innerBoxIsScrolled) {
                         return <Widget>[
-                          SliverAppBar(
-                              shadowColor: Colors.white,
-                              elevation: 5,
-                              backgroundColor: const Color(0xffF9F9F9),
-                              expandedHeight: 100.0,
-                              pinned: true,
-                              stretch: true,
-                              automaticallyImplyLeading: false,
-                              leading: null,
-                              actions: [_findButton(context)],
-                              flexibleSpace: BlocBuilder<FavoriteCubit,
-                                      FavoriteState>(
-                                  buildWhen: (previous, current) =>
-                                      previous.isSearch != current.isSearch ||
-                                      previous.searchInput !=
-                                          current.searchInput ||
-                                      previous.categoryName !=
-                                          current.categoryName,
-                                  builder: (context, state) {
-                                    return FlexibleBarWithSearch(
-                                      title: "Favorites",
-                                      isSearch: state.isSearch,
-                                      searchInput: state.searchInput,
-                                      func: (value) {
-                                        BlocProvider.of<FavoriteCubit>(context)
-                                            .favoriteSearch(value);
-                                      },
-                                    );
-                                  })),
-                          AnimatedBuilder(
-                            animation: _controller,
-                            builder: (context, child) {
-                              return SliverPersistentHeader(
-                                  pinned: true,
-                                  delegate: SliverAppBarDelegate(
-                                    child: PreferredSize(
-                                        preferredSize:
-                                            Size.fromHeight(_animation.value),
-                                        child: BlocBuilder<FavoriteCubit,
-                                                FavoriteState>(
-                                            buildWhen: (previous, current) =>
-                                                previous.isShowCategoryBar !=
-                                                    current.isShowCategoryBar ||
-                                                previous.categoryName !=
-                                                    current.categoryName ||
-                                                previous.sort != current.sort ||
-                                                previous.isGridLayout !=
-                                                    current.isGridLayout,
-                                            builder: (context, state) {
-                                              return FilterBarWidget(
-                                                height:
-                                                    _animationCategory.value,
-                                                showCategory: () async {
-                                                  BlocProvider.of<
-                                                              FavoriteCubit>(
-                                                          context)
-                                                      .favoriteOpenCategoryBarEvent();
-
-                                                  if (state.isShowCategoryBar) {
-                                                    await _controller.reverse();
-                                                  } else {
-                                                    await _controller.forward();
-                                                  }
-                                                },
-                                                chooseCategory:
-                                                    state.categoryName,
-                                                applyGrid: BlocProvider.of<
-                                                        FavoriteCubit>(context)
-                                                    .favoriteLoadGridLayout,
-                                                applySortCategory: context
-                                                    .read<FavoriteCubit>()
-                                                    .filterFavoriteCategory,
-                                                applySortChooseSort: context
-                                                    .read<FavoriteCubit>()
-                                                    .filterFavoriteType,
-                                                chooseSort: state.sort,
-                                                isGridLayout:
-                                                    state.isGridLayout,
-                                              );
-                                            })),
-                                  ));
-                            },
-                          )
+                          _appBar(),
+                          _filterBar(),
                         ];
                       },
-                      body: BlocBuilder<FavoriteCubit, FavoriteState>(
-                          buildWhen: (previous, current) =>
-                              previous.favoritesListToShow !=
-                                  current.favoritesListToShow ||
-                              previous.isGridLayout != current.isGridLayout,
-                          builder: (context, state) {
-                            return state.favoritesListToShow.isEmpty
-                                ? const Center(
-                                    child: Text("No favorites"),
-                                  )
-                                : state.isGridLayout
-                                    ? _displayGridView(
-                                        state.favoritesListToShow, context)
-                                    : _displayListView(
-                                        state.favoritesListToShow);
-                          }))),
+                      body: _showFavoritesList())),
             );
 
           default:
@@ -191,41 +98,128 @@ class _FavoriteScreenState extends State<FavoriteScreen>
       },
     );
   }
-}
 
-GridView _displayGridView(List favorites, BuildContext context) {
-  return GridView.builder(
-    padding: const EdgeInsets.only(left: 16, top: 32),
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
-      childAspectRatio: 0.55,
-    ),
-    itemBuilder: (BuildContext context, int index) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 16),
-        child: FavoriteCardGrid(
-          favoriteProduct: favorites[index],
-        ),
-      );
-    },
-    itemCount: favorites.length,
-  );
-}
+  Widget _showFavoritesList() {
+    return BlocBuilder<FavoriteCubit, FavoriteState>(
+        buildWhen: (previous, current) =>
+            previous.favoritesListToShow != current.favoritesListToShow ||
+            previous.isGridLayout != current.isGridLayout,
+        builder: (context, state) {
+          return state.favoritesListToShow.isEmpty
+              ? const Center(
+                  child: Text("No favorites"),
+                )
+              : state.isGridLayout
+                  ? _displayGridView(state.favoritesListToShow, context)
+                  : _displayListView(state.favoritesListToShow);
+        });
+  }
 
-ListView _displayListView(List favorites) {
-  return ListView.builder(
+  Widget _appBar() {
+    return SliverAppBar(
+        shadowColor: Colors.white,
+        elevation: 5,
+        backgroundColor: const Color(0xffF9F9F9),
+        expandedHeight: 100.0,
+        pinned: true,
+        stretch: true,
+        automaticallyImplyLeading: false,
+        leading: null,
+        actions: [
+          ButtonFind(func: () {
+            BlocProvider.of<FavoriteCubit>(context)
+                .favoriteOpenSearchBarEvent();
+          }),
+        ],
+        flexibleSpace: BlocBuilder<FavoriteCubit, FavoriteState>(
+            buildWhen: (previous, current) =>
+                previous.isSearch != current.isSearch ||
+                previous.searchInput != current.searchInput ||
+                previous.categoryName != current.categoryName,
+            builder: (context, state) {
+              return FlexibleBarWithSearch(
+                title: "Favorites",
+                isSearch: state.isSearch,
+                searchInput: state.searchInput,
+                func: (value) {
+                  BlocProvider.of<FavoriteCubit>(context).favoriteSearch(value);
+                },
+              );
+            }));
+  }
+
+  Widget _filterBar() {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return SliverPersistentHeader(
+            pinned: true,
+            delegate: SliverAppBarDelegate(
+              child: PreferredSize(
+                  preferredSize: Size.fromHeight(_animation.value),
+                  child: BlocBuilder<FavoriteCubit, FavoriteState>(
+                      buildWhen: (previous, current) =>
+                          previous.isShowCategoryBar !=
+                              current.isShowCategoryBar ||
+                          previous.categoryName != current.categoryName ||
+                          previous.sort != current.sort ||
+                          previous.isGridLayout != current.isGridLayout,
+                      builder: (context, state) {
+                        return FilterBarWidget(
+                          height: _animationCategory.value,
+                          showCategory: () async {
+                            BlocProvider.of<FavoriteCubit>(context)
+                                .favoriteOpenCategoryBarEvent();
+
+                            if (state.isShowCategoryBar) {
+                              await _controller.reverse();
+                            } else {
+                              await _controller.forward();
+                            }
+                          },
+                          chooseCategory: state.categoryName,
+                          applyGrid: BlocProvider.of<FavoriteCubit>(context)
+                              .favoriteLoadGridLayout,
+                          applySortCategory: context
+                              .read<FavoriteCubit>()
+                              .filterFavoriteCategory,
+                          applySortChooseSort:
+                              context.read<FavoriteCubit>().filterFavoriteType,
+                          chooseSort: state.sort,
+                          isGridLayout: state.isGridLayout,
+                        );
+                      })),
+            ));
+      },
+    );
+  }
+
+  GridView _displayGridView(List favorites, BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.only(left: 16, top: 32),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
+        childAspectRatio: 0.55,
+      ),
       itemBuilder: (BuildContext context, int index) {
-        return FavoriteCardList(
-          favoriteProduct: favorites[index],
+        return Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: FavoriteCardGrid(
+            favoriteProduct: favorites[index],
+          ),
         );
       },
-      itemCount: favorites.length);
-}
+      itemCount: favorites.length,
+    );
+  }
 
-Widget _findButton(BuildContext context) {
-  return IconButton(
-      onPressed: () {
-        BlocProvider.of<FavoriteCubit>(context).favoriteOpenSearchBarEvent();
-      },
-      icon: Image.asset('assets/images/icons/find.png'));
+  ListView _displayListView(List favorites) {
+    return ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return FavoriteCardList(
+            favoriteProduct: favorites[index],
+          );
+        },
+        itemCount: favorites.length);
+  }
 }

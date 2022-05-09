@@ -1,7 +1,9 @@
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
-import 'package:e_commerce_shop_app/widgets/button_intro.dart';
-import 'package:e_commerce_shop_app/widgets/text_field_widget.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_intro.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_leading.dart';
+import 'package:e_commerce_shop_app/widgets/dismiss_keyboard.dart';
+import 'package:e_commerce_shop_app/widgets/textfields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,31 +27,20 @@ class ResetPassScreen extends StatelessWidget {
             Navigator.of(context).pop();
           }
         },
-        child: GestureDetector(
-          onTap: () {
-            FocusScopeNode currentFocus = FocusScope.of(context);
-            if (!currentFocus.hasPrimaryFocus &&
-                currentFocus.focusedChild != null) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            }
-          },
+        child: DismissKeyboard(
           child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 0,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                ),
-              ),
-            ),
+            appBar: _appBar(context),
             body: _resetForm(),
           ),
         ));
+  }
+
+  AppBar _appBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      elevation: 0,
+      leading: const ButtonLeading(),
+    );
   }
 
   Widget _resetForm() {
@@ -61,57 +52,67 @@ class ResetPassScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Align(
-            child: Text(
-              "Reset Password",
-              style:
-                  ETextStyle.metropolis(fontSize: 40, weight: FontWeight.bold),
-            ),
-            alignment: Alignment.center,
-          ),
+          _titleResetPass(),
           const SizedBox(
             height: 80,
           ),
-          BlocBuilder<AuthenticationCubit, AuthenticationState>(
-              buildWhen: (previous, current) =>
-                  previous.emailReset != current.emailReset,
-              builder: (context, state) {
-                return TextFieldWidget(
-                    labelText: 'Email Reset',
-                    validatorText: 'Email reset must contain @',
-                    isValid: state.isValidEmailReset,
-                    func: (value) => context
-                        .read<AuthenticationCubit>()
-                        .emailResetChanged(value),
-                    isPassword: false);
-              }),
+          _inputEmailField(),
           const SizedBox(
             height: 20,
           ),
-          BlocBuilder<AuthenticationCubit, AuthenticationState>(
-              buildWhen: (previous, current) =>
-                  previous.resetPassStatus != current.resetPassStatus ||
-                  previous.emailReset != current.emailReset,
-              builder: (context, stateAuth) {
-                return stateAuth.resetPassStatus == ResetPassStatus.loading
-                    ? const LoadingWidget()
-                    : ButtonIntro(
-                        func: () async {
-                          FocusScopeNode currentFocus = FocusScope.of(context);
-                          if (!currentFocus.hasPrimaryFocus &&
-                              currentFocus.focusedChild != null) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          }
-                          if (_formKey.currentState!.validate()) {
-                            context
-                                .read<AuthenticationCubit>()
-                                .resetPass(stateAuth.emailReset);
-                          }
-                        },
-                        title: 'Send Email');
-              }),
+          _resetButton(),
         ],
       ),
     );
+  }
+
+  Widget _titleResetPass() {
+    return Align(
+      child: Text(
+        "Reset Password",
+        style: ETextStyle.metropolis(fontSize: 40, weight: FontWeight.bold),
+      ),
+      alignment: Alignment.center,
+    );
+  }
+
+  Widget _inputEmailField() {
+    return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+        buildWhen: (previous, current) =>
+            previous.emailReset != current.emailReset,
+        builder: (context, state) {
+          return TextFieldWidget(
+              labelText: 'Email Reset',
+              validatorText: 'Email reset must contain @',
+              isValid: state.isValidEmailReset,
+              func: (value) =>
+                  context.read<AuthenticationCubit>().emailResetChanged(value),
+              isPassword: false);
+        });
+  }
+
+  Widget _resetButton() {
+    return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+        buildWhen: (previous, current) =>
+            previous.resetPassStatus != current.resetPassStatus ||
+            previous.emailReset != current.emailReset,
+        builder: (context, stateAuth) {
+          return stateAuth.resetPassStatus == ResetPassStatus.loading
+              ? const LoadingWidget()
+              : ButtonIntro(
+                  func: () async {
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus &&
+                        currentFocus.focusedChild != null) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }
+                    if (_formKey.currentState!.validate()) {
+                      context
+                          .read<AuthenticationCubit>()
+                          .resetPass(stateAuth.emailReset);
+                    }
+                  },
+                  title: 'Send Email');
+        });
   }
 }

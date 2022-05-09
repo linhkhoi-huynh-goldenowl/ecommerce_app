@@ -1,11 +1,11 @@
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product_detail/product_detail_cubit.dart';
-import 'package:e_commerce_shop_app/widgets/button_intro.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_intro.dart';
 import 'package:e_commerce_shop_app/widgets/label_tile_list.dart';
 import 'package:flutter/material.dart';
 
-import '../modules/models/size_cloth.dart';
-import 'button_choose_size.dart';
+import '../../modules/models/size_cloth.dart';
+import '../buttons/button_choose_size.dart';
 
 class PopupChooseSize extends StatelessWidget {
   const PopupChooseSize(

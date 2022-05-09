@@ -2,7 +2,7 @@ import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/favorite_product.dart';
-import 'package:e_commerce_shop_app/widgets/button_circle.dart';
+import 'package:e_commerce_shop_app/widgets/buttons/button_circle.dart';
 import 'package:e_commerce_shop_app/widgets/chip_label.dart';
 import 'package:e_commerce_shop_app/widgets/color_size_widget.dart';
 import 'package:e_commerce_shop_app/widgets/image_product_widget.dart';
@@ -11,9 +11,9 @@ import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../modules/cubit/cart/cart_cubit.dart';
-import '../utils/helpers/show_snackbar.dart';
-import '../utils/services/navigator_services.dart';
+import '../../modules/cubit/cart/cart_cubit.dart';
+import '../../utils/helpers/show_snackbar.dart';
+import '../../utils/services/navigator_services.dart';
 
 class FavoriteCardList extends StatelessWidget {
   const FavoriteCardList({Key? key, required this.favoriteProduct})

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../config/styles/text_style.dart';
+import '../../config/styles/text_style.dart';
 
 class FlexibleAppBar extends StatelessWidget {
   const FlexibleAppBar({Key? key, required this.title}) : super(key: key);
@@ -28,7 +28,7 @@ class FlexibleAppBar extends StatelessWidget {
                       : FontWeight.w700,
                   fontSize: top < MediaQuery.of(context).size.height * 0.13
                       ? 22
-                      : 27),
+                      : 25),
             )),
       );
     });

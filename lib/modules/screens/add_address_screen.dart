@@ -2,11 +2,11 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/address/address_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/address.dart';
-import 'package:e_commerce_shop_app/widgets/text_field_widget.dart';
+import 'package:e_commerce_shop_app/widgets/textfields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/button_intro.dart';
+import '../../widgets/buttons/button_intro.dart';
 import '../../widgets/loading_widget.dart';
 
 class AddAddressScreen extends StatelessWidget {

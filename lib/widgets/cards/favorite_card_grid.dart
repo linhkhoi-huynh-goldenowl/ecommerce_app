@@ -7,13 +7,13 @@ import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../modules/cubit/favorite/favorite_cubit.dart';
-import '../modules/models/favorite_product.dart';
-import '../utils/services/navigator_services.dart';
-import 'button_circle.dart';
-import 'chip_label.dart';
-import 'color_size_widget.dart';
-import 'image_product_widget.dart';
+import '../../modules/cubit/favorite/favorite_cubit.dart';
+import '../../modules/models/favorite_product.dart';
+import '../../utils/services/navigator_services.dart';
+import '../buttons/button_circle.dart';
+import '../chip_label.dart';
+import '../color_size_widget.dart';
+import '../image_product_widget.dart';
 
 class FavoriteCardGrid extends StatelessWidget {
   const FavoriteCardGrid({Key? key, required this.favoriteProduct})

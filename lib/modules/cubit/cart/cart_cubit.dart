@@ -30,7 +30,8 @@ class CartCubit extends Cubit<CartState> {
       final pref = await SharedPreferences.getInstance();
       final userId = pref.getString("userId");
       cartModel.userId = userId;
-      cartModel.id = "$userId-${cartModel.productItem.id}- ${cartModel.size}";
+      cartModel.id =
+          "$userId-${cartModel.productItem.id}-${cartModel.size}-${cartModel.color}";
       int indexCart = _getIndexContainList(cartModel);
       if (indexCart > -1) {
         cartModel.quantity += 1;
@@ -226,7 +227,8 @@ class CartCubit extends Cubit<CartState> {
     return state.carts
         .where((element) =>
             element.productItem.id == item.productItem.id &&
-            element.size == item.size)
+            element.size == item.size &&
+            element.color == item.color)
         .toList()
         .isNotEmpty;
   }
