@@ -1,3 +1,4 @@
+import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_shop_app/widgets/appbars/flexible_bar_with_search.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
@@ -35,6 +36,7 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
         (CurvedAnimation(parent: _controller, curve: Curves.decelerate)));
     _animationCategory = Tween<double>(begin: 0, end: 50).animate(
         (CurvedAnimation(parent: _controller, curve: Curves.decelerate)));
+
     _controller.forward();
   }
 
@@ -144,43 +146,50 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return SliverPersistentHeader(
-            pinned: true,
-            delegate: SliverAppBarDelegate(
-              child: PreferredSize(
-                  preferredSize: Size.fromHeight(_animation.value),
-                  child: BlocBuilder<ProductCubit, ProductState>(
-                      buildWhen: (previous, current) =>
-                          previous.isShowCategoryBar !=
-                              current.isShowCategoryBar ||
-                          previous.categoryName != current.categoryName ||
-                          previous.sort != current.sort ||
-                          previous.isGridLayout != current.isGridLayout,
-                      builder: (context, state) {
-                        return FilterBarWidget(
-                          height: _animationCategory.value,
-                          showCategory: () async {
-                            BlocProvider.of<ProductCubit>(context)
-                                .productOpenCategoryBarEvent();
-                            if (state.isShowCategoryBar) {
-                              await _controller.reverse();
-                            } else {
-                              await _controller.forward();
-                            }
-                          },
-                          chooseCategory: state.categoryName,
-                          applyGrid: BlocProvider.of<ProductCubit>(context)
-                              .productLoadGridLayout,
-                          applySortCategory: context
-                              .read<ProductCubit>()
-                              .filterProductCategory,
-                          applySortChooseSort:
-                              context.read<ProductCubit>().filterProductType,
-                          chooseSort: state.sort,
-                          isGridLayout: state.isGridLayout,
-                        );
-                      })),
-            ));
+        return BlocBuilder<ProductCubit, ProductState>(
+          buildWhen: (previous, current) =>
+              previous.isShowCategoryBar != current.isShowCategoryBar ||
+              previous.categoryName != current.categoryName ||
+              previous.sort != current.sort ||
+              previous.isGridLayout != current.isGridLayout ||
+              previous.tagsFilter != current.tagsFilter,
+          builder: (context, state) {
+            return SliverPersistentHeader(
+                pinned: true,
+                delegate: SliverAppBarDelegate(
+                  child: PreferredSize(
+                      preferredSize: Size.fromHeight(state.tagsFilter.isNotEmpty
+                          ? _animation.value + _animationCategory.value
+                          : _animation.value),
+                      child: FilterBarWidget(
+                        tags: state.tagsFilter,
+                        height: _animationCategory.value,
+                        showCategory: () async {
+                          BlocProvider.of<ProductCubit>(context)
+                              .productOpenCategoryBarEvent();
+                          if (state.isShowCategoryBar) {
+                            await _controller.reverse();
+                          } else {
+                            await _controller.forward();
+                          }
+                        },
+                        chooseCategory: state.categoryName,
+                        applyGrid: BlocProvider.of<ProductCubit>(context)
+                            .productLoadGridLayout,
+                        applySortCategory:
+                            context.read<ProductCubit>().filterProductCategory,
+                        applySortChooseSort:
+                            context.read<ProductCubit>().filterProductType,
+                        chooseSort: state.sort,
+                        isGridLayout: state.isGridLayout,
+                        showTagList: () {
+                          BottomSheetApp.showModalTag(context,
+                              context.read<ProductCubit>().filterProductByTag);
+                        },
+                      )),
+                ));
+          },
+        );
       },
     );
   }

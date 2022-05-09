@@ -15,12 +15,12 @@ import 'package:e_commerce_shop_app/widgets/buttons/button_leading.dart';
 import 'package:e_commerce_shop_app/widgets/carousel_product.dart';
 import 'package:e_commerce_shop_app/widgets/label_tile_list.dart';
 import 'package:e_commerce_shop_app/widgets/cards/main_product_card.dart';
-import 'package:e_commerce_shop_app/widgets/price_text.dart';
 import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/loading_widget.dart';
+import '../../widgets/price_text.dart';
 import '../cubit/cart/cart_cubit.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
@@ -54,6 +54,9 @@ class ProductDetailsScreen extends StatelessWidget {
             children: [
               CarouselProductWidget(imgList: productItem.images),
               _chooseOptionBar(context),
+              (productItem.tags != null || productItem.tags!.isNotEmpty)
+                  ? _showProductTags()
+                  : const SizedBox(),
               _showProductTitle(),
               _showProductBrandAndPrice(),
               _reviewBar(),
@@ -167,6 +170,48 @@ class ProductDetailsScreen extends StatelessWidget {
             weight: FontWeight.w600,
             fontSize: 11,
             color: const Color(0xff9B9B9B)),
+      ),
+    );
+  }
+
+  Widget _showProductTags() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SizedBox(
+          height: 50,
+          child: Row(
+            children: [
+              Text(
+                "Tags:",
+                style: ETextStyle.metropolis(fontSize: 14),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: productItem.tags!.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, i) {
+                      return _tagChip(productItem.tags![i].name);
+                    }),
+              )
+            ],
+          ),
+        ));
+  }
+
+  Widget _tagChip(String name) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: InputChip(
+        label: Text(
+          name,
+          style: ETextStyle.metropolis(fontSize: 14, color: Colors.black87),
+        ),
+        elevation: 2,
+        isEnabled: false,
+        disabledColor: Colors.white,
       ),
     );
   }

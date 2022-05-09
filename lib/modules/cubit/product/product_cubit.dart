@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:e_commerce_shop_app/modules/models/tag_model.dart';
 import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
+import 'package:e_commerce_shop_app/utils/helpers/product_helpers.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/product_item.dart';
@@ -131,5 +133,9 @@ class ProductCubit extends Cubit<ProductState> {
 
   void filterProductType(ChooseSort chooseSort) {
     emit(state.copyWith(sort: chooseSort));
+  }
+
+  void filterProductByTag(List<TagModel> tags) async {
+    emit(state.copyWith(tagsFilter: tags));
   }
 }
