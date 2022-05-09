@@ -3,7 +3,6 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
 import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
-import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
 import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
 import 'package:e_commerce_shop_app/widgets/button_circle.dart';
 import 'package:e_commerce_shop_app/widgets/price_text.dart';
@@ -84,8 +83,9 @@ class MainProductCard extends StatelessWidget {
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
-          (product.createdDate.month == DateTime.now().month &&
-                  product.createdDate.year == DateTime.now().year)
+          (product.createdDate.toDate().month == DateTime.now().month &&
+                  product.createdDate.toDate().year == DateTime.now().year &&
+                  product.createdDate.toDate().day <= DateTime.now().day)
               ? Positioned(
                   top: product.salePercent == null ? 5 : 40,
                   left: 5,
@@ -107,10 +107,11 @@ class MainProductCard extends StatelessWidget {
                           iconPath: "assets/images/icons/heart.png",
                           iconSize: 16,
                           iconColor: const Color(0xffDADADA),
-                          fillColor:
-                              Domain().favorite.checkContainId(product.id!)
-                                  ? const Color(0xffDB3022)
-                                  : Colors.white,
+                          fillColor: context
+                                  .read<FavoriteCubit>()
+                                  .checkContainId(product.id!)
+                              ? const Color(0xffDB3022)
+                              : Colors.white,
                           padding: 12),
                     );
                   }))

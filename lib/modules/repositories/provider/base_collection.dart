@@ -32,9 +32,44 @@ class BaseCollectionReference<T extends BaseModel> {
         .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
   }
 
-  Stream<XResult<List<T>>> snapshotsAllQuery(String param, String variable) {
+  Stream<XResult<List<T>>> snapshotsAllQuery(String param, Object? variable) {
     return ref
         .where(param, isEqualTo: variable)
+        .snapshots()
+        .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
+  }
+
+  Stream<XResult<List<T>>> snapshotsAllLimitByQuery(String param, int limit) {
+    return ref
+        .orderBy(param)
+        .limit(limit)
+        .snapshots()
+        .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
+  }
+
+  Stream<XResult<List<T>>> snapshotsAllQueryNotNull(String param) {
+    return ref
+        .where(param, isNull: false)
+        .snapshots()
+        .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
+  }
+
+  Stream<XResult<List<T>>> snapshotsAllQueryTwoCondition(
+      String param1, Object? variable1, String param2, Object? variable2) {
+    return ref
+        .where(param1, isEqualTo: variable1)
+        .where(param2, isEqualTo: variable2)
+        .snapshots()
+        .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
+  }
+
+  Stream<XResult<List<T>>> snapshotsAllQueryTimeStamp(String param) {
+    var dateNow = DateTime.now();
+    var timestampStart =
+        Timestamp.fromDate(DateTime(dateNow.year, dateNow.month, 1));
+    return ref
+        .where(param, isGreaterThanOrEqualTo: timestampStart)
+        .where(param, isLessThanOrEqualTo: dateNow)
         .snapshots()
         .asyncMap((event) => _onSuccessWithQuerySnapshot(event));
   }
@@ -105,12 +140,28 @@ class BaseCollectionReference<T extends BaseModel> {
     }
   }
 
-  Future<XResult<List<T>>> queryWhereId(String param, String variable) async {
+  Future<XResult<List<T>>> queryWhereEqual(
+      String param, String variable) async {
     try {
       final QuerySnapshot<T> query = await ref
           .where(param, isEqualTo: variable)
           .get()
           .timeout(const Duration(seconds: 5));
+      final docs = query.docs.map((e) => e.data()).toList();
+      return XResult.success(docs);
+    } catch (e) {
+      return XResult.exception(e);
+    }
+  }
+
+  Future<XResult<List<T>>> queryWhereForSearch(
+      String param1, String variable1, String param2, String variable2) async {
+    try {
+      final QuerySnapshot<T> query = await ref
+          .where(param2, isGreaterThanOrEqualTo: variable2)
+          .where(param2, isLessThan: variable2 + "z")
+          .where(param1, isEqualTo: variable1)
+          .get();
       final docs = query.docs.map((e) => e.data()).toList();
       return XResult.success(docs);
     } catch (e) {

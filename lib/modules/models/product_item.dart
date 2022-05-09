@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_shop_app/modules/models/base_model.dart';
 import 'package:e_commerce_shop_app/modules/models/color_cloth.dart';
 
@@ -5,7 +6,7 @@ class ProductItem extends BaseModel {
   final String title;
   final String brandName;
   final List<String> images;
-  final DateTime createdDate;
+  final Timestamp createdDate;
   final double? salePercent;
   final bool isPopular;
   int numberReviews;
@@ -41,7 +42,7 @@ class ProductItem extends BaseModel {
         description: parsedJson['description'],
         numberReviews: parsedJson['numberReviews'],
         reviewStars: parsedJson['reviewStars'],
-        createdDate: DateTime.parse(parsedJson['createdDate']),
+        createdDate: parsedJson['createdDate'],
         isPopular: parsedJson['isPopular'],
         categoryName: parsedJson['categoryName'],
         colors: _colors,
@@ -58,7 +59,7 @@ class ProductItem extends BaseModel {
       'id': id,
       'title': title,
       'brandName': brandName,
-      'createdDate': createdDate.toIso8601String(),
+      'createdDate': createdDate,
       'isPopular': isPopular,
       'images': images,
       'numberReviews': numberReviews,

@@ -56,6 +56,7 @@ class BottomSheetApp {
                         func: () {
                           if (state.size != "") {
                             context.read<CartCubit>().addToCart(CartModel(
+                                title: product.title.toLowerCase(),
                                 productItem: product,
                                 size: state.size,
                                 color: state.color,
@@ -158,8 +159,8 @@ class BottomSheetApp {
             providers: [
               BlocProvider.value(
                   value: BlocProvider.of<CartCubit>(contextParent)),
-              BlocProvider<PromoCubit>(
-                  create: (BuildContext context) => PromoCubit())
+              BlocProvider.value(
+                  value: BlocProvider.of<PromoCubit>(contextParent))
             ],
             child: PopupPromo(
               code: code,

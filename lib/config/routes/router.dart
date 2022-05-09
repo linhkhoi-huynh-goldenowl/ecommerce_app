@@ -1,5 +1,6 @@
 import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
+import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
 import 'package:e_commerce_shop_app/modules/screens/add_address_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/checkout_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/favorite_screen.dart';
@@ -90,7 +91,7 @@ class AppRouter {
       case Routes.checkoutScreen:
         final argumentOrder = settings.arguments as Map;
         final List<CartModel> carts = argumentOrder['carts'];
-        final String promoId = argumentOrder['promoId'];
+        final PromoModel? promo = argumentOrder['promo'];
         final double totalPrice = argumentOrder['totalPrice'];
         final BuildContext contextBag = argumentOrder['contextBag'];
         return MaterialPageRoute(
@@ -98,7 +99,7 @@ class AppRouter {
             builder: (BuildContext context) => CheckoutScreen(
                 contextBag: contextBag,
                 carts: carts,
-                promoId: promoId,
+                promo: promo,
                 totalPrice: totalPrice));
       case Routes.paymentScreen:
         return MaterialPageRoute(

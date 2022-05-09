@@ -2,6 +2,7 @@ import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/profile/profile_cubit.dart';
 import 'package:e_commerce_shop_app/widgets/e_cached_image.dart';
+import 'package:e_commerce_shop_app/widgets/flexible_app_bar.dart';
 import 'package:e_commerce_shop_app/widgets/profile_info_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,16 +35,17 @@ class ProfileScreen extends ProductCoordinatorBase {
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
-                SliverAppBar(
+                const SliverAppBar(
                     shadowColor: Colors.white,
                     elevation: 5,
-                    backgroundColor: const Color(0xffF9F9F9),
+                    backgroundColor: Color(0xffF9F9F9),
                     expandedHeight: 110.0,
                     pinned: true,
                     stretch: true,
                     automaticallyImplyLeading: false,
-                    flexibleSpace: _flexibleSpaceBar(),
-                    actions: [_findButton()]),
+                    flexibleSpace: FlexibleAppBar(
+                      title: "My profile",
+                    )),
               ];
             },
             body: ListView(
@@ -157,36 +159,4 @@ class ProfileScreen extends ProductCoordinatorBase {
           ));
         });
   }
-}
-
-Widget _findButton() {
-  return IconButton(
-      onPressed: () {}, icon: Image.asset('assets/images/icons/find.png'));
-}
-
-Widget _flexibleSpaceBar() {
-  return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-    var top = constraints.biggest.height;
-    return FlexibleSpaceBar(
-      titlePadding: EdgeInsets.only(
-          left: top < MediaQuery.of(context).size.height * 0.13 ? 0 : 16,
-          bottom: top < MediaQuery.of(context).size.height * 0.13 ? 15 : 0),
-      centerTitle:
-          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
-      title: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: 1,
-          child: Text(
-            "My profile",
-            textAlign: TextAlign.start,
-            style: ETextStyle.metropolis(
-                weight: top < MediaQuery.of(context).size.height * 0.13
-                    ? FontWeight.w600
-                    : FontWeight.w700,
-                fontSize:
-                    top < MediaQuery.of(context).size.height * 0.13 ? 22 : 27),
-          )),
-    );
-  });
 }

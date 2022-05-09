@@ -5,6 +5,7 @@ import 'package:e_commerce_shop_app/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/loading_widget.dart';
 import '../cubit/authentication/authentication_cubit.dart';
 
 class ResetPassScreen extends StatelessWidget {
@@ -93,9 +94,7 @@ class ResetPassScreen extends StatelessWidget {
                   previous.emailReset != current.emailReset,
               builder: (context, stateAuth) {
                 return stateAuth.resetPassStatus == ResetPassStatus.loading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
+                    ? const LoadingWidget()
                     : ButtonIntro(
                         func: () async {
                           FocusScopeNode currentFocus = FocusScope.of(context);

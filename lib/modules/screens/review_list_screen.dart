@@ -2,12 +2,14 @@ import 'package:e_commerce_shop_app/modules/cubit/promo/promo_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/reviewUser/review_user_cubit.dart';
 import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
 import 'package:e_commerce_shop_app/widgets/e_cached_image.dart';
+import 'package:e_commerce_shop_app/widgets/flexible_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/routes/router.dart';
 import '../../config/styles/text_style.dart';
+import '../../widgets/loading_widget.dart';
 import '../../widgets/star_bar.dart';
 import '../models/review_model.dart';
 
@@ -32,7 +34,7 @@ class ReviewListSCreen extends StatelessWidget {
                   pinned: true,
                   stretch: true,
                   leading: _leadingButton(context),
-                  flexibleSpace: _flexibleSpaceBar(),
+                  flexibleSpace: const FlexibleAppBar(title: "Review List"),
                 ),
               ];
             },
@@ -41,9 +43,7 @@ class ReviewListSCreen extends StatelessWidget {
                     previous.status != current.status,
                 builder: (context, state) {
                   return state.status == PromoStatus.loading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
+                      ? const LoadingWidget()
                       : state.reviews.isEmpty
                           ? const Center(
                               child: Text("No Reviews"),
@@ -155,31 +155,4 @@ Widget _leadingButton(BuildContext context) {
       Navigator.pop(context);
     },
   );
-}
-
-Widget _flexibleSpaceBar() {
-  return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-    var top = constraints.biggest.height;
-    return FlexibleSpaceBar(
-      titlePadding: EdgeInsets.only(
-          left: top < MediaQuery.of(context).size.height * 0.12 ? 0 : 16,
-          bottom: top < MediaQuery.of(context).size.height * 0.12 ? 12 : 0),
-      centerTitle:
-          top < MediaQuery.of(context).size.height * 0.12 ? true : false,
-      title: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: 1,
-          child: Text(
-            "Review List",
-            textAlign: TextAlign.start,
-            style: ETextStyle.metropolis(
-                weight: top < MediaQuery.of(context).size.height * 0.12
-                    ? FontWeight.w600
-                    : FontWeight.w700,
-                fontSize:
-                    top < MediaQuery.of(context).size.height * 0.12 ? 22 : 27),
-          )),
-    );
-  });
 }

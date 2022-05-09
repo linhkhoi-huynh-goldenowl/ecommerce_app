@@ -24,7 +24,8 @@ class FavoriteProvider extends BaseCollectionReference<FavoriteProduct> {
   }
 
   Future<XResult<List<FavoriteProduct>>> getFavoritesByUser(String id) async {
-    final XResult<List<FavoriteProduct>> res = await queryWhereId('userId', id);
+    final XResult<List<FavoriteProduct>> res =
+        await queryWhereEqual('userId', id);
 
     return res;
   }

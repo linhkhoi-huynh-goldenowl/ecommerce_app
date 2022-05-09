@@ -102,8 +102,10 @@ class CartCardWidget extends StatelessWidget {
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
-          (cartModel.productItem.createdDate.month == DateTime.now().month &&
-                  cartModel.productItem.createdDate.year == DateTime.now().year)
+          (cartModel.productItem.createdDate.toDate().month ==
+                      DateTime.now().month &&
+                  cartModel.productItem.createdDate.toDate().year ==
+                      DateTime.now().year)
               ? Positioned(
                   top: cartModel.productItem.salePercent == null ? 5 : 40,
                   left: 5,

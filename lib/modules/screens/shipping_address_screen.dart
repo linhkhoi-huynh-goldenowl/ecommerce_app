@@ -7,6 +7,8 @@ import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/loading_widget.dart';
+
 class ShippingAddressScreen extends StatelessWidget {
   const ShippingAddressScreen({Key? key}) : super(key: key);
   @override
@@ -39,9 +41,7 @@ class ShippingAddressScreen extends StatelessWidget {
                         arguments: {'context': context});
                   }),
                   body: state.status == AddressStatus.loading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
+                      ? const LoadingWidget()
                       : (state.addresses.isNotEmpty
                           ? ListView.builder(
                               padding: const EdgeInsets.symmetric(

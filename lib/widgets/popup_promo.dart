@@ -48,9 +48,9 @@ class PopupPromo extends StatelessWidget {
                               state.isValidCodeInput || state.codeInput == "",
                           applyFunc: () {
                             if (state.isValidCodeInput) {
-                              context
-                                  .read<CartCubit>()
-                                  .setPromoToCart(state.codeInput);
+                              context.read<CartCubit>().setPromoToCart(context
+                                  .read<PromoCubit>()
+                                  .getPromoById(state.codeInput));
                               Navigator.of(context).pop();
                             }
                           },
@@ -76,7 +76,7 @@ class PopupPromo extends StatelessWidget {
                         return _promoItem(state.promos[index], () {
                           context
                               .read<CartCubit>()
-                              .setPromoToCart(state.promos[index].id ?? "");
+                              .setPromoToCart(state.promos[index]);
                           Navigator.of(context).pop();
                         });
                       },

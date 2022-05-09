@@ -44,6 +44,10 @@ class ReviewState extends Equatable {
   final AddReviewStatus addStatus;
 
   final String errMessage;
+  List<ReviewModel> get reviewsToShow => withPhoto
+      ? reviews.where((element) => element.images.isNotEmpty).toList()
+      : reviews;
+
   ReviewState copyWith(
       {ReviewStatus? status,
       List<ReviewModel>? reviews,

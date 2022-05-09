@@ -1,6 +1,9 @@
 part of 'order_cubit.dart';
 
 enum OrderStatus { initial, loading, success, failure }
+enum OrderDeliveredStatus { initial, loading, success, failure }
+enum OrderProcessingStatus { initial, loading, success, failure }
+enum OrderCancelledStatus { initial, loading, success, failure }
 enum AddressOrderStatus { initial, selected, unselected }
 enum CreditOrderStatus { initial, selected, unselected }
 enum DeliveryOrderStatus { initial, selected, unselected }
@@ -10,8 +13,13 @@ enum ReOrderStatus { initial, loading, success, failure }
 
 class OrderState extends Equatable {
   const OrderState(
-      {this.orders = const [],
+      {this.ordersDeli = const [],
+      this.ordersProcess = const [],
+      this.ordersCancel = const [],
       this.status = OrderStatus.initial,
+      this.statusDelivered = OrderDeliveredStatus.initial,
+      this.statusProcessing = OrderProcessingStatus.initial,
+      this.statusCancelled = OrderCancelledStatus.initial,
       this.deliveryId = "",
       this.addressStatus = AddressOrderStatus.initial,
       this.creditStatus = CreditOrderStatus.initial,
@@ -22,7 +30,12 @@ class OrderState extends Equatable {
       this.errMessage = "",
       this.reOrderStatus = ReOrderStatus.initial});
   final OrderStatus status;
-  final List<Order> orders;
+  final OrderDeliveredStatus statusDelivered;
+  final OrderProcessingStatus statusProcessing;
+  final OrderCancelledStatus statusCancelled;
+  final List<Order> ordersDeli;
+  final List<Order> ordersProcess;
+  final List<Order> ordersCancel;
   final String deliveryId;
   final double deliPrice;
   final AddressOrderStatus addressStatus;
@@ -34,8 +47,13 @@ class OrderState extends Equatable {
   final ReOrderStatus reOrderStatus;
 
   OrderState copyWith(
-      {List<Order>? orders,
+      {List<Order>? ordersDeli,
+      List<Order>? ordersProcess,
+      List<Order>? ordersCancel,
       OrderStatus? status,
+      OrderDeliveredStatus? statusDelivered,
+      OrderProcessingStatus? statusProcessing,
+      OrderCancelledStatus? statusCancelled,
       String? deliveryId,
       AddressOrderStatus? addressStatus,
       CreditOrderStatus? creditStatus,
@@ -47,7 +65,12 @@ class OrderState extends Equatable {
       ReOrderStatus? reOrderStatus}) {
     return OrderState(
         status: status ?? this.status,
-        orders: orders ?? this.orders,
+        statusDelivered: statusDelivered ?? this.statusDelivered,
+        statusProcessing: statusProcessing ?? this.statusProcessing,
+        statusCancelled: statusCancelled ?? this.statusCancelled,
+        ordersDeli: ordersDeli ?? this.ordersDeli,
+        ordersProcess: ordersProcess ?? this.ordersProcess,
+        ordersCancel: ordersCancel ?? this.ordersCancel,
         deliveryId: deliveryId ?? this.deliveryId,
         addressStatus: addressStatus ?? this.addressStatus,
         creditStatus: creditStatus ?? this.creditStatus,
@@ -61,7 +84,6 @@ class OrderState extends Equatable {
 
   @override
   List<Object> get props => [
-        orders,
         status,
         deliveryId,
         addressStatus,
@@ -71,6 +93,12 @@ class OrderState extends Equatable {
         submitStatus,
         orderSelect,
         errMessage,
-        reOrderStatus
+        reOrderStatus,
+        ordersDeli,
+        ordersProcess,
+        ordersCancel,
+        statusDelivered,
+        statusProcessing,
+        statusCancelled
       ];
 }

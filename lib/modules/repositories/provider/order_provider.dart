@@ -18,7 +18,7 @@ class OrderProvider extends BaseCollectionReference<Order> {
   }
 
   Future<XResult<List<Order>>> getOrderByUser(String id) async {
-    final XResult<List<Order>> res = await queryWhereId('userId', id);
+    final XResult<List<Order>> res = await queryWhereEqual('userId', id);
 
     return res;
   }

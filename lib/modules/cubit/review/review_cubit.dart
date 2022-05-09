@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/modules/models/review_model.dart';
@@ -18,6 +20,15 @@ class ReviewCubit extends Cubit<ReviewState> {
   ReviewCubit({required this.productId}) : super(const ReviewState()) {
     fetchReviewByProduct(productId);
   }
+
+  StreamSubscription? reviewSubscription;
+  @override
+  Future<void> close() async {
+    reviewSubscription?.cancel();
+    await Domain().review.clearImage();
+    return super.close();
+  }
+
   final String productId;
   void fetchReviewByProduct(String productId) async {
     try {
@@ -25,30 +36,36 @@ class ReviewCubit extends Cubit<ReviewState> {
       final pref = await SharedPreferences.getInstance();
       final userId = pref.getString("userId");
 
-      XResult<List<ReviewModel>> reviewsRes =
-          await Domain().review.getReviewsFromProduct(productId);
-      if (reviewsRes.isSuccess) {
-        final reviews =
-            await Domain().review.setReviewList(reviewsRes.data ?? []);
-        final total = reviews.length;
+      final Stream<XResult<List<ReviewModel>>> reviewStream =
+          Domain().review.getReviewsFromProductStream(productId);
 
-        final reviewCount = ReviewHelper.getReviewDetail(reviews);
-        final avgReview = ReviewHelper.getAvgReviews(reviews);
-        final percentReview = ReviewHelper.getReviewPercent(reviews);
+      reviewSubscription = reviewStream.listen((event) async {
+        emit(state.copyWith(status: ReviewStatus.loading));
+        var reviews = event.data!;
+        reviews.sort((a, b) =>
+            b.createdDate!.toDate().compareTo(a.createdDate!.toDate()));
+        if (event.isSuccess) {
+          final reviews = event.data!;
+          final total = reviews.length;
 
-        emit(state.copyWith(
-            status: ReviewStatus.success,
-            reviews: reviews,
-            totalReviews: total,
-            avgReviews: avgReview,
-            reviewCount: reviewCount,
-            reviewPercent: percentReview,
-            userId: userId,
-            errMessage: ""));
-      } else {
-        emit(state.copyWith(
-            status: ReviewStatus.failure, errMessage: reviewsRes.error));
-      }
+          final reviewCount = ReviewHelper.getReviewDetail(reviews);
+          final avgReview = ReviewHelper.getAvgReviews(reviews);
+          final percentReview = ReviewHelper.getReviewPercent(reviews);
+
+          emit(state.copyWith(
+              status: ReviewStatus.success,
+              reviews: reviews,
+              totalReviews: total,
+              avgReviews: avgReview,
+              reviewCount: reviewCount,
+              reviewPercent: percentReview,
+              userId: userId,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: ReviewStatus.failure, errMessage: event.error));
+        }
+      });
     } catch (_) {
       emit(state.copyWith(
           status: ReviewStatus.failure, errMessage: "Something wrong"));
@@ -59,14 +76,9 @@ class ReviewCubit extends Cubit<ReviewState> {
     try {
       emit(state.copyWith(status: ReviewStatus.loading));
       bool checkImage = !state.withPhoto;
-      var reviews =
-          await Domain().review.getReviewsFromProductWithImage(checkImage);
 
       emit(state.copyWith(
-          status: ReviewStatus.success,
-          withPhoto: checkImage,
-          reviews: reviews,
-          errMessage: ""));
+          status: ReviewStatus.success, withPhoto: checkImage, errMessage: ""));
     } catch (_) {
       emit(state.copyWith(
           status: ReviewStatus.failure, errMessage: "Something wrong"));
@@ -98,19 +110,14 @@ class ReviewCubit extends Cubit<ReviewState> {
           await Domain().review.addReviewToProduct(reviewModel);
       if (reviewsRes.isSuccess) {
         var clearImage = await Domain().review.clearImage();
-        final reviewsAdd =
-            await Domain().review.addReviewToLocal(reviewsRes.data!);
-        ProductItem? productItem =
+
+        XResult<ProductItem> productResult =
             await Domain().product.getProductById(productId);
-        if (productItem != null) {
-          final total = reviewsAdd.length;
-
-          final reviewCount = ReviewHelper.getReviewDetail(reviewsAdd);
-          final avgReview = ReviewHelper.getAvgReviews(reviewsAdd);
-          final percentReview = ReviewHelper.getReviewPercent(reviewsAdd);
-
-          productItem.reviewStars = avgReview.round();
-          productItem.numberReviews = total;
+        if (productResult.isSuccess) {
+          ProductItem productItem = productResult.data!;
+          productItem.reviewStars =
+              ReviewHelper.getAvgReviews(state.reviews).round();
+          productItem.numberReviews = productItem.numberReviews + 1;
 
           XResult<ProductItem> productRes =
               await Domain().product.updateProduct(productItem);
@@ -123,10 +130,6 @@ class ReviewCubit extends Cubit<ReviewState> {
               emit(state.copyWith(addStatus: AddReviewStatus.success));
 
               emit(state.copyWith(
-                  totalReviews: total,
-                  avgReviews: avgReview,
-                  reviewCount: reviewCount,
-                  reviewPercent: percentReview,
                   addStatus: AddReviewStatus.initial,
                   imageLocalPaths: clearImage,
                   likeStatus: LikeReviewStatus.initial,
@@ -175,11 +178,8 @@ class ReviewCubit extends Cubit<ReviewState> {
       XResult<ReviewModel> reviewsRes =
           await Domain().review.addLikeToReview(reviewModel, state.userId);
       if (reviewsRes.isSuccess) {
-        final reviews = await Domain().review.addLikeToLocal(reviewsRes.data!);
         emit(state.copyWith(
-            likeStatus: LikeReviewStatus.success,
-            reviews: reviews,
-            errMessage: ""));
+            likeStatus: LikeReviewStatus.success, errMessage: ""));
       } else {
         emit(state.copyWith(
             likeStatus: LikeReviewStatus.failure,
@@ -208,12 +208,6 @@ class ReviewCubit extends Cubit<ReviewState> {
       state.copyWith(
           reviewContent: content, contentStatus: ContentReviewStatus.typed),
     );
-  }
-
-  @override
-  Future<void> close() async {
-    await Domain().review.clearImage();
-    return super.close();
   }
 
   void getImageFromGallery(BuildContext context) async {

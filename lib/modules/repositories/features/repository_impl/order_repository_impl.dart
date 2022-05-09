@@ -7,7 +7,6 @@ import '../../provider/order_provider.dart';
 import '../../x_result.dart';
 
 class OrderRepositoryImpl extends OrderRepository {
-  List<Order> _listOrders = [];
   final OrderProvider _orderProvider = OrderProvider();
   @override
   Future<XResult<Order>> addOrder(Order item) async {
@@ -21,36 +20,11 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  Future<List<Order>> getOrdersByCancelled() async {
-    return _listOrders
-        .where((element) => element.status == "Cancelled")
-        .toList();
-  }
-
-  @override
-  Future<List<Order>> getOrdersByDelivered() async {
-    return _listOrders
-        .where((element) => element.status == "Delivered")
-        .toList();
-  }
-
-  @override
-  Future<List<Order>> getOrdersByProcessing() async {
-    return _listOrders
-        .where((element) => element.status == "Processing")
-        .toList();
-  }
-
-  @override
-  Future<Stream<XResult<List<Order>>>> getOrderStream() async {
+  Future<Stream<XResult<List<Order>>>> getOrderStream(
+      String statusOrder) async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
-    return _orderProvider.snapshotsAllQuery("userId", userId!);
-  }
-
-  @override
-  Future<List<Order>> setOrder(List<Order> orders) async {
-    _listOrders = orders;
-    return _listOrders;
+    return _orderProvider.snapshotsAllQueryTwoCondition(
+        "userId", userId!, "status", statusOrder);
   }
 }

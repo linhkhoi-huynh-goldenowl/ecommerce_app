@@ -8,6 +8,7 @@ import 'package:e_commerce_shop_app/modules/cubit/order/order_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/address.dart';
 import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
+import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
 import 'package:e_commerce_shop_app/utils/helpers/address_helpers.dart';
 import 'package:e_commerce_shop_app/utils/helpers/credit_helpers.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
@@ -16,6 +17,7 @@ import 'package:e_commerce_shop_app/widgets/e_cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/loading_widget.dart';
 import '../models/delivery.dart';
 
 // ignore: must_be_immutable
@@ -23,12 +25,12 @@ class CheckoutScreen extends StatelessWidget {
   CheckoutScreen(
       {Key? key,
       required this.carts,
-      required this.promoId,
+      this.promo,
       required this.totalPrice,
       required this.contextBag})
       : super(key: key);
   final List<CartModel> carts;
-  final String promoId;
+  final PromoModel? promo;
   final double totalPrice;
   Address? address;
   CreditCard? card;
@@ -79,9 +81,7 @@ class CheckoutScreen extends StatelessWidget {
               previous.submitStatus != current.submitStatus,
           builder: (context, stateOrder) {
             return stateOrder.status == OrderStatus.loading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? const LoadingWidget()
                 : Scaffold(
                     appBar: AppBar(
                         backgroundColor: const Color(0xffF9F9F9),
@@ -94,9 +94,7 @@ class CheckoutScreen extends StatelessWidget {
                         )),
                     bottomNavigationBar: stateOrder.submitStatus ==
                             OrderSubmitStatus.loading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
+                        ? const LoadingWidget()
                         : bottomCheckBar(() {
                             if (address == null) {
                               context.read<OrderCubit>().setUnselectAddress();
@@ -106,12 +104,15 @@ class CheckoutScreen extends StatelessWidget {
                               context.read<OrderCubit>().setUnselectDelivery();
                             } else {
                               context.read<OrderCubit>().addOrder(
-                                  carts,
-                                  card!,
-                                  address!,
-                                  totalPrice,
-                                  stateOrder.deliveryId,
-                                  promoId);
+                                    carts,
+                                    card!,
+                                    address!,
+                                    totalPrice,
+                                    promo,
+                                    context
+                                        .read<DeliveryCubit>()
+                                        .getDeliveryById(stateOrder.deliveryId),
+                                  );
                             }
                           }, totalPrice, stateOrder.deliPrice),
                     body: ListView(
@@ -131,9 +132,7 @@ class CheckoutScreen extends StatelessWidget {
                             builder: (context, stateAddress) {
                               if (stateAddress.status ==
                                   AddressStatus.loading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
+                                return const LoadingWidget();
                               } else {
                                 final defaultAddress =
                                     AddressHelper.getDefaultAddress(
@@ -190,9 +189,7 @@ class CheckoutScreen extends StatelessWidget {
                             builder: (context, stateCredit) {
                               if (stateCredit.status ==
                                   CreditCardStatus.loading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
+                                return const LoadingWidget();
                               } else {
                                 final cardDefault =
                                     CreditCardHelper.getDefaultCreditCard(
@@ -229,9 +226,7 @@ class CheckoutScreen extends StatelessWidget {
                                 builder: (context, stateDeli) {
                                   if (stateDeli.status ==
                                       DeliveryStatus.loading) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
+                                    return const LoadingWidget();
                                   } else {
                                     return ListView.builder(
                                       itemBuilder: (context, index) {
@@ -240,11 +235,7 @@ class CheckoutScreen extends StatelessWidget {
                                           context
                                               .read<OrderCubit>()
                                               .setDelivery(
-                                                  stateDeli.deliveries[index]
-                                                          .id ??
-                                                      "",
-                                                  stateDeli.deliveries[index]
-                                                      .shipPrice);
+                                                  stateDeli.deliveries[index]);
                                         },
                                             stateDeli.deliveries[index].id ==
                                                 stateOrder.deliveryId);

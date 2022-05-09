@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../modules/cubit/cart/cart_cubit.dart';
-import '../modules/repositories/domain.dart';
 import '../utils/helpers/show_snackbar.dart';
 import '../utils/services/navigator_services.dart';
 
@@ -126,10 +125,12 @@ class FavoriteCardList extends StatelessWidget {
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
-          (favoriteProduct.productItem.createdDate.month ==
+          (favoriteProduct.productItem.createdDate.toDate().month ==
                       DateTime.now().month &&
-                  favoriteProduct.productItem.createdDate.year ==
-                      DateTime.now().year)
+                  favoriteProduct.productItem.createdDate.toDate().year ==
+                      DateTime.now().year &&
+                  favoriteProduct.productItem.createdDate.toDate().day <=
+                      DateTime.now().day)
               ? Positioned(
                   top: favoriteProduct.productItem.salePercent == null ? 5 : 40,
                   left: 5,
@@ -165,20 +166,20 @@ class FavoriteCardList extends StatelessWidget {
                       previous.status != current.status,
                   builder: (context, state) {
                     return ButtonCircle(
-                        func: Domain()
-                                .cart
+                        func: context
+                                .read<CartCubit>()
                                 .checkContainInFavorite(favoriteProduct)
                             ? () {}
                             : () {
                                 context
-                                    .read<FavoriteCubit>()
+                                    .read<CartCubit>()
                                     .addFavoriteToCart(favoriteProduct);
                               },
                         iconPath: "assets/images/icons/bag_favorite.png",
                         iconSize: 17,
                         iconColor: const Color(0xffF9F9F9),
-                        fillColor: Domain()
-                                .cart
+                        fillColor: context
+                                .read<CartCubit>()
                                 .checkContainInFavorite(favoriteProduct)
                             ? const Color(0xffDB3022)
                             : const Color(0xff9B9B9B),

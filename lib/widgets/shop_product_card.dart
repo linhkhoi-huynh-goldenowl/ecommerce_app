@@ -11,7 +11,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../dialogs/bottom_sheet_app.dart';
 import '../modules/cubit/favorite/favorite_cubit.dart';
-import '../modules/repositories/domain.dart';
 import 'button_circle.dart';
 
 class ShopProductCard extends StatelessWidget {
@@ -104,8 +103,10 @@ class ShopProductCard extends StatelessWidget {
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
-          (productItem.createdDate.month == DateTime.now().month &&
-                  productItem.createdDate.year == DateTime.now().year)
+          (productItem.createdDate.toDate().month == DateTime.now().month &&
+                  productItem.createdDate.toDate().year ==
+                      DateTime.now().year &&
+                  productItem.createdDate.toDate().day <= DateTime.now().day)
               ? Positioned(
                   top: productItem.salePercent == null ? 5 : 40,
                   left: 5,
@@ -126,10 +127,11 @@ class ShopProductCard extends StatelessWidget {
                         iconPath: "assets/images/icons/heart.png",
                         iconSize: 16,
                         iconColor: const Color(0xffDADADA),
-                        fillColor:
-                            Domain().favorite.checkContainId(productItem.id!)
-                                ? const Color(0xffDB3022)
-                                : Colors.white,
+                        fillColor: context
+                                .read<FavoriteCubit>()
+                                .checkContainId(productItem.id!)
+                            ? const Color(0xffDB3022)
+                            : Colors.white,
                         padding: 12);
                   }))
         ],

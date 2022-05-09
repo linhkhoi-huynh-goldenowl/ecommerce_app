@@ -1,12 +1,12 @@
-import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
-import 'package:e_commerce_shop_app/widgets/search_text_field.dart';
+import 'package:e_commerce_shop_app/widgets/flexible_bar_with_search.dart';
 import 'package:e_commerce_shop_app/widgets/shop_product_card.dart';
 import 'package:e_commerce_shop_app/widgets/sliver_app_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/filter_bar_widget.dart';
+import '../../widgets/loading_widget.dart';
 import '../../widgets/main_product_card.dart';
 
 class ShopCategoryScreen extends StatefulWidget {
@@ -77,25 +77,31 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
                         actions: [_findButton(context)],
                         flexibleSpace: BlocBuilder<ProductCubit, ProductState>(
                             buildWhen: (previous, current) =>
-                                previous.gridStatus != current.gridStatus,
+                                previous.isSearch != current.isSearch ||
+                                previous.searchInput != current.searchInput ||
+                                previous.categoryName != current.categoryName,
                             builder: (context, state) {
-                              return _flexibleSpaceBar(
-                                  context,
-                                  state.type == TypeList.newest
-                                      ? ("New - " +
-                                          (state.categoryName == ""
-                                              ? "All products"
-                                              : state.categoryName))
-                                      : state.type == TypeList.sale
-                                          ? "Sale - " +
-                                              (state.categoryName == ""
-                                                  ? "All products"
-                                                  : state.categoryName)
-                                          : "" + state.categoryName == ""
-                                              ? "All products"
-                                              : state.categoryName,
-                                  state.isSearch,
-                                  state.searchInput);
+                              return FlexibleBarWithSearch(
+                                title: state.type == TypeList.newest
+                                    ? ("New - " +
+                                        (state.categoryName == ""
+                                            ? "All products"
+                                            : state.categoryName))
+                                    : state.type == TypeList.sale
+                                        ? "Sale - " +
+                                            (state.categoryName == ""
+                                                ? "All products"
+                                                : state.categoryName)
+                                        : "" + state.categoryName == ""
+                                            ? "All products"
+                                            : state.categoryName,
+                                isSearch: state.isSearch,
+                                searchInput: state.searchInput,
+                                func: (value) {
+                                  BlocProvider.of<ProductCubit>(context)
+                                      .productSearch(value);
+                                },
+                              );
                             })),
                     AnimatedBuilder(
                       animation: _controller,
@@ -109,8 +115,13 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
                                   child:
                                       BlocBuilder<ProductCubit, ProductState>(
                                           buildWhen: (previous, current) =>
-                                              previous.gridStatus !=
-                                              current.gridStatus,
+                                              previous.isShowCategoryBar !=
+                                                  current.isShowCategoryBar ||
+                                              previous.categoryName !=
+                                                  current.categoryName ||
+                                              previous.sort != current.sort ||
+                                              previous.isGridLayout !=
+                                                  current.isGridLayout,
                                           builder: (context, state) {
                                             return FilterBarWidget(
                                               height: _animationCategory.value,
@@ -130,9 +141,12 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
                                                   BlocProvider.of<ProductCubit>(
                                                           context)
                                                       .productLoadGridLayout,
-                                              applySort: context
+                                              applySortCategory: context
                                                   .read<ProductCubit>()
-                                                  .productSort,
+                                                  .filterProductCategory,
+                                              applySortChooseSort: context
+                                                  .read<ProductCubit>()
+                                                  .filterProductType,
                                               chooseSort: state.sort,
                                               isGridLayout: state.isGridLayout,
                                             );
@@ -144,26 +158,20 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
                 },
                 body: BlocBuilder<ProductCubit, ProductState>(
                     buildWhen: (previous, current) =>
-                        previous.gridStatus != current.gridStatus ||
-                        previous.searchStatus != current.searchStatus,
+                        previous.productListToShow !=
+                            current.productListToShow ||
+                        previous.isGridLayout != current.isGridLayout,
                     builder: (context, state) {
-                      if (state.searchStatus ==
-                              SearchProductStatus.loadingSearch ||
-                          state.gridStatus == GridProductStatus.loadingGrid) {
+                      if (state.productListToShow.isEmpty) {
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: Text("No products"),
                         );
                       } else {
-                        if (state.productList.isEmpty) {
-                          return const Center(
-                            child: Text("No products"),
-                          );
+                        if (state.isGridLayout) {
+                          return _displayGridView(
+                              state.productListToShow, context);
                         } else {
-                          if (state.isGridLayout) {
-                            return _displayGridView(state.productList, context);
-                          } else {
-                            return _displayListView(state.productList);
-                          }
+                          return _displayListView(state.productListToShow);
                         }
                       }
                     }),
@@ -171,7 +179,7 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
             );
 
           default:
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingWidget();
         }
       },
     );
@@ -210,7 +218,6 @@ Widget _leadingButton(BuildContext context) {
   return IconButton(
     icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
     onPressed: () {
-      context.read<ProductCubit>().productSort(typeList: TypeList.all);
       Navigator.pop(context);
     },
   );
@@ -222,43 +229,4 @@ Widget _findButton(BuildContext context) {
         BlocProvider.of<ProductCubit>(context).productOpenSearchBarEvent();
       },
       icon: Image.asset('assets/images/icons/find.png'));
-}
-
-Widget _flexibleSpaceBar(BuildContext context, String categoryName,
-    bool isSearch, String searchInput) {
-  return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-    var top = constraints.biggest.height;
-    return FlexibleSpaceBar(
-      titlePadding: EdgeInsets.only(
-          right: 40,
-          left: isSearch == false
-              ? top < MediaQuery.of(context).size.height * 0.13
-                  ? 40
-                  : 16
-              : 40,
-          top: isSearch == false ? 0 : 5,
-          bottom: isSearch == false ? 15 : 5),
-      centerTitle:
-          top < MediaQuery.of(context).size.height * 0.13 ? true : false,
-      title: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: 1,
-          child: isSearch == false
-              ? Text(
-                  categoryName,
-                  style: ETextStyle.metropolis(
-                      weight: top < MediaQuery.of(context).size.height * 0.13
-                          ? FontWeight.w600
-                          : FontWeight.w700,
-                      fontSize: 20),
-                )
-              : SearchTextField(
-                  initValue: searchInput,
-                  func: (value) {
-                    BlocProvider.of<ProductCubit>(context)
-                        .productSort(searchName: value);
-                  })),
-    );
-  });
 }

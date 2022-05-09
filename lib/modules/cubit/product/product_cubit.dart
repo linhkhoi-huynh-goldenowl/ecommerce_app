@@ -12,22 +12,32 @@ part 'product_state.dart';
 class ProductCubit extends Cubit<ProductState> {
   ProductCubit() : super(const ProductState()) {
     fetchProducts();
+    fetchProductsNew();
+    fetchProductsSale();
   }
   StreamSubscription? productSubscription;
-  void fetchProducts() async {
+  StreamSubscription? productSaleSubscription;
+  StreamSubscription? productNewSubscription;
+  @override
+  Future<void> close() {
+    productSubscription?.cancel();
+    productSaleSubscription?.cancel();
+    productNewSubscription?.cancel();
+    return super.close();
+  }
+
+  void fetchProducts() {
     try {
       emit(state.copyWith(status: ProductStatus.loading));
       final Stream<XResult<List<ProductItem>>> productsStream =
           Domain().product.getProductsStream();
 
-      productSubscription = productsStream.listen((event) async {
+      productSubscription = productsStream.listen((event) {
         emit(state.copyWith(status: ProductStatus.loading));
         if (event.isSuccess) {
-          final products = await Domain().product.setProducts(event.data ?? []);
-
           emit(state.copyWith(
               status: ProductStatus.success,
-              productList: products,
+              productList: event.data,
               type: TypeList.all,
               errMessage: ""));
         } else {
@@ -41,99 +51,85 @@ class ProductCubit extends Cubit<ProductState> {
     }
   }
 
-  @override
-  Future<void> close() {
-    productSubscription?.cancel();
-    return super.close();
+  void fetchProductsNew() {
+    try {
+      emit(state.copyWith(statusNew: ProductNewStatus.loading));
+      final Stream<XResult<List<ProductItem>>> productsNewStream =
+          Domain().product.getProductsNewStream();
+
+      productNewSubscription = productsNewStream.listen((event) {
+        emit(state.copyWith(statusNew: ProductNewStatus.loading));
+        if (event.isSuccess) {
+          emit(state.copyWith(
+              statusNew: ProductNewStatus.success,
+              productNewList: event.data,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              statusNew: ProductNewStatus.failure, errMessage: event.error));
+        }
+      });
+    } catch (_) {
+      emit(state.copyWith(
+          statusNew: ProductNewStatus.failure, errMessage: "Something wrong"));
+    }
+  }
+
+  void fetchProductsSale() {
+    try {
+      emit(state.copyWith(statusSale: ProductSaleStatus.loading));
+      final Stream<XResult<List<ProductItem>>> productsSaleStream =
+          Domain().product.getProductsSaleStream();
+      productSaleSubscription = productsSaleStream.listen((event) {
+        emit(state.copyWith(statusSale: ProductSaleStatus.loading));
+        if (event.isSuccess) {
+          emit(state.copyWith(
+              statusSale: ProductSaleStatus.success,
+              productSaleList: event.data,
+              errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              statusSale: ProductSaleStatus.failure, errMessage: event.error));
+        }
+      });
+    } catch (_) {
+      emit(state.copyWith(
+          statusSale: ProductSaleStatus.failure,
+          errMessage: "Something wrong"));
+    }
+  }
+
+  void productSetType(TypeList typeList) async {
+    emit(state.copyWith(type: typeList));
   }
 
   void productLoadGridLayout() async {
-    try {
-      emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
-      emit(state.copyWith(
-          isGridLayout: !state.isGridLayout,
-          gridStatus: GridProductStatus.successGrid,
-          errMessage: ""));
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridProductStatus.failureGrid,
-          errMessage: "Something wrong"));
-    }
+    emit(state.copyWith(isGridLayout: !state.isGridLayout));
   }
 
   void productOpenSearchBarEvent() async {
-    try {
-      emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
-      emit(state.copyWith(
-          isSearch: !state.isSearch,
-          gridStatus: GridProductStatus.successGrid,
-          errMessage: ""));
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridProductStatus.failureGrid,
-          errMessage: "Something wrong"));
-    }
+    emit(state.copyWith(isSearch: !state.isSearch));
   }
 
   void productOpenCategoryBarEvent() async {
-    try {
-      emit(state.copyWith(
-          gridStatus: GridProductStatus.loadingGrid,
-          status: ProductStatus.loading));
-      emit(state.copyWith(
-          isShowCategoryBar: !state.isShowCategoryBar,
-          gridStatus: GridProductStatus.successGrid,
-          status: ProductStatus.success,
-          errMessage: ""));
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridProductStatus.failureGrid,
-          status: ProductStatus.failure,
-          errMessage: "Something wrong"));
+    emit(state.copyWith(
+      isShowCategoryBar: !state.isShowCategoryBar,
+    ));
+  }
+
+  void productSearch(String searchName) {
+    emit(state.copyWith(searchInput: searchName));
+  }
+
+  void filterProductCategory(String categoryName) {
+    if (categoryName == state.categoryName) {
+      emit(state.copyWith(categoryName: ""));
+    } else {
+      emit(state.copyWith(categoryName: categoryName));
     }
   }
 
-  void productSort(
-      {String? searchName,
-      TypeList? typeList,
-      ChooseSort? chooseSort,
-      String? categoryName}) async {
-    try {
-      emit(state.copyWith(gridStatus: GridProductStatus.loadingGrid));
-
-      if (categoryName == state.categoryName) {
-        var products = await Domain().product.getProductsFilter(
-            searchName: searchName ?? state.searchInput,
-            chooseSort: chooseSort ?? state.sort,
-            typeList: typeList ?? state.type);
-
-        emit(state.copyWith(
-            sort: chooseSort ?? state.sort,
-            categoryName: "",
-            searchInput: searchName ?? state.searchInput,
-            type: typeList ?? state.type,
-            productList: products,
-            gridStatus: GridProductStatus.successGrid,
-            errMessage: ""));
-      } else {
-        var products = await Domain().product.getProductsFilter(
-            searchName: searchName ?? state.searchInput,
-            categoryName: categoryName ?? state.categoryName,
-            chooseSort: chooseSort ?? state.sort,
-            typeList: typeList ?? state.type);
-        emit(state.copyWith(
-            sort: chooseSort ?? state.sort,
-            categoryName: categoryName ?? state.categoryName,
-            searchInput: searchName ?? state.searchInput,
-            type: typeList ?? state.type,
-            productList: products,
-            gridStatus: GridProductStatus.successGrid,
-            errMessage: ""));
-      }
-    } catch (_) {
-      emit(state.copyWith(
-          gridStatus: GridProductStatus.failureGrid,
-          errMessage: "Something wrong"));
-    }
+  void filterProductType(ChooseSort chooseSort) {
+    emit(state.copyWith(sort: chooseSort));
   }
 }

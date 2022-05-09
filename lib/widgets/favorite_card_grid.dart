@@ -1,7 +1,6 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/cart/cart_cubit.dart';
-import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
 import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:e_commerce_shop_app/widgets/price_text.dart';
 import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
@@ -93,10 +92,12 @@ class FavoriteCardGrid extends StatelessWidget {
                       backgroundColor: const Color(0xffDB3022)),
                 )
               : const SizedBox(),
-          (favoriteProduct.productItem.createdDate.month ==
+          (favoriteProduct.productItem.createdDate.toDate().month ==
                       DateTime.now().month &&
-                  favoriteProduct.productItem.createdDate.year ==
-                      DateTime.now().year)
+                  favoriteProduct.productItem.createdDate.toDate().year ==
+                      DateTime.now().year &&
+                  favoriteProduct.productItem.createdDate.toDate().day <=
+                      DateTime.now().day)
               ? Positioned(
                   top: favoriteProduct.productItem.salePercent == null ? 5 : 40,
                   left: 5,
@@ -132,20 +133,20 @@ class FavoriteCardGrid extends StatelessWidget {
                       previous.status != current.status,
                   builder: (context, stateCart) {
                     return ButtonCircle(
-                        func: Domain()
-                                .cart
+                        func: context
+                                .read<CartCubit>()
                                 .checkContainInFavorite(favoriteProduct)
                             ? () {}
                             : () {
                                 context
-                                    .read<FavoriteCubit>()
+                                    .read<CartCubit>()
                                     .addFavoriteToCart(favoriteProduct);
                               },
                         iconPath: "assets/images/icons/bag_favorite.png",
                         iconSize: 17,
                         iconColor: const Color(0xffF9F9F9),
-                        fillColor: Domain()
-                                .cart
+                        fillColor: context
+                                .read<CartCubit>()
                                 .checkContainInFavorite(favoriteProduct)
                             ? const Color(0xffDB3022)
                             : const Color(0xff9B9B9B),

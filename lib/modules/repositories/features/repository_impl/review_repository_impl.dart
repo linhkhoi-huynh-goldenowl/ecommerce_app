@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../x_result.dart';
 
 class ReviewRepositoryImpl extends ReviewRepository {
-  List<ReviewModel> _listReviews = [];
   final List<String> _listImage = [];
   final ReviewProvider _reviewProvider = ReviewProvider();
   @override
@@ -24,38 +23,6 @@ class ReviewRepositoryImpl extends ReviewRepository {
   }
 
   @override
-  Future<List<ReviewModel>> addReviewToLocal(ReviewModel item) async {
-    _listReviews.add(item);
-    return _listReviews;
-  }
-
-  @override
-  Future<XResult<List<ReviewModel>>> getReviewsFromProduct(
-      String productId) async {
-    return await _reviewProvider.getReviewByProduct(productId);
-  }
-
-  @override
-  Future<List<ReviewModel>> setReviewList(List<ReviewModel> reviews) async {
-    _listReviews = reviews;
-    _listReviews.sort(
-      (a, b) => b.createdDate!.toDate().compareTo(a.createdDate!.toDate()),
-    );
-    return _listReviews;
-  }
-
-  @override
-  Future<List<ReviewModel>> getReviewsFromProductWithImage(bool isImage) async {
-    if (isImage) {
-      return _listReviews
-          .where((element) => element.images.isNotEmpty)
-          .toList();
-    } else {
-      return _listReviews;
-    }
-  }
-
-  @override
   Future<XResult<ReviewModel>> addLikeToReview(
       ReviewModel item, String userId) async {
     final indexLikeUser = item.like.indexWhere((element) => element == userId);
@@ -66,15 +33,6 @@ class ReviewRepositoryImpl extends ReviewRepository {
     }
 
     return await _reviewProvider.addReviewToProduct(item);
-  }
-
-  @override
-  Future<List<ReviewModel>> addLikeToLocal(ReviewModel item) async {
-    final indexList =
-        _listReviews.indexWhere((element) => element.id == item.id);
-    _listReviews[indexList] == item;
-
-    return _listReviews;
   }
 
   @override
@@ -101,9 +59,15 @@ class ReviewRepositoryImpl extends ReviewRepository {
   }
 
   @override
-  Future<XResult<List<ReviewModel>>> getReviewsByUser() async {
+  Stream<XResult<List<ReviewModel>>> getReviewsFromProductStream(
+      String productId) {
+    return _reviewProvider.snapshotsAllQuery("productId", productId);
+  }
+
+  @override
+  Future<Stream<XResult<List<ReviewModel>>>> getReviewsByUserStream() async {
     final pref = await SharedPreferences.getInstance();
     final userId = pref.getString("userId");
-    return await _reviewProvider.getReviewByUser(userId!);
+    return _reviewProvider.snapshotsAllQuery("accountId", userId!);
   }
 }

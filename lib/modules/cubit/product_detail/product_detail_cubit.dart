@@ -1,15 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
-import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
 
 part 'product_detail_state.dart';
 
 class ProductDetailCubit extends Cubit<ProductDetailState> {
   ProductDetailCubit({required this.category})
-      : super(const ProductDetailState()) {
-    fetchRelatedProducts();
-  }
+      : super(const ProductDetailState());
   final String category;
   void chooseSize(String size) async {
     emit(state.copyWith(size: size, sizeStatus: SizeStatus.selected));
@@ -25,17 +22,5 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
 
   void chooseColor(String color) async {
     emit(state.copyWith(color: color, size: ""));
-  }
-
-  void fetchRelatedProducts() async {
-    try {
-      emit(state.copyWith(relatedStatus: RelatedStatus.loading));
-      final relatedList =
-          await Domain().product.getProductsFilter(categoryName: category);
-      emit(state.copyWith(
-          relatedStatus: RelatedStatus.success, relatedList: relatedList));
-    } catch (_) {
-      emit(state.copyWith(relatedStatus: RelatedStatus.failure));
-    }
   }
 }

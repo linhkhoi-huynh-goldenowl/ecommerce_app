@@ -4,7 +4,10 @@ import 'package:bloc/bloc.dart';
 import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../utils/helpers/product_helpers.dart';
+import '../../models/favorite_product.dart';
 import '../../repositories/domain.dart';
 import '../../repositories/x_result.dart';
 
@@ -24,13 +27,30 @@ class CartCubit extends Cubit<CartState> {
   void addToCart(CartModel cartModel) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
-      XResult<CartModel> cartsRes =
-          await Domain().cart.addProductToCart(cartModel);
-      if (cartsRes.isSuccess) {
-        emit(state.copyWith(status: CartStatus.success, errMessage: ""));
+      final pref = await SharedPreferences.getInstance();
+      final userId = pref.getString("userId");
+      cartModel.userId = userId;
+      cartModel.id = "$userId-${cartModel.productItem.id}- ${cartModel.size}";
+      int indexCart = _getIndexContainList(cartModel);
+      if (indexCart > -1) {
+        cartModel.quantity += 1;
+        XResult<CartModel> cartsRes =
+            await Domain().cart.addProductToCart(cartModel);
+        if (cartsRes.isSuccess) {
+          emit(state.copyWith(status: CartStatus.success, errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: CartStatus.failure, errMessage: cartsRes.error));
+        }
       } else {
-        emit(state.copyWith(
-            status: CartStatus.failure, errMessage: cartsRes.error));
+        XResult<CartModel> cartsRes =
+            await Domain().cart.addProductToCart(cartModel);
+        if (cartsRes.isSuccess) {
+          emit(state.copyWith(status: CartStatus.success, errMessage: ""));
+        } else {
+          emit(state.copyWith(
+              status: CartStatus.failure, errMessage: cartsRes.error));
+        }
       }
     } catch (_) {
       emit(state.copyWith(
@@ -76,15 +96,16 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  void setPromoToCart(String code) async {
+  void setPromoToCart(PromoModel promoModel) async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
-      PromoModel promoModel = await Domain().promo.getPromoById(code);
+      var total = _getTotalPrice(state.carts, promoModel.salePercent);
       emit(state.copyWith(
           status: CartStatus.success,
           salePercent: promoModel.salePercent,
-          code: code));
-      fetchCart();
+          totalPrice: total,
+          code: promoModel.id,
+          errMessage: ""));
     } catch (_) {
       emit(state.copyWith(
           status: CartStatus.failure, errMessage: "Something wrong"));
@@ -94,7 +115,7 @@ class CartCubit extends Cubit<CartState> {
   void clearCodePromo() async {
     try {
       emit(state.copyWith(status: CartStatus.loading));
-      var total = Domain().cart.getTotalPrice(0);
+      var total = _getTotalPrice(state.carts, 0);
       emit(state.copyWith(
           status: CartStatus.success,
           totalPrice: total,
@@ -116,11 +137,10 @@ class CartCubit extends Cubit<CartState> {
       cartSubscription = cartStream.listen((event) async {
         emit(state.copyWith(status: CartStatus.loading));
         if (event.isSuccess) {
-          final carts = await Domain().cart.setCarts(event.data!);
-          var total = Domain().cart.getTotalPrice(state.salePercent);
+          var total = _getTotalPrice(event.data!, state.salePercent);
           emit(state.copyWith(
               status: CartStatus.success,
-              carts: carts,
+              carts: event.data,
               totalPrice: total,
               errMessage: ""));
         } else {
@@ -132,6 +152,14 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(
           status: CartStatus.failure, errMessage: "Something wrong"));
     }
+  }
+
+  void cartSearch(String searchInput) async {
+    emit(state.copyWith(searchInput: searchInput));
+  }
+
+  void cartOpenSearchBarEvent() async {
+    emit(state.copyWith(isSearch: !state.isSearch));
   }
 
   void clearCart() async {
@@ -152,5 +180,54 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(
           status: CartStatus.failure, errMessage: "Something wrong"));
     }
+  }
+
+  void addFavoriteToCart(FavoriteProduct favoriteProduct) async {
+    CartModel cartModel = CartModel(
+        title: favoriteProduct.productItem.title.toLowerCase(),
+        productItem: favoriteProduct.productItem,
+        size: favoriteProduct.size,
+        color: favoriteProduct.color ?? "Black",
+        quantity: 1);
+
+    addToCart(cartModel);
+  }
+
+  bool checkContainTitle(String title) {
+    return state.carts
+        .where((element) => element.productItem.title == title)
+        .toList()
+        .isNotEmpty;
+  }
+
+  int _getIndexContainList(CartModel item) {
+    return state.carts.indexWhere((element) =>
+        element.productItem.id == item.productItem.id &&
+        element.size == item.size &&
+        element.color == item.color);
+  }
+
+  double _getTotalPrice(List<CartModel> list, [int? salePercent]) {
+    double total = 0;
+
+    for (var item in list) {
+      double price = ProductHelper.getPriceWithSaleItem(
+          item.productItem, item.color, item.size);
+
+      total += (item.quantity * price);
+    }
+    if (salePercent != null && salePercent > 0) {
+      total = total - (total * salePercent / 100);
+    }
+    return total;
+  }
+
+  bool checkContainInFavorite(FavoriteProduct item) {
+    return state.carts
+        .where((element) =>
+            element.productItem.id == item.productItem.id &&
+            element.size == item.size)
+        .toList()
+        .isNotEmpty;
   }
 }

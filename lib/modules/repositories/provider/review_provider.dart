@@ -18,13 +18,15 @@ class ReviewProvider extends BaseCollectionReference<ReviewModel> {
   }
 
   Future<XResult<List<ReviewModel>>> getReviewByProduct(String id) async {
-    final XResult<List<ReviewModel>> res = await queryWhereId('productId', id);
+    final XResult<List<ReviewModel>> res =
+        await queryWhereEqual('productId', id);
 
     return res;
   }
 
   Future<XResult<List<ReviewModel>>> getReviewByUser(String id) async {
-    final XResult<List<ReviewModel>> res = await queryWhereId('accountId', id);
+    final XResult<List<ReviewModel>> res =
+        await queryWhereEqual('accountId', id);
 
     return res;
   }

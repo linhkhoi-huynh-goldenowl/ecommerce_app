@@ -22,7 +22,7 @@ class CreditCardProvider extends BaseCollectionReference<CreditCard> {
   }
 
   Future<XResult<List<CreditCard>>> getCreditCardByUser(String id) async {
-    final XResult<List<CreditCard>> res = await queryWhereId('userId', id);
+    final XResult<List<CreditCard>> res = await queryWhereEqual('userId', id);
 
     return res;
   }
