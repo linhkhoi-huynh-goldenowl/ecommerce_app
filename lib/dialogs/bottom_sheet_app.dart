@@ -6,6 +6,7 @@ import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product_detail/product_detail_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/promo/promo_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/review/review_cubit.dart';
+import 'package:e_commerce_shop_app/modules/cubit/tag/tag_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/modules/models/size_cloth.dart';
@@ -14,6 +15,7 @@ import 'package:e_commerce_shop_app/widgets/popups/popup_countries.dart';
 import 'package:e_commerce_shop_app/widgets/popups/popup_credit.dart';
 import 'package:e_commerce_shop_app/widgets/popups/popup_promo.dart';
 import 'package:e_commerce_shop_app/widgets/popups/popup_review.dart';
+import 'package:e_commerce_shop_app/widgets/popups/popup_tag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -143,6 +145,29 @@ class BottomSheetApp {
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom * 0),
               child: PopupReview(productId: productId),
+            ),
+          );
+        });
+  }
+
+  static void showModalTag(BuildContext contextParent, Function applyTag) {
+    showModalBottomSheet<void>(
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+        ),
+        context: contextParent,
+        builder: (context) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(
+                  value: BlocProvider.of<TagCubit>(contextParent)),
+            ],
+            child: Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom * 0),
+              child: PopupTag(applyTag: applyTag),
             ),
           );
         });

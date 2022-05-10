@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_shop_app/modules/models/base_model.dart';
 import 'package:e_commerce_shop_app/modules/models/color_cloth.dart';
+import 'package:e_commerce_shop_app/modules/models/tag_model.dart';
 
 class ProductItem extends BaseModel {
   final String title;
@@ -11,6 +12,7 @@ class ProductItem extends BaseModel {
   final bool isPopular;
   int numberReviews;
   int reviewStars;
+  List<TagModel>? tags;
   final String categoryName;
   final String description;
   final List<ColorCloth> colors;
@@ -21,6 +23,7 @@ class ProductItem extends BaseModel {
       required this.numberReviews,
       required this.reviewStars,
       required this.title,
+      this.tags,
       required this.createdDate,
       required this.isPopular,
       required this.categoryName,
@@ -34,9 +37,17 @@ class ProductItem extends BaseModel {
     List<ColorCloth> _colors = colorsObjJson
         .map((colorJson) => ColorCloth.fromJson(colorJson))
         .toList();
+    List<TagModel> _tags = [];
+
+    if (parsedJson['tags'] != null) {
+      var tagsObjJson = parsedJson['tags'] as List;
+      _tags = tagsObjJson.map((tagJson) => TagModel.fromJson(tagJson)).toList();
+    }
+
     return ProductItem(
         id: id ?? parsedJson['id'],
         title: parsedJson['title'],
+        tags: _tags,
         brandName: parsedJson['brandName'],
         images: parsedJson['images'].cast<String>(),
         description: parsedJson['description'],
@@ -55,6 +66,8 @@ class ProductItem extends BaseModel {
   Map<String, dynamic> toJson() {
     List<Map<String, dynamic>> colorsList =
         colors.map((i) => i.toJson()).toList();
+
+    List<Map<String, dynamic>> tagsList = tags!.map((i) => i.toJson()).toList();
     return {
       'id': id,
       'title': title,
@@ -67,6 +80,7 @@ class ProductItem extends BaseModel {
       'categoryName': categoryName,
       'colors': colorsList,
       'salePercent': salePercent,
+      'tags': tagsList,
       'description': description
     };
   }

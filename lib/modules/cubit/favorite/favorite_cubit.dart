@@ -6,6 +6,8 @@ import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/modules/repositories/domain.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../utils/helpers/favorite_helpers.dart';
+import '../../models/tag_model.dart';
 import '../../repositories/x_result.dart';
 import '../product/product_cubit.dart';
 
@@ -133,5 +135,9 @@ class FavoriteCubit extends Cubit<FavoriteState> {
             element.size == item.size)
         .toList()
         .isEmpty;
+  }
+
+  void filterFavoriteByTag(List<TagModel> tags) async {
+    emit(state.copyWith(tagsFilter: tags));
   }
 }

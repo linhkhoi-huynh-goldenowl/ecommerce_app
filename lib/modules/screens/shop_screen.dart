@@ -1,6 +1,7 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_shop_app/modules/cubit/tag/tag_cubit.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/button_intro.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/category_title_button.dart';
@@ -23,6 +24,7 @@ class ShopScreen extends ProductCoordinatorBase {
       ),
       BlocProvider<ProductCubit>(
           create: (BuildContext context) => ProductCubit()),
+      BlocProvider<TagCubit>(create: (BuildContext context) => TagCubit()),
     ], child: stackView(context));
   }
 

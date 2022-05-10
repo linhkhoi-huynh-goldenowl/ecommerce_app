@@ -10,6 +10,7 @@ import 'package:e_commerce_shop_app/modules/repositories/features/repository/pro
 import 'package:e_commerce_shop_app/modules/repositories/features/repository/profile_repository.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository/promotion_repository.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository/review_repository.dart';
+import 'package:e_commerce_shop_app/modules/repositories/features/repository/tag_repository.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository_impl/address_repository_impl.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository_impl/cart_repository_impl.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository_impl/category_repository_impl.dart';
@@ -22,6 +23,7 @@ import 'package:e_commerce_shop_app/modules/repositories/features/repository_imp
 import 'package:e_commerce_shop_app/modules/repositories/features/repository_impl/profile_repository_impl.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository_impl/promotion_repository_impl.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository_impl/review_repository_impl.dart';
+import 'package:e_commerce_shop_app/modules/repositories/features/repository_impl/tag_repository_impl.dart';
 
 import 'features/repository/auth_repository.dart';
 import 'features/repository_impl/auth_repository_impl.dart';
@@ -42,6 +44,7 @@ class Domain {
     delivery = DeliveryRepositoryImpl();
     order = OrderRepositoryImpl();
     country = CountryRepositoryImpl();
+    tag = TagRepositoryImpl();
   }
   factory Domain() {
     _internal ??= Domain._();
@@ -60,4 +63,5 @@ class Domain {
   late final DeliveryRepository delivery;
   late final OrderRepository order;
   late final CountryRepository country;
+  late final TagRepository tag;
 }

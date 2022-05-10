@@ -22,79 +22,37 @@ enum AddCartStatus {
 }
 
 class FavoriteState extends Equatable {
-  const FavoriteState(
-      {this.gridStatus = GridFavoriteStatus.initialGrid,
-      this.searchStatus = SearchFavoriteStatus.initialSearch,
-      this.categoryName = "",
-      this.searchInput = "",
-      this.isSearch = false,
-      this.sort = ChooseSort.newest,
-      this.isGridLayout = false,
-      this.favorites = const <FavoriteProduct>[],
-      this.status = FavoriteStatus.initial,
-      this.products = const <ProductItem>[],
-      this.isShowCategoryBar = true,
-      this.errMessage = "",
-      this.addCartStatus = AddCartStatus.initial});
+  const FavoriteState({
+    this.gridStatus = GridFavoriteStatus.initialGrid,
+    this.searchStatus = SearchFavoriteStatus.initialSearch,
+    this.categoryName = "",
+    this.searchInput = "",
+    this.isSearch = false,
+    this.sort = ChooseSort.newest,
+    this.isGridLayout = false,
+    this.favorites = const <FavoriteProduct>[],
+    this.status = FavoriteStatus.initial,
+    this.products = const <ProductItem>[],
+    this.isShowCategoryBar = true,
+    this.errMessage = "",
+    this.addCartStatus = AddCartStatus.initial,
+    this.tagsFilter = const [],
+  });
   final List<FavoriteProduct> favorites;
 
   List<FavoriteProduct> get favoritesListToShow {
     List<FavoriteProduct> favoritesList = favorites;
-    favoritesList = favoritesList
-        .where((element) => element.productItem.title
-            .toLowerCase()
-            .contains(searchInput.toLowerCase()))
-        .toList();
-    if (categoryName != "") {
-      favoritesList = favoritesList
-          .where((element) => element.productItem.categoryName
-              .toLowerCase()
-              .contains(categoryName.toLowerCase()))
-          .toList();
-    }
-    switch (sort) {
-      case ChooseSort.popular:
-        {
-          favoritesList = favoritesList
-              .where((element) => element.productItem.isPopular)
-              .toList();
-          break;
-        }
-      case ChooseSort.newest:
-        {
-          var favoritesNews = favoritesList;
-          favoritesNews.sort((b, a) => a.productItem.createdDate
-              .toDate()
-              .compareTo(b.productItem.createdDate.toDate()));
-          favoritesList = favoritesNews;
-          break;
-        }
+    favoritesList = FavoriteHelper.filterByName(searchInput, favoritesList);
 
-      case ChooseSort.review:
-        {
-          var favoritesReview = favoritesList;
-          favoritesReview.sort((b, a) =>
-              a.productItem.reviewStars.compareTo(b.productItem.reviewStars));
-          favoritesList = favoritesReview;
-          break;
-        }
-      case ChooseSort.priceLowest:
-        {
-          var favoritesLow = favoritesList;
-          favoritesLow.sort((a, b) => a.productItem.colors[0].sizes[0].price
-              .compareTo(b.productItem.colors[0].sizes[0].price));
-          favoritesList = favoritesLow;
-          break;
-        }
-      case ChooseSort.priceHighest:
-        {
-          var favoritesHigh = favoritesList;
-          favoritesHigh.sort((b, a) => a.productItem.colors[0].sizes[0].price
-              .compareTo(b.productItem.colors[0].sizes[0].price));
-          favoritesList = favoritesHigh;
-          break;
-        }
+    if (tagsFilter.isNotEmpty) {
+      favoritesList = FavoriteHelper.filterByTag(tagsFilter, favoritesList);
     }
+
+    if (categoryName != "") {
+      favoritesList =
+          FavoriteHelper.sortByCategory(categoryName, favoritesList);
+    }
+    favoritesList = FavoriteHelper.sortByTypeFavorite(sort, favoritesList);
 
     return favoritesList;
   }
@@ -111,7 +69,7 @@ class FavoriteState extends Equatable {
   final String categoryName;
   final String errMessage;
   final AddCartStatus addCartStatus;
-
+  final List<TagModel> tagsFilter;
   FavoriteState copyWith(
       {FavoriteStatus? status,
       List<FavoriteProduct>? favorites,
@@ -125,7 +83,8 @@ class FavoriteState extends Equatable {
       List<ProductItem>? products,
       bool? isShowCategoryBar,
       String? errMessage,
-      AddCartStatus? addCartStatus}) {
+      AddCartStatus? addCartStatus,
+      List<TagModel>? tagsFilter}) {
     return FavoriteState(
         status: status ?? this.status,
         favorites: favorites ?? this.favorites,
@@ -139,7 +98,8 @@ class FavoriteState extends Equatable {
         products: products ?? this.products,
         isShowCategoryBar: isShowCategoryBar ?? this.isShowCategoryBar,
         errMessage: errMessage ?? this.errMessage,
-        addCartStatus: addCartStatus ?? this.addCartStatus);
+        addCartStatus: addCartStatus ?? this.addCartStatus,
+        tagsFilter: tagsFilter ?? this.tagsFilter);
   }
 
   @override
@@ -156,6 +116,7 @@ class FavoriteState extends Equatable {
         products,
         isShowCategoryBar,
         errMessage,
-        addCartStatus
+        addCartStatus,
+        tagsFilter
       ];
 }

@@ -168,4 +168,23 @@ class BaseCollectionReference<T extends BaseModel> {
       return XResult.exception(e);
     }
   }
+
+  Future<XResult<List<T>>> queryContainList(
+      String param, List<Object?> listVariable) async {
+    try {
+      var queryContain = ref.where(param);
+
+      for (var i = 0; i < listVariable.length; i++) {
+        queryContain = queryContain
+            .where(param, arrayContains: listVariable[i])
+            .where(param);
+      }
+
+      final QuerySnapshot<T> query = await queryContain.get();
+      final docs = query.docs.map((e) => e.data()).toList();
+      return XResult.success(docs);
+    } catch (e) {
+      return XResult.exception(e);
+    }
+  }
 }

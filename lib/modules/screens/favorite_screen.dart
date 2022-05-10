@@ -1,10 +1,12 @@
 import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
+import 'package:e_commerce_shop_app/modules/cubit/tag/tag_cubit.dart';
 import 'package:e_commerce_shop_app/widgets/appbars/flexible_bar_with_search.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
 import 'package:e_commerce_shop_app/widgets/dismiss_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../dialogs/bottom_sheet_app.dart';
 import '../../utils/helpers/show_snackbar.dart';
 import '../../widgets/cards/favorite_card_grid.dart';
 import '../../widgets/cards/favorite_card_list.dart';
@@ -55,6 +57,9 @@ class _FavoriteScreenState extends State<FavoriteScreen>
         ),
         BlocProvider<ProductCubit>(
           create: (BuildContext context) => ProductCubit(),
+        ),
+        BlocProvider<TagCubit>(
+          create: (BuildContext context) => TagCubit(),
         ),
       ],
       child: _buildBody(context),
@@ -152,44 +157,55 @@ class _FavoriteScreenState extends State<FavoriteScreen>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return SliverPersistentHeader(
-            pinned: true,
-            delegate: SliverAppBarDelegate(
-              child: PreferredSize(
-                  preferredSize: Size.fromHeight(_animation.value),
-                  child: BlocBuilder<FavoriteCubit, FavoriteState>(
-                      buildWhen: (previous, current) =>
-                          previous.isShowCategoryBar !=
-                              current.isShowCategoryBar ||
-                          previous.categoryName != current.categoryName ||
-                          previous.sort != current.sort ||
-                          previous.isGridLayout != current.isGridLayout,
-                      builder: (context, state) {
-                        return FilterBarWidget(
-                          height: _animationCategory.value,
-                          showCategory: () async {
-                            BlocProvider.of<FavoriteCubit>(context)
-                                .favoriteOpenCategoryBarEvent();
+        return BlocBuilder<FavoriteCubit, FavoriteState>(
+          buildWhen: (previous, current) =>
+              previous.isShowCategoryBar != current.isShowCategoryBar ||
+              previous.categoryName != current.categoryName ||
+              previous.sort != current.sort ||
+              previous.isGridLayout != current.isGridLayout ||
+              previous.tagsFilter != current.tagsFilter,
+          builder: (context, state) {
+            return SliverPersistentHeader(
+                pinned: true,
+                delegate: SliverAppBarDelegate(
+                  child: PreferredSize(
+                      preferredSize: Size.fromHeight(state.tagsFilter.isNotEmpty
+                          ? _animation.value + _animationCategory.value
+                          : _animation.value),
+                      child: FilterBarWidget(
+                        tags: state.tagsFilter,
+                        height: _animationCategory.value,
+                        showCategory: () async {
+                          BlocProvider.of<FavoriteCubit>(context)
+                              .favoriteOpenCategoryBarEvent();
 
-                            if (state.isShowCategoryBar) {
-                              await _controller.reverse();
-                            } else {
-                              await _controller.forward();
-                            }
-                          },
-                          chooseCategory: state.categoryName,
-                          applyGrid: BlocProvider.of<FavoriteCubit>(context)
-                              .favoriteLoadGridLayout,
-                          applySortCategory: context
-                              .read<FavoriteCubit>()
-                              .filterFavoriteCategory,
-                          applySortChooseSort:
-                              context.read<FavoriteCubit>().filterFavoriteType,
-                          chooseSort: state.sort,
-                          isGridLayout: state.isGridLayout,
-                        );
-                      })),
-            ));
+                          if (state.isShowCategoryBar) {
+                            await _controller.reverse();
+                          } else {
+                            await _controller.forward();
+                          }
+                        },
+                        chooseCategory: state.categoryName,
+                        applyGrid: BlocProvider.of<FavoriteCubit>(context)
+                            .favoriteLoadGridLayout,
+                        applySortCategory: context
+                            .read<FavoriteCubit>()
+                            .filterFavoriteCategory,
+                        applySortChooseSort:
+                            context.read<FavoriteCubit>().filterFavoriteType,
+                        chooseSort: state.sort,
+                        isGridLayout: state.isGridLayout,
+                        showTagList: () {
+                          BottomSheetApp.showModalTag(
+                              context,
+                              context
+                                  .read<FavoriteCubit>()
+                                  .filterFavoriteByTag);
+                        },
+                      )),
+                ));
+          },
+        );
       },
     );
   }
