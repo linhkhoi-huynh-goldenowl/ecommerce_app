@@ -23,7 +23,7 @@ class PromoListScreen extends StatelessWidget {
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
-                _appBar(),
+                _appBar(context.read<PromoCubit>().changePromoSort),
               ];
             },
             body: _showPromoList()),
@@ -33,11 +33,14 @@ class PromoListScreen extends StatelessWidget {
 
   Widget _showPromoList() {
     return BlocBuilder<PromoCubit, PromoState>(
-        buildWhen: (previous, current) => previous.status != current.status,
+        buildWhen: (previous, current) =>
+            previous.status != current.status ||
+            previous.promoListToShow != current.promoListToShow ||
+            previous.sort != current.sort,
         builder: (context, state) {
           return state.status == PromoStatus.loading
               ? const LoadingWidget()
-              : state.promos.isEmpty
+              : state.promoListToShow.isEmpty
                   ? const Center(
                       child: Text("No Promo"),
                     )
@@ -45,23 +48,115 @@ class PromoListScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 32),
                       itemBuilder: (context, index) {
-                        return _promoItem(state.promos[index]);
+                        return _promoItem(state.promoListToShow[index]);
                       },
-                      itemCount: state.promos.length,
+                      itemCount: state.promoListToShow.length,
                     );
         });
   }
 
-  Widget _appBar() {
-    return const SliverAppBar(
+  Widget _appBar(Function sortPromo) {
+    return SliverAppBar(
       shadowColor: Colors.white,
       elevation: 5,
-      backgroundColor: Color(0xffF9F9F9),
+      backgroundColor: const Color(0xffF9F9F9),
       expandedHeight: 110.0,
       pinned: true,
       stretch: true,
-      leading: ButtonLeading(),
-      flexibleSpace: FlexibleAppBar(title: "Promo List"),
+      leading: const ButtonLeading(),
+      actions: [_popupFilter(sortPromo)],
+      flexibleSpace: const FlexibleAppBar(title: "Promo List"),
+    );
+  }
+
+  Widget _popupFilter(Function sortPromo) {
+    return BlocBuilder<PromoCubit, PromoState>(
+      buildWhen: (previous, current) => previous.sort != current.sort,
+      builder: (context, state) {
+        return PopupMenuButton<int>(
+          offset: const Offset(-40, -30),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10.0),
+            ),
+          ),
+          onSelected: (int value) {
+            if (value == 1) {
+              sortPromo(PromoSort.endDateAsc);
+            }
+            if (value == 2) {
+              sortPromo(PromoSort.endDateDesc);
+            }
+            if (value == 3) {
+              sortPromo(PromoSort.percentAsc);
+            }
+            if (value == 4) {
+              sortPromo(PromoSort.percentDesc);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Text(
+                  state.sort == PromoSort.endDateAsc
+                      ? "End Date ▲"
+                      : state.sort == PromoSort.endDateDesc
+                          ? 'End date ▼'
+                          : state.sort == PromoSort.percentAsc
+                              ? 'Percent ▲'
+                              : 'Percent ▼',
+                  style: ETextStyle.metropolis(),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                const ImageIcon(AssetImage("assets/images/icons/filter.png"),
+                    color: Colors.black, size: 18),
+              ],
+            ),
+          ),
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+            PopupMenuItem<int>(
+              value: 1,
+              child: Center(
+                child: Text('Sort by end date ascending',
+                    style: ETextStyle.metropolis(fontSize: 14)),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<int>(
+              value: 2,
+              child: Center(
+                child: Text(
+                  'Sort by end date descending',
+                  style: ETextStyle.metropolis(fontSize: 14),
+                ),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<int>(
+              value: 3,
+              child: Center(
+                child: Text(
+                  'Sort by percent ascending',
+                  style: ETextStyle.metropolis(fontSize: 14),
+                ),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<int>(
+              value: 4,
+              child: Center(
+                child: Text(
+                  'Sort by percent descending',
+                  style: ETextStyle.metropolis(fontSize: 14),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

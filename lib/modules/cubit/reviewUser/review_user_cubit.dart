@@ -45,4 +45,8 @@ class ReviewUserCubit extends Cubit<ReviewUserState> {
           status: ReviewUserStatus.failure, errMessage: "Something wrong"));
     }
   }
+
+  void changeReviewSort(ReviewUserSort sort) {
+    emit(state.copyWith(sort: sort));
+  }
 }

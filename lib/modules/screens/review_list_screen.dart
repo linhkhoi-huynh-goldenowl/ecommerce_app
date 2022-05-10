@@ -27,7 +27,7 @@ class ReviewListSCreen extends StatelessWidget {
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
-                _appBar(),
+                _appBar(context.read<ReviewUserCubit>().changeReviewSort),
               ];
             },
             body: _showReviewList()),
@@ -35,13 +35,107 @@ class ReviewListSCreen extends StatelessWidget {
     );
   }
 
+  Widget _popupFilter(Function sortReview) {
+    return BlocBuilder<ReviewUserCubit, ReviewUserState>(
+      buildWhen: (previous, current) => previous.sort != current.sort,
+      builder: (context, state) {
+        return PopupMenuButton<int>(
+          offset: const Offset(-40, -30),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10.0),
+            ),
+          ),
+          onSelected: (int value) {
+            if (value == 1) {
+              sortReview(ReviewUserSort.createDateAsc);
+            }
+            if (value == 2) {
+              sortReview(ReviewUserSort.createDateDesc);
+            }
+            if (value == 3) {
+              sortReview(ReviewUserSort.starAsc);
+            }
+            if (value == 4) {
+              sortReview(ReviewUserSort.starDesc);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Text(
+                  state.sort == ReviewUserSort.createDateAsc
+                      ? "Date ▲"
+                      : state.sort == ReviewUserSort.createDateDesc
+                          ? 'Date ▼'
+                          : state.sort == ReviewUserSort.starAsc
+                              ? 'Star ▲'
+                              : 'Star ▼',
+                  style: ETextStyle.metropolis(),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                const ImageIcon(AssetImage("assets/images/icons/filter.png"),
+                    color: Colors.black, size: 18),
+              ],
+            ),
+          ),
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+            PopupMenuItem<int>(
+              value: 1,
+              child: Center(
+                child: Text('Sort by create date ascending',
+                    style: ETextStyle.metropolis(fontSize: 14)),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<int>(
+              value: 2,
+              child: Center(
+                child: Text(
+                  'Sort by create date descending',
+                  style: ETextStyle.metropolis(fontSize: 14),
+                ),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<int>(
+              value: 3,
+              child: Center(
+                child: Text(
+                  'Sort by star ascending',
+                  style: ETextStyle.metropolis(fontSize: 14),
+                ),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<int>(
+              value: 4,
+              child: Center(
+                child: Text(
+                  'Sort by star descending',
+                  style: ETextStyle.metropolis(fontSize: 14),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _showReviewList() {
     return BlocBuilder<ReviewUserCubit, ReviewUserState>(
-        buildWhen: (previous, current) => previous.status != current.status,
+        buildWhen: (previous, current) =>
+            previous.status != current.status ||
+            previous.reviewsToShow != current.reviewsToShow ||
+            previous.sort != current.sort,
         builder: (context, state) {
           return state.status == PromoStatus.loading
               ? const LoadingWidget()
-              : state.reviews.isEmpty
+              : state.reviewsToShow.isEmpty
                   ? const Center(
                       child: Text("No Reviews"),
                     )
@@ -49,23 +143,24 @@ class ReviewListSCreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 32),
                       itemBuilder: (context, index) {
-                        return _reviewComment(state.reviews[index]);
+                        return _reviewComment(state.reviewsToShow[index]);
                       },
-                      itemCount: state.reviews.length,
+                      itemCount: state.reviewsToShow.length,
                     );
         });
   }
 
-  Widget _appBar() {
-    return const SliverAppBar(
+  Widget _appBar(Function sortReview) {
+    return SliverAppBar(
       shadowColor: Colors.white,
       elevation: 5,
-      backgroundColor: Color(0xffF9F9F9),
+      backgroundColor: const Color(0xffF9F9F9),
       expandedHeight: 110.0,
       pinned: true,
       stretch: true,
-      leading: ButtonLeading(),
-      flexibleSpace: FlexibleAppBar(title: "Review List"),
+      leading: const ButtonLeading(),
+      actions: [_popupFilter(sortReview)],
+      flexibleSpace: const FlexibleAppBar(title: "Review List"),
     );
   }
 
