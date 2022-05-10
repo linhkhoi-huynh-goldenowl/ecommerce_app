@@ -67,4 +67,8 @@ class PromoCubit extends Cubit<PromoState> {
         .toList()
         .isNotEmpty;
   }
+
+  void changePromoSort(PromoSort sort) {
+    emit(state.copyWith(sort: sort));
+  }
 }

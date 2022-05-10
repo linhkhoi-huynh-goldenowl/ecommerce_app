@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/modules/models/review_model.dart';
 import 'package:e_commerce_shop_app/utils/helpers/review_helpers.dart';
@@ -100,12 +101,20 @@ class ReviewCubit extends Cubit<ReviewState> {
           throw Exception(result.error);
         }
       }
+      final account = await Domain().profile.getProfile();
+
       ReviewModel reviewModel = ReviewModel(
           comment: state.reviewContent,
           star: state.starNum,
           productId: productId,
           images: pathImageNetwork,
+          accountAvatar: account.imageUrl!,
+          accountId: account.id!,
+          accountName: account.name,
+          createdDate: Timestamp.now(),
           like: []);
+      reviewModel.id =
+          "${reviewModel.accountName}-${reviewModel.productId}- ${reviewModel.createdDate}";
       XResult<ReviewModel> reviewsRes =
           await Domain().review.addReviewToProduct(reviewModel);
       if (reviewsRes.isSuccess) {

@@ -273,7 +273,7 @@ class ProductRatingScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  reviewModel.accountName ?? "",
+                  reviewModel.accountName ?? "UnKnow",
                   style: ETextStyle.metropolis(fontSize: 14),
                 ),
                 const SizedBox(

@@ -50,17 +50,16 @@ class SettingScreen extends StatelessWidget {
               );
             case ProfileStatus.success:
               return Scaffold(
-                  body: NestedScrollView(
-                physics: const BouncingScrollPhysics(),
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return <Widget>[
-                    _appBar(),
-                  ];
-                },
-                body: Form(
-                  key: state.formKey,
-                  child: Expanded(
+                body: NestedScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxIsScrolled) {
+                    return <Widget>[
+                      _appBar(),
+                    ];
+                  },
+                  body: Form(
+                    key: state.formKey,
                     child: ListView(
                       children: [
                         _avatarChange(),
@@ -92,7 +91,7 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              ));
+              );
             default:
               return const LoadingWidget();
           }
