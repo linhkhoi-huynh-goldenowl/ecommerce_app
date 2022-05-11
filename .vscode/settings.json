@@ -3,6 +3,8 @@
         "appbars",
         "Cupertino",
         "firestore",
+        "goldenowl",
+        "googleapis",
         "textfields",
         "unfocus",
         "vsync"

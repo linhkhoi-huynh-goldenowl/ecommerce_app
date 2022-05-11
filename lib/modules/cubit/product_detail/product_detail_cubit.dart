@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:e_commerce_shop_app/utils/services/dynamic_link_services.dart';
 import 'package:equatable/equatable.dart';
+import 'package:share_plus/share_plus.dart';
 
 part 'product_detail_state.dart';
 
@@ -21,5 +23,10 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
 
   void chooseColor(String color) async {
     emit(state.copyWith(color: color, size: ""));
+  }
+
+  void shareProductLink(String id) async {
+    String result = await DynamicLinkServices.buildDynamicLinkProduct(id);
+    await Share.share(result);
   }
 }
