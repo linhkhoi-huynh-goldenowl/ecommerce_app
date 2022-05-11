@@ -1,9 +1,12 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_shop_app/utils/services/firebase_message_services.dart';
 import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'config/routes/router.dart';
 import 'firebase_options.dart';
@@ -13,17 +16,62 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  //Add device preview to see UI on IOS device
+
+  await FirebaseMessageServices.flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(FirebaseMessageServices.channel);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       builder: (context) => const MyApp(), // Wrap your app
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    AndroidInitializationSettings initializationSettingsAndroid =
+        const AndroidInitializationSettings('app_icon');
+    InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    FirebaseMessageServices.flutterLocalNotificationsPlugin
+        .initialize(initializationSettings);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null) {
+        FirebaseMessageServices.flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                FirebaseMessageServices.channel.id,
+                FirebaseMessageServices.channel.name,
+                color: const Color(0xffFFC107),
+              ),
+            ));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

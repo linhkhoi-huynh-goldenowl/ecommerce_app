@@ -5,6 +5,7 @@ import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/credit_card.dart';
 import 'package:e_commerce_shop_app/modules/models/delivery.dart';
 import 'package:e_commerce_shop_app/modules/models/promo_model.dart';
+import 'package:e_commerce_shop_app/utils/services/firebase_message_services.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -187,6 +188,10 @@ class OrderCubit extends Cubit<OrderState> {
         localUser.orderCount = localUser.orderCount + 1;
         XResult<EUser> resUser = await Domain().profile.saveProfile(localUser);
         if (resUser.isSuccess) {
+          await FirebaseMessageServices.sendAnNotification(
+              "Order was created successfully",
+              "Thank you for buy our product");
+
           emit(state.copyWith(submitStatus: OrderSubmitStatus.success));
           emit(state.copyWith(submitStatus: OrderSubmitStatus.initial));
         } else {
