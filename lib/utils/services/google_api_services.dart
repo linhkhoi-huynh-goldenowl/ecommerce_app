@@ -6,7 +6,7 @@ import 'package:googleapis_auth/auth_io.dart';
 class GoogleApiServices {
   static Future<AuthClient> obtainAuthenticatedClient() async {
     final String response =
-        await rootBundle.loadString('assets/json/app_firebase.json');
+        await rootBundle.loadString('android/app_firebase.json');
     final data = await json.decode(response);
     final accountCredentials = ServiceAccountCredentials.fromJson({
       "private_key_id": data["private_key_id"],

@@ -189,7 +189,8 @@ class OrderCubit extends Cubit<OrderState> {
         XResult<EUser> resUser = await Domain().profile.saveProfile(localUser);
         if (resUser.isSuccess) {
           await FirebaseMessageServices.sendAnNotification(
-              "Order was create successfully", "Thank you for buy our product");
+              "Order was created successfully",
+              "Thank you for buy our product");
 
           emit(state.copyWith(submitStatus: OrderSubmitStatus.success));
           emit(state.copyWith(submitStatus: OrderSubmitStatus.initial));
