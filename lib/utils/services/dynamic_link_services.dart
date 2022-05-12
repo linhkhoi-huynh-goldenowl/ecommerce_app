@@ -40,9 +40,9 @@ class DynamicLinkServices {
       link: Uri.parse('$url/product/$id'),
       androidParameters: const AndroidParameters(
         packageName: "com.goldenowl.e_commerce_shop_app",
-        minimumVersion: 26,
       ),
     );
+
     final ShortDynamicLink dynamicUrl =
         await dynamicLinks.buildShortLink(parameters);
     return dynamicUrl.shortUrl.toString();

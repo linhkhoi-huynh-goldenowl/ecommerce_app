@@ -11,7 +11,6 @@ import 'package:e_commerce_shop_app/modules/screens/payment_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/photo_view_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/product_details_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/product_rating_screen.dart';
-import 'package:e_commerce_shop_app/modules/screens/profile_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/reset_pass_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/setting_screen.dart';
 import 'package:e_commerce_shop_app/modules/screens/shipping_address_screen.dart';
@@ -72,10 +71,7 @@ class AppRouter {
         return MaterialPageRoute(
             settings: settings,
             builder: (BuildContext context) => const FavoriteScreen());
-      case Routes.profileScreen:
-        return MaterialPageRoute(
-            settings: settings,
-            builder: (BuildContext context) => ProfileScreen());
+
       case Routes.settingScreen:
         return MaterialPageRoute(
             settings: settings,

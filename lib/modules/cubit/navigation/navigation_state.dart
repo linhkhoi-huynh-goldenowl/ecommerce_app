@@ -6,8 +6,16 @@ class NavigationState extends Equatable {
   final NavbarItem navbarItem;
   final int index;
 
-  const NavigationState(this.navbarItem, this.index);
+  NavigationState(this.navbarItem, this.index);
+
+  final Map<int, GlobalKey> navigatorKeys = {
+    0: GlobalKey(),
+    1: GlobalKey(),
+    2: GlobalKey(),
+    3: GlobalKey(),
+    4: GlobalKey(),
+  };
 
   @override
-  List<Object> get props => [navbarItem, index];
+  List<Object> get props => [navbarItem, index, navigatorKeys];
 }

@@ -15,7 +15,8 @@ import '../cubit/category/category_cubit.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class ShopScreen extends ProductCoordinatorBase {
-  ShopScreen({Key? key}) : super(key: key);
+  ShopScreen({required GlobalKey navigatorKey, Key? key})
+      : super(key: key, navigatorKey: navigatorKey);
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [

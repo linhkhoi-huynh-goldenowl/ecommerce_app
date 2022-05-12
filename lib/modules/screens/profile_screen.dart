@@ -12,7 +12,9 @@ import '../../utils/services/navigator_services.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class ProfileScreen extends ProductCoordinatorBase {
-  ProfileScreen({Key? key}) : super(key: key);
+  ProfileScreen({required GlobalKey navigatorKey, Key? key})
+      : super(key: key, navigatorKey: navigatorKey);
+  @override
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProfileCubit>(

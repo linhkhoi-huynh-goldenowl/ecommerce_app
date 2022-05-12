@@ -13,16 +13,16 @@ import '../../../config/routes/router.dart';
 import '../favorite_screen.dart';
 import '../order_screen.dart';
 import '../photo_view_screen.dart';
-import '../profile_screen.dart';
 import '../shop_category_screen.dart';
 
 abstract class ProductCoordinatorBase extends StatelessWidget {
-  ProductCoordinatorBase({Key? key}) : super(key: key);
+  ProductCoordinatorBase({Key? key, this.navigatorKey}) : super(key: key);
+  final GlobalKey? navigatorKey;
   late final BuildContext context;
   Widget buildInitialBody();
   Widget stackView(BuildContext context) {
     this.context = context;
-    return Navigator(onGenerateRoute: onGenerateRoute);
+    return Navigator(key: navigatorKey, onGenerateRoute: onGenerateRoute);
   }
 
   void navigateLogin() {
@@ -51,10 +51,7 @@ abstract class ProductCoordinatorBase extends StatelessWidget {
         return MaterialPageRoute(
             settings: settings,
             builder: (BuildContext context) => const OrderScreen());
-      case Routes.profileScreen:
-        return MaterialPageRoute(
-            settings: settings,
-            builder: (BuildContext context) => ProfileScreen());
+
       case Routes.favorite:
         return MaterialPageRoute(
             settings: settings,

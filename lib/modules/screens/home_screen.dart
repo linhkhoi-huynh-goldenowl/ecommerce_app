@@ -13,7 +13,8 @@ import '../cubit/category/category_cubit.dart';
 import 'base_screens/product_coordinator_base.dart';
 
 class HomeScreen extends ProductCoordinatorBase {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({required GlobalKey navigatorKey, Key? key})
+      : super(key: key, navigatorKey: navigatorKey);
 
   @override
   Widget build(BuildContext context) {
