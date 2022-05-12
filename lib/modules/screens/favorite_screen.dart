@@ -1,4 +1,3 @@
-import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/tag/tag_cubit.dart';
 import 'package:e_commerce_shop_app/widgets/appbars/flexible_bar_with_search.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/button_find.dart';
@@ -54,9 +53,6 @@ class _FavoriteScreenState extends State<FavoriteScreen>
       providers: [
         BlocProvider<CategoryCubit>(
           create: (BuildContext context) => CategoryCubit(),
-        ),
-        BlocProvider<ProductCubit>(
-          create: (BuildContext context) => ProductCubit(),
         ),
         BlocProvider<TagCubit>(
           create: (BuildContext context) => TagCubit(),

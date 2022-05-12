@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
-import 'package:e_commerce_shop_app/modules/models/tag_model.dart';
 import 'package:e_commerce_shop_app/modules/repositories/provider/base_collection.dart';
 import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
 
@@ -22,16 +21,13 @@ class ProductProvider extends BaseCollectionReference<ProductItem> {
     return res;
   }
 
-  Future<XResult<ProductItem>> getProduct(String id) async {
-    final XResult<ProductItem> res = await get(id);
+  Future<XResult<List<ProductItem>>> getSaleProduct() async {
+    final XResult<List<ProductItem>> res = await queryNotNull("salePercent");
     return res;
   }
 
-  Future<XResult<List<ProductItem>>> getProductByTags(
-      List<TagModel> tags) async {
-    List<Map<String, dynamic>> tagNames = tags.map((e) => e.toJson()).toList();
-    final XResult<List<ProductItem>> res =
-        await queryContainList("tags", tagNames);
+  Future<XResult<ProductItem>> getProduct(String id) async {
+    final XResult<ProductItem> res = await get(id);
     return res;
   }
 }

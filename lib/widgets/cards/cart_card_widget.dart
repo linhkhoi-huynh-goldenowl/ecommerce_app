@@ -39,10 +39,8 @@ class CartCardWidget extends StatelessWidget {
                 onTap: () {
                   Navigator.of(NavigationService.navigatorKey.currentContext ??
                           context)
-                      .pushNamed(Routes.productDetailsScreen, arguments: {
-                    'product': cartModel.productItem,
-                    'contextParent': context
-                  });
+                      .pushNamed(Routes.productDetailsScreen,
+                          arguments: {'product': cartModel.productItem});
                 },
                 child: Container(
                   height: 104,
@@ -61,27 +59,23 @@ class CartCardWidget extends StatelessWidget {
                       const SizedBox(
                         width: 12,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 11,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(cartModel.productItem.title,
+                                  style: ETextStyle.metropolis(
+                                      weight: FontWeight.bold)),
+                              ColorSizeWidget(
+                                  color: cartModel.color, size: cartModel.size),
+                              _rowAdjustQuantity(
+                                  cartModel, addToCart, removeByOneCart)
+                            ],
                           ),
-                          Text(cartModel.productItem.title,
-                              style: ETextStyle.metropolis(
-                                  weight: FontWeight.bold)),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          ColorSizeWidget(
-                              color: cartModel.color, size: cartModel.size),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          _rowAdjustQuantity(
-                              cartModel, addToCart, removeByOneCart)
-                        ],
+                        ),
                       ),
                     ],
                   ),

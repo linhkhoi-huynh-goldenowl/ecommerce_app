@@ -22,22 +22,25 @@ class FavoriteCubit extends Cubit<FavoriteState> {
 
   void addFavorite(FavoriteProduct favoriteProduct) async {
     try {
-      emit(state.copyWith(status: FavoriteStatus.loading));
+      emit(state.copyWith(addStatus: AddFavoriteStatus.loading));
       if (checkNotContainInList(favoriteProduct)) {
         XResult<FavoriteProduct> favoritesRes =
             await Domain().favorite.addProductToFavorite(favoriteProduct);
         if (favoritesRes.isSuccess) {
-          emit(state.copyWith(status: FavoriteStatus.success, errMessage: ""));
+          emit(state.copyWith(
+              addStatus: AddFavoriteStatus.success, errMessage: ""));
         } else {
           emit(state.copyWith(
-              status: FavoriteStatus.failure, errMessage: favoritesRes.error));
+              addStatus: AddFavoriteStatus.failure,
+              errMessage: favoritesRes.error));
         }
       } else {
-        emit(state.copyWith(status: FavoriteStatus.success, errMessage: ""));
+        emit(state.copyWith(
+            addStatus: AddFavoriteStatus.success, errMessage: ""));
       }
     } catch (_) {
       emit(state.copyWith(
-          status: FavoriteStatus.failure, errMessage: "Something wrong"));
+          addStatus: AddFavoriteStatus.failure, errMessage: "Something wrong"));
     }
   }
 

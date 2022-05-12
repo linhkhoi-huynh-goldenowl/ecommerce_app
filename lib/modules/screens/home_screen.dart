@@ -1,4 +1,5 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
+import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_shop_app/widgets/carousel.dart';
 import 'package:e_commerce_shop_app/widgets/home_label_widget.dart';
@@ -6,6 +7,7 @@ import 'package:e_commerce_shop_app/widgets/cards/main_product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../dialogs/bottom_sheet_app.dart';
 import '../../widgets/loading_widget.dart';
 import '../cubit/category/category_cubit.dart';
 import 'base_screens/product_coordinator_base.dart';
@@ -84,8 +86,21 @@ Widget _displaySaleList() {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 16),
-                    child: MainProductCard(
-                      product: state.productSaleList[index],
+                    child: BlocBuilder<FavoriteCubit, FavoriteState>(
+                      buildWhen: (previous, current) =>
+                          previous.favorites != current.favorites,
+                      builder: (context, stateFavorite) {
+                        return MainProductCard(
+                          func: () => BottomSheetApp.showModalFavorite(
+                            context,
+                            state.productSaleList[index],
+                          ),
+                          product: state.productSaleList[index],
+                          isFavorite: context
+                              .read<FavoriteCubit>()
+                              .checkContainId(state.productSaleList[index].id!),
+                        );
+                      },
                     ),
                   );
                 },
@@ -126,8 +141,22 @@ Widget _displayNewList() {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 16),
-                    child:
-                        MainProductCard(product: state.productNewList[index]),
+                    child: BlocBuilder<FavoriteCubit, FavoriteState>(
+                      buildWhen: (previous, current) =>
+                          previous.favorites != current.favorites,
+                      builder: (context, stateFavorite) {
+                        return MainProductCard(
+                          func: () => BottomSheetApp.showModalFavorite(
+                            context,
+                            state.productNewList[index],
+                          ),
+                          product: state.productNewList[index],
+                          isFavorite: context
+                              .read<FavoriteCubit>()
+                              .checkContainId(state.productNewList[index].id!),
+                        );
+                      },
+                    ),
                   );
                 },
                 itemCount: state.productNewList.length > 3

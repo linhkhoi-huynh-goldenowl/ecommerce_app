@@ -140,11 +140,39 @@ class BaseCollectionReference<T extends BaseModel> {
     }
   }
 
+  Future<XResult<List<T>>> queryNotNull(String param) async {
+    try {
+      final QuerySnapshot<T> query = await ref
+          .where(param, isNull: false)
+          .get()
+          .timeout(const Duration(seconds: 5));
+      final docs = query.docs.map((e) => e.data()).toList();
+      return XResult.success(docs);
+    } catch (e) {
+      return XResult.exception(e);
+    }
+  }
+
   Future<XResult<List<T>>> queryWhereEqual(
       String param, String variable) async {
     try {
       final QuerySnapshot<T> query = await ref
           .where(param, isEqualTo: variable)
+          .get()
+          .timeout(const Duration(seconds: 5));
+      final docs = query.docs.map((e) => e.data()).toList();
+      return XResult.success(docs);
+    } catch (e) {
+      return XResult.exception(e);
+    }
+  }
+
+  Future<XResult<List<T>>> queryWhereEqualTwoParam(
+      String param1, String variable1, String param2, String variable2) async {
+    try {
+      final QuerySnapshot<T> query = await ref
+          .where(param1, isEqualTo: variable1)
+          .where(param2, isEqualTo: variable2)
           .get()
           .timeout(const Duration(seconds: 5));
       final docs = query.docs.map((e) => e.data()).toList();
@@ -162,25 +190,6 @@ class BaseCollectionReference<T extends BaseModel> {
           .where(param2, isLessThan: variable2 + "z")
           .where(param1, isEqualTo: variable1)
           .get();
-      final docs = query.docs.map((e) => e.data()).toList();
-      return XResult.success(docs);
-    } catch (e) {
-      return XResult.exception(e);
-    }
-  }
-
-  Future<XResult<List<T>>> queryContainList(
-      String param, List<Object?> listVariable) async {
-    try {
-      var queryContain = ref.where(param);
-
-      for (var i = 0; i < listVariable.length; i++) {
-        queryContain = queryContain
-            .where(param, arrayContains: listVariable[i])
-            .where(param);
-      }
-
-      final QuerySnapshot<T> query = await queryContain.get();
       final docs = query.docs.map((e) => e.data()).toList();
       return XResult.success(docs);
     } catch (e) {

@@ -26,7 +26,7 @@ class CartCubit extends Cubit<CartState> {
 
   void addToCart(CartModel cartModel) async {
     try {
-      emit(state.copyWith(status: CartStatus.loading));
+      emit(state.copyWith(addStatus: AddCartStatus.loading));
       final pref = await SharedPreferences.getInstance();
       final userId = pref.getString("userId");
       cartModel.userId = userId;
@@ -38,24 +38,26 @@ class CartCubit extends Cubit<CartState> {
         XResult<CartModel> cartsRes =
             await Domain().cart.addProductToCart(cartModel);
         if (cartsRes.isSuccess) {
-          emit(state.copyWith(status: CartStatus.success, errMessage: ""));
+          emit(
+              state.copyWith(addStatus: AddCartStatus.success, errMessage: ""));
         } else {
           emit(state.copyWith(
-              status: CartStatus.failure, errMessage: cartsRes.error));
+              addStatus: AddCartStatus.failure, errMessage: cartsRes.error));
         }
       } else {
         XResult<CartModel> cartsRes =
             await Domain().cart.addProductToCart(cartModel);
         if (cartsRes.isSuccess) {
-          emit(state.copyWith(status: CartStatus.success, errMessage: ""));
+          emit(
+              state.copyWith(addStatus: AddCartStatus.success, errMessage: ""));
         } else {
           emit(state.copyWith(
-              status: CartStatus.failure, errMessage: cartsRes.error));
+              addStatus: AddCartStatus.failure, errMessage: cartsRes.error));
         }
       }
     } catch (_) {
       emit(state.copyWith(
-          status: CartStatus.failure, errMessage: "Something wrong"));
+          addStatus: AddCartStatus.failure, errMessage: "Something wrong"));
     }
   }
 

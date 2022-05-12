@@ -7,17 +7,19 @@ import 'package:e_commerce_shop_app/widgets/image_product_widget.dart';
 import 'package:e_commerce_shop_app/widgets/price_text.dart';
 import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../dialogs/bottom_sheet_app.dart';
-import '../../modules/cubit/favorite/favorite_cubit.dart';
 import '../buttons/button_circle.dart';
 
 class ShopProductCard extends StatelessWidget {
-  const ShopProductCard({Key? key, required this.productItem})
+  const ShopProductCard(
+      {Key? key,
+      required this.productItem,
+      required this.func,
+      required this.isFavorite})
       : super(key: key);
   final ProductItem productItem;
-
+  final bool isFavorite;
+  final VoidCallback func;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,10 +33,8 @@ class ShopProductCard extends StatelessWidget {
                 onTap: () {
                   Navigator.of(NavigationService.navigatorKey.currentContext ??
                           context)
-                      .pushNamed(Routes.productDetailsScreen, arguments: {
-                    'product': productItem,
-                    'contextParent': context
-                  });
+                      .pushNamed(Routes.productDetailsScreen,
+                          arguments: {'product': productItem});
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -117,26 +117,14 @@ class ShopProductCard extends StatelessWidget {
           Positioned(
               bottom: 5,
               right: 0,
-              child: BlocBuilder<FavoriteCubit, FavoriteState>(
-                  buildWhen: (previous, current) =>
-                      previous.status != current.status,
-                  builder: (context, state) {
-                    return ButtonCircle(
-                        func: () => BottomSheetApp.showModalFavorite(
-                            context,
-                            productItem,
-                            productItem.colors[0].sizes,
-                            productItem.colors[0].color),
-                        iconPath: "assets/images/icons/heart.png",
-                        iconSize: 16,
-                        iconColor: const Color(0xffDADADA),
-                        fillColor: context
-                                .read<FavoriteCubit>()
-                                .checkContainId(productItem.id!)
-                            ? const Color(0xffDB3022)
-                            : Colors.white,
-                        padding: 12);
-                  }))
+              child: ButtonCircle(
+                  func: func,
+                  iconPath: "assets/images/icons/heart.png",
+                  iconSize: 16,
+                  iconColor: const Color(0xffDADADA),
+                  fillColor:
+                      isFavorite ? const Color(0xffDB3022) : Colors.white,
+                  padding: 12))
         ],
       ),
     );
