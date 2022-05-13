@@ -184,4 +184,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           messageError: "Something wrong"));
     }
   }
+
+  bool hasLogin() {
+    return state.status == AuthenticationStatus.authenticated;
+  }
 }

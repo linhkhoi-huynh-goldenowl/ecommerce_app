@@ -37,14 +37,14 @@ class ProductDetailsScreen extends StatelessWidget {
             create: (BuildContext context) =>
                 ProductDetailCubit(category: productItem.categoryName),
           ),
-          BlocProvider.value(
-            value: BlocProvider.of<ProductCubit>(contextParent),
+          BlocProvider<ProductCubit>(
+            create: (BuildContext context) => ProductCubit(),
           ),
-          BlocProvider.value(
-            value: BlocProvider.of<CartCubit>(contextParent),
+          BlocProvider<CartCubit>(
+            create: (BuildContext context) => CartCubit(),
           ),
-          BlocProvider.value(
-            value: BlocProvider.of<FavoriteCubit>(contextParent),
+          BlocProvider<FavoriteCubit>(
+            create: (BuildContext context) => FavoriteCubit(),
           ),
         ],
         child: Scaffold(
@@ -109,16 +109,25 @@ class ProductDetailsScreen extends StatelessWidget {
         backgroundColor: const Color(0xffF9F9F9),
         centerTitle: true,
         leading: const ButtonLeading(),
-        actions: [_shareButton()],
+        actions: [
+          BlocBuilder<ProductDetailCubit, ProductDetailState>(
+            builder: (context, state) {
+              return _shareButton(
+                  context.read<ProductDetailCubit>().shareProductLink);
+            },
+          )
+        ],
         title: Text(
           productItem.title,
           style: ETextStyle.metropolis(weight: FontWeight.w600),
         ));
   }
 
-  Widget _shareButton() {
+  Widget _shareButton(Function shareProduct) {
     return IconButton(
-        onPressed: () {},
+        onPressed: () {
+          shareProduct(productItem.id);
+        },
         icon: Image.asset(
           'assets/images/icons/share.png',
         ));

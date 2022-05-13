@@ -1,5 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:e_commerce_shop_app/modules/cubit/authentication/authentication_cubit.dart';
+import 'package:e_commerce_shop_app/utils/services/dynamic_link_services.dart';
 import 'package:e_commerce_shop_app/utils/services/firebase_message_services.dart';
 import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,6 +47,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    DynamicLinkServices.initDynamicLinks();
 
     AndroidInitializationSettings initializationSettingsAndroid =
         const AndroidInitializationSettings('app_icon');
