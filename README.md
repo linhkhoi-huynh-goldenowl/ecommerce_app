@@ -103,9 +103,9 @@ lib/
 ```
 
 ## Screenshot
-![screenshot1](https://github.com/linhkhoi-huynh-goldenowl/ecommerce_app/tree/main/assets/images/screenshots/screenshot1.png)
-![screenshot2](https://github.com/linhkhoi-huynh-goldenowl/ecommerce_app/tree/main/assets/images/screenshots/screenshot2.png)
-![screenshot3](https://github.com/linhkhoi-huynh-goldenowl/ecommerce_app/tree/main/assets/images/screenshots/screenshot3.png)
+![screenshot1](/assets/images/screenshots/screenshot1.png)
+![screenshot2](/assets/images/screenshots/screenshot2.png)
+![screenshot3](/assets/images/screenshots/screenshot3.png)
 
 ## Github Action
 - Github Action only deploys to google play console when pull request has been merged.
