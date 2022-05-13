@@ -48,8 +48,9 @@ class BottomSheetApp {
                     previous.addStatus != current.addStatus,
                 listener: (context, state) {
                   if (state.addStatus == AddCartStatus.success) {
-                    AppSnackBar.showSnackBar(context, "Add cart successfully");
                     Navigator.pop(context);
+                    AppSnackBar.showSnackBar(
+                        contextParent, "Add cart successfully");
                   }
                 },
                 child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
@@ -109,9 +110,9 @@ class BottomSheetApp {
                     previous.addStatus != current.addStatus,
                 listener: (context, state) {
                   if (state.addStatus == AddFavoriteStatus.success) {
+                    Navigator.pop(context);
                     AppSnackBar.showSnackBar(
                         context, "Add favorite successfully");
-                    Navigator.pop(context);
                   }
                 },
                 child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
@@ -147,7 +148,7 @@ class BottomSheetApp {
         });
   }
 
-  static void showModalFavoriteInProductDetail(BuildContext context,
+  static void showModalFavoriteInProductDetail(BuildContext contextParent,
       ProductItem product, List<SizeCloth> listSize, String color) {
     showModalBottomSheet<void>(
         constraints:
@@ -156,12 +157,12 @@ class BottomSheetApp {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(40), topRight: Radius.circular(40)),
         ),
-        context: context,
+        context: contextParent,
         builder: (_) {
           return MultiBlocProvider(
               providers: [
                 BlocProvider.value(
-                  value: BlocProvider.of<ProductDetailCubit>(context),
+                  value: BlocProvider.of<ProductDetailCubit>(contextParent),
                 ),
                 BlocProvider<FavoriteCubit>(
                   create: (BuildContext context) => FavoriteCubit(),
@@ -174,9 +175,9 @@ class BottomSheetApp {
                   if (state.addStatus == AddFavoriteStatus.success) {
                     context.read<ProductDetailCubit>().fetchRelatedList();
                     context.read<ProductDetailCubit>().checkContainFavorite();
-                    AppSnackBar.showSnackBar(
-                        context, "Add favorite successfully");
                     Navigator.pop(context);
+                    AppSnackBar.showSnackBar(
+                        contextParent, "Add favorite successfully");
                   }
                 },
                 child: BlocBuilder<ProductDetailCubit, ProductDetailState>(

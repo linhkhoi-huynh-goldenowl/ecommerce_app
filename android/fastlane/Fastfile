@@ -26,8 +26,22 @@ platform :android do
   
   desc "Deploy a new version to the Google Play"
   lane :production do
-	gradle(task: "clean bundleRelease")
-    upload_to_play_store
+    build_number = number_of_commits()
+    Dir.chdir "../.." do
+      sh("flutter", "packages", "get")
+      sh("flutter", "clean")
+      sh("flutter", "build", "appbundle", "--build-number=#{build_number}")
+    end
+   gb = google_play_track_version_codes(track: 'beta',json_key: 'play_config.json',package_name:'com.goldenowl.e_commerce_shop_app')
+   
+   version_updated  =  gb[0].to_i + 1
+
+   upload_to_play_store(track: 'production',
+                         skip_upload_apk:true,
+                         package_name: "com.goldenowl.e_commerce_shop_app",
+                         version_code:version_updated,
+                         aab: "../build/app/outputs/bundle/release/app-release.aab",
+                         json_key: "play_config.json")
   end
 end
 
