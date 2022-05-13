@@ -5,29 +5,27 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.0007333">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000889">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: google_play_track_version_codes" time="2.5864363">
+      <testcase classname="fastlane.lanes" name="1: google_play_track_version_codes" time="2.3870834">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: flutter packages get" time="4.3204225">
+      <testcase classname="fastlane.lanes" name="2: flutter packages get" time="4.2659668">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: flutter clean" time="1.3712362">
+      <testcase classname="fastlane.lanes" name="3: flutter clean" time="1.3985708">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: flutter build appbundle --build-number = 179" time="1.2942392">
-        
-          <failure message="C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/actions/actions_helper.rb:67:in `execute_action&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/fast_file.rb:222:in `sh&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/fast_file.rb:216:in `sh&apos;&#10;Fastfile:15:in `block (3 levels) in parsing_binding&apos;&#10;Fastfile:12:in `chdir&apos;&#10;Fastfile:12:in `block (2 levels) in parsing_binding&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/lane.rb:33:in `call&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/runner.rb:49:in `block in execute&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/runner.rb:45:in `chdir&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/runner.rb:45:in `execute&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/lane_manager.rb:47:in `cruise_lane&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/command_line_handler.rb:36:in `handle&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/commands_generator.rb:110:in `block (2 levels) in run&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/commander-4.6.0/lib/commander/command.rb:187:in `call&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/commander-4.6.0/lib/commander/command.rb:157:in `run&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/commander-4.6.0/lib/commander/runner.rb:444:in `run_active_command&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane_core/lib/fastlane_core/ui/fastlane_runner.rb:124:in `run!&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/commander-4.6.0/lib/commander/delegates.rb:18:in `run!&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/commands_generator.rb:354:in `run&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/commands_generator.rb:43:in `start&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/fastlane/lib/fastlane/cli_tools_distributor.rb:122:in `take_off&apos;&#10;C:/Ruby31-x64/lib/ruby/gems/3.1.0/gems/fastlane-2.205.2/bin/fastlane:23:in `&lt;top (required)&gt;&apos;&#10;C:/Ruby31-x64/bin/fastlane:32:in `load&apos;&#10;C:/Ruby31-x64/bin/fastlane:32:in `&lt;main&gt;&apos;&#10;&#10;Exit status of command &apos;flutter build appbundle --build-number = 179&apos; was 1 instead of 0.&#10;Target file &quot;179&quot; not found.&#10;" />
+      <testcase classname="fastlane.lanes" name="4: flutter build appbundle --build-number=179" time="77.1968072">
         
       </testcase>
     
