@@ -1,22 +1,25 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
-import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
-import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/utils/services/navigator_services.dart';
 import 'package:e_commerce_shop_app/widgets/buttons/button_circle.dart';
 import 'package:e_commerce_shop_app/widgets/price_text.dart';
 import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../chip_label.dart';
 import '../image_product_widget.dart';
 
 class MainProductCard extends StatelessWidget {
-  const MainProductCard({Key? key, required this.product}) : super(key: key);
+  const MainProductCard(
+      {Key? key,
+      required this.product,
+      required this.isFavorite,
+      required this.func})
+      : super(key: key);
   final ProductItem product;
-
+  final bool isFavorite;
+  final VoidCallback func;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,10 +33,8 @@ class MainProductCard extends StatelessWidget {
             onTap: () {
               Navigator.of(
                       NavigationService.navigatorKey.currentContext ?? context)
-                  .pushNamed(Routes.productDetailsScreen, arguments: {
-                'product': product,
-                'contextParent': context
-              });
+                  .pushNamed(Routes.productDetailsScreen,
+                      arguments: {'product': product});
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,28 +97,16 @@ class MainProductCard extends StatelessWidget {
           Positioned(
               top: 170,
               right: 0,
-              child: BlocBuilder<FavoriteCubit, FavoriteState>(
-                  buildWhen: (previous, current) =>
-                      previous.status != current.status,
-                  builder: (context, state) {
-                    return SizedBox(
-                      child: ButtonCircle(
-                          func: () => BottomSheetApp.showModalFavorite(
-                              context,
-                              product,
-                              product.colors[0].sizes,
-                              product.colors[0].color),
-                          iconPath: "assets/images/icons/heart.png",
-                          iconSize: 16,
-                          iconColor: const Color(0xffDADADA),
-                          fillColor: context
-                                  .read<FavoriteCubit>()
-                                  .checkContainId(product.id!)
-                              ? const Color(0xffDB3022)
-                              : Colors.white,
-                          padding: 12),
-                    );
-                  }))
+              child: SizedBox(
+                child: ButtonCircle(
+                    func: func,
+                    iconPath: "assets/images/icons/heart.png",
+                    iconSize: 16,
+                    iconColor: const Color(0xffDADADA),
+                    fillColor:
+                        isFavorite ? const Color(0xffDB3022) : Colors.white,
+                    padding: 12),
+              ))
         ],
       ),
     );

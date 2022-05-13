@@ -1,8 +1,6 @@
 import 'package:e_commerce_shop_app/config/routes/router.dart';
 import 'package:e_commerce_shop_app/config/styles/text_style.dart';
 import 'package:e_commerce_shop_app/dialogs/bottom_sheet_app.dart';
-import 'package:e_commerce_shop_app/modules/cubit/favorite/favorite_cubit.dart';
-import 'package:e_commerce_shop_app/modules/cubit/product/product_cubit.dart';
 import 'package:e_commerce_shop_app/modules/cubit/product_detail/product_detail_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/color_cloth.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
@@ -19,32 +17,19 @@ import 'package:e_commerce_shop_app/widgets/review_star_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../widgets/loading_widget.dart';
 import '../../widgets/price_text.dart';
-import '../cubit/cart/cart_cubit.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  const ProductDetailsScreen(
-      {required this.productItem, Key? key, required this.contextParent})
+  const ProductDetailsScreen({required this.productItem, Key? key})
       : super(key: key);
   final ProductItem productItem;
-  final BuildContext contextParent;
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
           BlocProvider<ProductDetailCubit>(
             create: (BuildContext context) =>
-                ProductDetailCubit(category: productItem.categoryName),
-          ),
-          BlocProvider<ProductCubit>(
-            create: (BuildContext context) => ProductCubit(),
-          ),
-          BlocProvider<CartCubit>(
-            create: (BuildContext context) => CartCubit(),
-          ),
-          BlocProvider<FavoriteCubit>(
-            create: (BuildContext context) => FavoriteCubit(),
+                ProductDetailCubit(productId: productItem.id!),
           ),
         ],
         child: Scaffold(
@@ -146,25 +131,30 @@ class ProductDetailsScreen extends StatelessWidget {
   Widget _showRelatedList() {
     return SizedBox(
       height: 300,
-      child: BlocBuilder<ProductCubit, ProductState>(
+      child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
         buildWhen: (previous, current) =>
-            previous.statusSale != current.statusSale,
+            previous.relatedList != current.relatedList,
         builder: (context, state) {
-          if (state.statusSale == ProductSaleStatus.loading) {
-            return const LoadingWidget();
-          } else {
-            return ListView.builder(
-              padding: const EdgeInsets.only(left: 16),
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: MainProductCard(product: state.productSaleList[index]),
-                );
-              },
-              itemCount: state.productSaleList.length,
-            );
-          }
+          return ListView.builder(
+            padding: const EdgeInsets.only(left: 16),
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: MainProductCard(
+                  func: () => BottomSheetApp.showModalFavoriteInProductDetail(
+                    context,
+                    state.relatedList[index].keys.elementAt(0),
+                    state.relatedList[index].keys.elementAt(0).colors[0].sizes,
+                    state.relatedList[index].keys.elementAt(0).colors[0].color,
+                  ),
+                  product: state.relatedList[index].keys.elementAt(0),
+                  isFavorite: state.relatedList[index].values.elementAt(0),
+                ),
+              );
+            },
+            itemCount: state.relatedList.length,
+          );
         },
       ),
     );
@@ -336,12 +326,12 @@ class ProductDetailsScreen extends StatelessWidget {
               "You can also like this",
               style: ETextStyle.metropolis(weight: FontWeight.w600),
             ),
-            BlocBuilder<ProductCubit, ProductState>(
+            BlocBuilder<ProductDetailCubit, ProductDetailState>(
               buildWhen: (previous, current) =>
-                  previous.productSaleList != current.productSaleList,
+                  previous.relatedList != current.relatedList,
               builder: (context, state) {
                 return Text(
-                  "${state.productSaleList.length} items",
+                  "${state.relatedList.length} items",
                   style: ETextStyle.metropolis(color: const Color(0xff9B9B9B)),
                 );
               },
@@ -406,19 +396,19 @@ class ProductDetailsScreen extends StatelessWidget {
 
   Widget _favoriteButton(
       ProductItem productItem, List<SizeCloth> listSize, String color) {
-    return BlocBuilder<FavoriteCubit, FavoriteState>(
-        buildWhen: (previous, current) => previous.status != current.status,
+    return BlocBuilder<ProductDetailCubit, ProductDetailState>(
+        buildWhen: (previous, current) =>
+            previous.containFavorite != current.containFavorite,
         builder: (context, state) {
           return ButtonCircle(
-              func: () => BottomSheetApp.showModalFavorite(
+              func: () => BottomSheetApp.showModalFavoriteInProductDetail(
                   context, productItem, listSize, color),
               iconPath: "assets/images/icons/heart.png",
               iconSize: 16,
               iconColor: const Color(0xffDADADA),
-              fillColor:
-                  context.read<FavoriteCubit>().checkContainId(productItem.id!)
-                      ? const Color(0xffDB3022)
-                      : Colors.white,
+              fillColor: state.containFavorite
+                  ? const Color(0xffDB3022)
+                  : Colors.white,
               padding: 12);
         });
   }

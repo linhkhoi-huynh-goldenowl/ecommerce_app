@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
-import 'package:e_commerce_shop_app/modules/models/tag_model.dart';
 import 'package:e_commerce_shop_app/modules/repositories/features/repository/product_repository.dart';
 import 'package:e_commerce_shop_app/modules/repositories/provider/product_provider.dart';
 import 'package:e_commerce_shop_app/modules/repositories/x_result.dart';
@@ -35,8 +34,7 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<XResult<List<ProductItem>>> getProductByTags(
-      List<TagModel> tags) async {
-    return await _productProvider.getProductByTags(tags);
+  Future<XResult<List<ProductItem>>> getProductSale() async {
+    return await _productProvider.getSaleProduct();
   }
 }

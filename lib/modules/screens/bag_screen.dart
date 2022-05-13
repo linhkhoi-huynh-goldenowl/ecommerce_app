@@ -15,7 +15,6 @@ import '../../utils/services/navigator_services.dart';
 import '../../widgets/buttons/button_intro.dart';
 import '../../widgets/cards/cart_card_widget.dart';
 import '../../widgets/textfields/promo_code_field.dart';
-import '../cubit/product/product_cubit.dart';
 
 class BagScreen extends StatelessWidget {
   const BagScreen({Key? key}) : super(key: key);
@@ -26,9 +25,6 @@ class BagScreen extends StatelessWidget {
       providers: [
         BlocProvider<PromoCubit>(
           create: (BuildContext context) => PromoCubit(),
-        ),
-        BlocProvider<ProductCubit>(
-          create: (BuildContext context) => ProductCubit(),
         ),
       ],
       child: BlocListener<CartCubit, CartState>(

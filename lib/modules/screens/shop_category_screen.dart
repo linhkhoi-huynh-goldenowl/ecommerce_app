@@ -10,8 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/buttons/button_leading.dart';
 import '../../widgets/appbars/filter_bar_widget.dart';
-import '../../widgets/loading_widget.dart';
 import '../../widgets/cards/main_product_card.dart';
+import '../../widgets/loading_widget.dart';
+import '../cubit/favorite/favorite_cubit.dart';
 
 class ShopCategoryScreen extends StatefulWidget {
   const ShopCategoryScreen({Key? key}) : super(key: key);
@@ -205,7 +206,19 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
       itemBuilder: (BuildContext context, int index) {
         return Padding(
           padding: const EdgeInsets.only(right: 16),
-          child: MainProductCard(product: productItems[index]),
+          child: BlocBuilder<FavoriteCubit, FavoriteState>(
+            buildWhen: (previous, current) =>
+                previous.favorites != current.favorites,
+            builder: (context, state) {
+              return MainProductCard(
+                  isFavorite: context
+                      .read<FavoriteCubit>()
+                      .checkContainId(productItems[index].id!),
+                  func: () => BottomSheetApp.showModalFavorite(
+                      context, productItems[index]),
+                  product: productItems[index]);
+            },
+          ),
         );
       },
       itemCount: productItems.length,
@@ -215,8 +228,19 @@ class _ShopCategoryScreenState extends State<ShopCategoryScreen>
   ListView _displayListView(List productItems) {
     return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
-          return ShopProductCard(
-            productItem: productItems[index],
+          return BlocBuilder<FavoriteCubit, FavoriteState>(
+            buildWhen: (previous, current) =>
+                previous.favorites != current.favorites,
+            builder: (context, state) {
+              return ShopProductCard(
+                isFavorite: context
+                    .read<FavoriteCubit>()
+                    .checkContainId(productItems[index].id!),
+                func: () => BottomSheetApp.showModalFavorite(
+                    context, productItems[index]),
+                productItem: productItems[index],
+              );
+            },
           );
         },
         itemCount: productItems.length);

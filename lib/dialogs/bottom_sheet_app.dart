@@ -10,6 +10,7 @@ import 'package:e_commerce_shop_app/modules/cubit/tag/tag_cubit.dart';
 import 'package:e_commerce_shop_app/modules/models/cart_model.dart';
 import 'package:e_commerce_shop_app/modules/models/product_item.dart';
 import 'package:e_commerce_shop_app/modules/models/size_cloth.dart';
+import 'package:e_commerce_shop_app/utils/helpers/show_snackbar.dart';
 import 'package:e_commerce_shop_app/widgets/popups/popup_choose_size.dart';
 import 'package:e_commerce_shop_app/widgets/popups/popup_countries.dart';
 import 'package:e_commerce_shop_app/widgets/popups/popup_credit.dart';
@@ -38,44 +39,52 @@ class BottomSheetApp {
                 BlocProvider.value(
                   value: BlocProvider.of<ProductDetailCubit>(contextParent),
                 ),
-                BlocProvider.value(
-                  value: BlocProvider.of<CartCubit>(contextParent),
+                BlocProvider<CartCubit>(
+                  create: (BuildContext context) => CartCubit(),
                 ),
               ],
-              child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
-                  buildWhen: (previous, current) =>
-                      previous.color != current.color ||
-                      previous.size != current.size ||
-                      previous.sizeStatus != current.sizeStatus,
-                  builder: (context, state) {
-                    return PopupChooseSize(
-                        title: "ADD TO CART",
-                        listSize: listSize,
-                        stateSize: state.size,
-                        selectStatus: state.sizeStatus,
-                        chooseSize:
-                            context.read<ProductDetailCubit>().chooseSize,
-                        func: () {
-                          if (state.size != "") {
-                            context.read<CartCubit>().addToCart(CartModel(
-                                title: product.title.toLowerCase(),
-                                productItem: product,
-                                size: state.size,
-                                color: state.color,
-                                quantity: 1));
-                            Navigator.pop(context);
-                          } else {
-                            context
-                                .read<ProductDetailCubit>()
-                                .setUnselectSize();
-                          }
-                        });
-                  }));
+              child: BlocListener<CartCubit, CartState>(
+                listenWhen: (previous, current) =>
+                    previous.addStatus != current.addStatus,
+                listener: (context, state) {
+                  if (state.addStatus == AddCartStatus.success) {
+                    AppSnackBar.showSnackBar(context, "Add cart successfully");
+                    Navigator.pop(context);
+                  }
+                },
+                child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
+                    buildWhen: (previous, current) =>
+                        previous.color != current.color ||
+                        previous.size != current.size ||
+                        previous.sizeStatus != current.sizeStatus,
+                    builder: (context, state) {
+                      return PopupChooseSize(
+                          title: "ADD TO CART",
+                          listSize: listSize,
+                          stateSize: state.size,
+                          selectStatus: state.sizeStatus,
+                          chooseSize:
+                              context.read<ProductDetailCubit>().chooseSize,
+                          func: () {
+                            if (state.size != "") {
+                              context.read<CartCubit>().addToCart(CartModel(
+                                  title: product.title.toLowerCase(),
+                                  productItem: product,
+                                  size: state.size,
+                                  color: state.color,
+                                  quantity: 1));
+                            } else {
+                              context
+                                  .read<ProductDetailCubit>()
+                                  .setUnselectSize();
+                            }
+                          });
+                    }),
+              ));
         });
   }
 
-  static void showModalFavorite(BuildContext context, ProductItem product,
-      List<SizeCloth> listSize, String color) {
+  static void showModalFavorite(BuildContext context, ProductItem product) {
     showModalBottomSheet<void>(
         constraints:
             const BoxConstraints(maxHeight: 375, minWidth: double.infinity),
@@ -89,39 +98,117 @@ class BottomSheetApp {
               providers: [
                 BlocProvider<ProductDetailCubit>(
                   create: (BuildContext context) =>
-                      ProductDetailCubit(category: product.categoryName),
+                      ProductDetailCubit(productId: product.id!),
                 ),
-                BlocProvider.value(
-                  value: BlocProvider.of<FavoriteCubit>(context),
+                BlocProvider<FavoriteCubit>(
+                  create: (BuildContext context) => FavoriteCubit(),
                 ),
               ],
-              child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
-                  buildWhen: (previous, current) =>
-                      previous.size != current.size ||
-                      previous.sizeStatus != current.sizeStatus,
-                  builder: (context, state) {
-                    return PopupChooseSize(
-                        title: "ADD TO FAVORITES",
-                        listSize: listSize,
-                        stateSize: state.size,
-                        selectStatus: state.sizeStatus,
-                        chooseSize:
-                            context.read<ProductDetailCubit>().chooseSize,
-                        func: () {
-                          if (state.size != "") {
-                            context.read<FavoriteCubit>().addFavorite(
-                                FavoriteProduct(
-                                    productItem: product,
-                                    size: state.size,
-                                    color: color));
-                            Navigator.pop(context);
-                          } else {
-                            context
-                                .read<ProductDetailCubit>()
-                                .setUnselectSize();
-                          }
-                        });
-                  }));
+              child: BlocListener<FavoriteCubit, FavoriteState>(
+                listenWhen: (previous, current) =>
+                    previous.addStatus != current.addStatus,
+                listener: (context, state) {
+                  if (state.addStatus == AddFavoriteStatus.success) {
+                    AppSnackBar.showSnackBar(
+                        context, "Add favorite successfully");
+                    Navigator.pop(context);
+                  }
+                },
+                child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
+                    buildWhen: (previous, current) =>
+                        previous.size != current.size ||
+                        previous.sizeStatus != current.sizeStatus,
+                    builder: (context, state) {
+                      return PopupChooseSize(
+                          title: "ADD TO FAVORITES",
+                          listSize: product.colors[0].sizes,
+                          stateSize: state.size,
+                          selectStatus: state.sizeStatus,
+                          chooseSize:
+                              context.read<ProductDetailCubit>().chooseSize,
+                          func: () {
+                            if (state.size != "") {
+                              context.read<FavoriteCubit>().addFavorite(
+                                  FavoriteProduct(
+                                      productItem: product,
+                                      size: state.size,
+                                      color: product.colors[0].color));
+                              context
+                                  .read<ProductDetailCubit>()
+                                  .checkContainFavorite();
+                            } else {
+                              context
+                                  .read<ProductDetailCubit>()
+                                  .setUnselectSize();
+                            }
+                          });
+                    }),
+              ));
+        });
+  }
+
+  static void showModalFavoriteInProductDetail(BuildContext context,
+      ProductItem product, List<SizeCloth> listSize, String color) {
+    showModalBottomSheet<void>(
+        constraints:
+            const BoxConstraints(maxHeight: 375, minWidth: double.infinity),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+        ),
+        context: context,
+        builder: (_) {
+          return MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: BlocProvider.of<ProductDetailCubit>(context),
+                ),
+                BlocProvider<FavoriteCubit>(
+                  create: (BuildContext context) => FavoriteCubit(),
+                ),
+              ],
+              child: BlocListener<FavoriteCubit, FavoriteState>(
+                listenWhen: (previous, current) =>
+                    previous.addStatus != current.addStatus,
+                listener: (context, state) {
+                  if (state.addStatus == AddFavoriteStatus.success) {
+                    context.read<ProductDetailCubit>().fetchRelatedList();
+                    context.read<ProductDetailCubit>().checkContainFavorite();
+                    AppSnackBar.showSnackBar(
+                        context, "Add favorite successfully");
+                    Navigator.pop(context);
+                  }
+                },
+                child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
+                    buildWhen: (previous, current) =>
+                        previous.size != current.size ||
+                        previous.sizeStatus != current.sizeStatus,
+                    builder: (context, state) {
+                      return PopupChooseSize(
+                          title: "ADD TO FAVORITES",
+                          listSize: listSize,
+                          stateSize: state.size,
+                          selectStatus: state.sizeStatus,
+                          chooseSize:
+                              context.read<ProductDetailCubit>().chooseSize,
+                          func: () {
+                            if (state.size != "") {
+                              context.read<FavoriteCubit>().addFavorite(
+                                  FavoriteProduct(
+                                      productItem: product,
+                                      size: state.size,
+                                      color: color));
+                              context
+                                  .read<ProductDetailCubit>()
+                                  .checkContainFavorite();
+                            } else {
+                              context
+                                  .read<ProductDetailCubit>()
+                                  .setUnselectSize();
+                            }
+                          });
+                    }),
+              ));
         });
   }
 

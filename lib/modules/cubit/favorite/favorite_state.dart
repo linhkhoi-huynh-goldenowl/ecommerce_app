@@ -6,15 +6,8 @@ enum FavoriteStatus {
   failure,
   loading,
 }
-enum GridFavoriteStatus { initialGrid, loadingGrid, successGrid, failureGrid }
-enum SearchFavoriteStatus {
-  initialSearch,
-  loadingSearch,
-  successSearch,
-  failureSearch
-}
 
-enum AddCartStatus {
+enum AddFavoriteStatus {
   initial,
   success,
   failure,
@@ -22,22 +15,19 @@ enum AddCartStatus {
 }
 
 class FavoriteState extends Equatable {
-  const FavoriteState({
-    this.gridStatus = GridFavoriteStatus.initialGrid,
-    this.searchStatus = SearchFavoriteStatus.initialSearch,
-    this.categoryName = "",
-    this.searchInput = "",
-    this.isSearch = false,
-    this.sort = ChooseSort.newest,
-    this.isGridLayout = false,
-    this.favorites = const <FavoriteProduct>[],
-    this.status = FavoriteStatus.initial,
-    this.products = const <ProductItem>[],
-    this.isShowCategoryBar = true,
-    this.errMessage = "",
-    this.addCartStatus = AddCartStatus.initial,
-    this.tagsFilter = const [],
-  });
+  const FavoriteState(
+      {this.categoryName = "",
+      this.searchInput = "",
+      this.isSearch = false,
+      this.sort = ChooseSort.newest,
+      this.isGridLayout = false,
+      this.favorites = const <FavoriteProduct>[],
+      this.status = FavoriteStatus.initial,
+      this.products = const <ProductItem>[],
+      this.isShowCategoryBar = true,
+      this.errMessage = "",
+      this.tagsFilter = const [],
+      this.addStatus = AddFavoriteStatus.initial});
   final List<FavoriteProduct> favorites;
 
   List<FavoriteProduct> get favoritesListToShow {
@@ -59,8 +49,7 @@ class FavoriteState extends Equatable {
 
   final List<ProductItem> products;
   final FavoriteStatus status;
-  final GridFavoriteStatus gridStatus;
-  final SearchFavoriteStatus searchStatus;
+  final AddFavoriteStatus addStatus;
   final bool isGridLayout;
   final ChooseSort sort;
   final String searchInput;
@@ -68,7 +57,6 @@ class FavoriteState extends Equatable {
   final bool isShowCategoryBar;
   final String categoryName;
   final String errMessage;
-  final AddCartStatus addCartStatus;
   final List<TagModel> tagsFilter;
   FavoriteState copyWith(
       {FavoriteStatus? status,
@@ -78,13 +66,11 @@ class FavoriteState extends Equatable {
       bool? isSearch,
       String? searchInput,
       String? categoryName,
-      GridFavoriteStatus? gridStatus,
-      SearchFavoriteStatus? searchStatus,
       List<ProductItem>? products,
       bool? isShowCategoryBar,
       String? errMessage,
-      AddCartStatus? addCartStatus,
-      List<TagModel>? tagsFilter}) {
+      List<TagModel>? tagsFilter,
+      AddFavoriteStatus? addStatus}) {
     return FavoriteState(
         status: status ?? this.status,
         favorites: favorites ?? this.favorites,
@@ -93,13 +79,11 @@ class FavoriteState extends Equatable {
         searchInput: searchInput ?? this.searchInput,
         isSearch: isSearch ?? this.isSearch,
         categoryName: categoryName ?? this.categoryName,
-        gridStatus: gridStatus ?? this.gridStatus,
-        searchStatus: searchStatus ?? this.searchStatus,
         products: products ?? this.products,
         isShowCategoryBar: isShowCategoryBar ?? this.isShowCategoryBar,
         errMessage: errMessage ?? this.errMessage,
-        addCartStatus: addCartStatus ?? this.addCartStatus,
-        tagsFilter: tagsFilter ?? this.tagsFilter);
+        tagsFilter: tagsFilter ?? this.tagsFilter,
+        addStatus: addStatus ?? this.addStatus);
   }
 
   @override
@@ -111,12 +95,10 @@ class FavoriteState extends Equatable {
         searchInput,
         isSearch,
         categoryName,
-        gridStatus,
-        searchStatus,
         products,
         isShowCategoryBar,
         errMessage,
-        addCartStatus,
-        tagsFilter
+        tagsFilter,
+        addStatus
       ];
 }

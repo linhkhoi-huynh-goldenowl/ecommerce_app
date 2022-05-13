@@ -63,12 +63,10 @@ abstract class ProductCoordinatorBase extends StatelessWidget {
       case Routes.productDetailsScreen:
         {
           final argumentDetail = settings.arguments as Map;
-          final BuildContext contextParent = argumentDetail['contextParent'];
           final ProductItem product = argumentDetail['product'];
           return MaterialPageRoute(
               settings: settings,
               builder: (_) => ProductDetailsScreen(
-                    contextParent: contextParent,
                     productItem: product,
                   ));
         }

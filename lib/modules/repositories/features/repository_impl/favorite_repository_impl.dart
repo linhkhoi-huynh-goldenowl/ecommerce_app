@@ -27,4 +27,17 @@ class FavoriteRepositoryImpl implements FavoriteRepository {
     final userId = pref.getString("userId");
     return _favoriteProvider.snapshotsAllQuery("userId", userId);
   }
+
+  @override
+  Future<XResult<List<FavoriteProduct>>> getFavoritesByProductId(
+      String id, String userId) async {
+    return await _favoriteProvider.queryWhereEqualTwoParam(
+        "productItem.id", id, "userId", userId);
+  }
+
+  @override
+  Future<XResult<List<FavoriteProduct>>> getFavoritesByUser(
+      String userId) async {
+    return await _favoriteProvider.queryWhereEqual("userId", userId);
+  }
 }

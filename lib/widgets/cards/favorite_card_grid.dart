@@ -32,10 +32,8 @@ class FavoriteCardGrid extends StatelessWidget {
             onTap: () {
               Navigator.of(
                       NavigationService.navigatorKey.currentContext ?? context)
-                  .pushNamed(Routes.productDetailsScreen, arguments: {
-                'product': favoriteProduct.productItem,
-                'contextParent': context
-              });
+                  .pushNamed(Routes.productDetailsScreen,
+                      arguments: {'product': favoriteProduct.productItem});
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,42 +116,41 @@ class FavoriteCardGrid extends StatelessWidget {
                     size: 14),
               )),
           Positioned(
-              top: 170,
-              right: 0,
-              child: BlocListener<FavoriteCubit, FavoriteState>(
-                listenWhen: (previous, current) =>
-                    previous.addCartStatus != current.addCartStatus,
-                listener: (context, state) {
-                  if (state.addCartStatus == AddCartStatus.failure) {
-                    AppSnackBar.showSnackBar(context, state.errMessage);
-                  }
-                },
-                child: BlocBuilder<CartCubit, CartState>(
-                  buildWhen: (previous, current) =>
-                      previous.status != current.status,
-                  builder: (context, stateCart) {
-                    return ButtonCircle(
-                        func: context
+            top: 170,
+            right: 0,
+            child: BlocConsumer<CartCubit, CartState>(
+              listenWhen: (previous, current) =>
+                  previous.addStatus != current.addStatus,
+              listener: (context, state) {
+                if (state.addStatus == AddCartStatus.failure) {
+                  AppSnackBar.showSnackBar(context, state.errMessage);
+                }
+              },
+              buildWhen: (previous, current) =>
+                  previous.status != current.status,
+              builder: (context, stateCart) {
+                return ButtonCircle(
+                    func: context
+                            .read<CartCubit>()
+                            .checkContainInFavorite(favoriteProduct)
+                        ? () {}
+                        : () {
+                            context
                                 .read<CartCubit>()
-                                .checkContainInFavorite(favoriteProduct)
-                            ? () {}
-                            : () {
-                                context
-                                    .read<CartCubit>()
-                                    .addFavoriteToCart(favoriteProduct);
-                              },
-                        iconPath: "assets/images/icons/bag_favorite.png",
-                        iconSize: 17,
-                        iconColor: const Color(0xffF9F9F9),
-                        fillColor: context
-                                .read<CartCubit>()
-                                .checkContainInFavorite(favoriteProduct)
-                            ? const Color(0xffDB3022)
-                            : const Color(0xff9B9B9B),
-                        padding: 12);
-                  },
-                ),
-              ))
+                                .addFavoriteToCart(favoriteProduct);
+                          },
+                    iconPath: "assets/images/icons/bag_favorite.png",
+                    iconSize: 17,
+                    iconColor: const Color(0xffF9F9F9),
+                    fillColor: context
+                            .read<CartCubit>()
+                            .checkContainInFavorite(favoriteProduct)
+                        ? const Color(0xffDB3022)
+                        : const Color(0xff9B9B9B),
+                    padding: 12);
+              },
+            ),
+          )
         ],
       ),
     );
