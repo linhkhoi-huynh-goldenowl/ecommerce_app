@@ -8,6 +8,8 @@ import '../../config/styles/text_style.dart';
 import '../../utils/helpers/promo_helpers.dart';
 import '../../widgets/e_cached_image.dart';
 import '../../widgets/loading_widget.dart';
+import '../cubit/cart/cart_cubit.dart';
+import '../cubit/navigation/navigation_cubit.dart';
 import '../models/promo_model.dart';
 
 class PromoListScreen extends StatelessWidget {
@@ -48,7 +50,14 @@ class PromoListScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 32),
                       itemBuilder: (context, index) {
-                        return _promoItem(state.promoListToShow[index]);
+                        return _promoItem(state.promoListToShow[index], () {
+                          Navigator.of(context).pop();
+                          BlocProvider.of<NavigationCubit>(context)
+                              .getNavBarItem(NavbarItem.bag);
+                          context
+                              .read<CartCubit>()
+                              .setPromoToCart(state.promos[index]);
+                        });
                       },
                       itemCount: state.promoListToShow.length,
                     );
@@ -100,9 +109,9 @@ class PromoListScreen extends StatelessWidget {
               children: [
                 Text(
                   state.sort == PromoSort.endDateAsc
-                      ? "End Date ▲"
+                      ? "Date ▲"
                       : state.sort == PromoSort.endDateDesc
-                          ? 'End date ▼'
+                          ? 'Date ▼'
                           : state.sort == PromoSort.percentAsc
                               ? 'Percent ▲'
                               : 'Percent ▼',
@@ -160,7 +169,7 @@ class PromoListScreen extends StatelessWidget {
     );
   }
 
-  Widget _promoItem(PromoModel promoModel) {
+  Widget _promoItem(PromoModel promoModel, VoidCallback func) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.only(right: 16),
@@ -180,7 +189,8 @@ class PromoListScreen extends StatelessWidget {
         children: [
           _showSalePercent(promoModel.backgroundImage, promoModel.salePercent),
           _showTitlePromo(promoModel.name, promoModel.id ?? ""),
-          _showApply(PromoHelpers.getDaysRemain(promoModel.endDate.toDate()))
+          _showApply(
+              PromoHelpers.getDaysRemain(promoModel.endDate.toDate()), func)
         ],
       ),
     );
@@ -265,11 +275,36 @@ class PromoListScreen extends StatelessWidget {
     );
   }
 
-  Widget _showApply(int day) {
-    return Text(
-      "$day days remaining",
-      style:
-          ETextStyle.metropolis(color: const Color(0xff9B9B9B), fontSize: 11),
+  Widget _showApply(int day, VoidCallback func) {
+    return Column(
+      children: [
+        Text(
+          "$day days remaining",
+          style: ETextStyle.metropolis(
+              color: const Color(0xff9B9B9B), fontSize: 11),
+        ),
+        _applyButton(func)
+      ],
+    );
+  }
+
+  Widget _applyButton(VoidCallback func) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 26),
+          primary: const Color(0xffDB3022),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          elevation: 5,
+        ),
+        onPressed: func,
+        child: Text("Apply",
+            style: ETextStyle.metropolis(
+                fontSize: 11, color: const Color(0xffFFFFFF))),
+      ),
     );
   }
 }
