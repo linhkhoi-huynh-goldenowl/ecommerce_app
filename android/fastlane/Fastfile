@@ -7,12 +7,12 @@ platform :android do
   desc "Deploy a beta version to the Google Play"
   lane :beta do
     gb = google_play_track_version_codes(track: 'beta',json_key: 'play_config.json',package_name:'com.goldenowl.e_commerce_shop_app')
-    
+    equal = "="
     version_updated  =  gb[0].to_i + 1
      Dir.chdir "../.." do
        sh("flutter", "packages", "get")
        sh("flutter", "clean")
-       sh("flutter", "build", "appbundle", "\-\-build\-number"+"\="+"#{version_updated}")
+       sh("flutter build appbundle --build-number#{equal}#{version_updated}")
      end
     
 
