@@ -224,22 +224,14 @@ class OrderDetailScreen extends StatelessWidget {
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.43,
-                  child: state.reOrderStatus == ReOrderStatus.loading
-                      ? const LoadingWidget()
-                      : _buttonReorder(() {
-                          BlocProvider.of<OrderCubit>(context)
-                              .reOrder(order.listItems, context);
-                        })),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.43,
-                  child: _buttonFeedback(() {}))
-            ],
-          ),
+          child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.43,
+              child: state.reOrderStatus == ReOrderStatus.loading
+                  ? const LoadingWidget()
+                  : _buttonReorder(() {
+                      BlocProvider.of<OrderCubit>(context)
+                          .reOrder(order.listItems, context);
+                    })),
         );
       },
     );
@@ -260,23 +252,6 @@ class OrderDetailScreen extends StatelessWidget {
       child: Text("Reorder",
           style: ETextStyle.metropolis(
               fontSize: 14, color: const Color(0xff222222))),
-    );
-  }
-
-  Widget _buttonFeedback(VoidCallback func) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 25),
-        primary: const Color(0xffDB3022),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
-        elevation: 3,
-      ),
-      onPressed: func,
-      child: Text("Leave feedback",
-          style: ETextStyle.metropolis(
-              fontSize: 14, color: const Color(0xffffffff))),
     );
   }
 
