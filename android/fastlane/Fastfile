@@ -12,7 +12,7 @@ platform :android do
      Dir.chdir "../.." do
        sh("flutter", "packages", "get")
        sh("flutter", "clean")
-       sh("flutter", "build", "appbundle", "--build-number"+"="+"#{version_updated}")
+       sh("flutter", "build", "appbundle", "\-\-build\-number"+"\="+"#{version_updated}")
      end
     
 
