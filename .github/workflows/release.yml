@@ -34,7 +34,6 @@ jobs:
           bundle install --jobs 4 --retry 3
           
       - name: Configure Keystore
-        working-directory: android
         run: |
           echo keyPassword=\${{ secrets.KEYSTORE_KEY_PASSWORD }} > ${{env.PROPERTIES_PATH}}
           echo storePassword=\${{ secrets.KEYSTORE_STORE_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
