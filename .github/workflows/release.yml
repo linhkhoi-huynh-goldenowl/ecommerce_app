@@ -21,6 +21,9 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.10.5'
+
+      env:
+          PROPERTIES_PATH: "./android/key.properties"
       
       - name: Install bundle
         working-directory: android
@@ -31,17 +34,12 @@ jobs:
       - name: Configure Keystore
         working-directory: android
         run: |
-          echo "$ANDROID_KEYSTORE_FILE" > keystore.jks.b64
-          base64 -d -i keystore.jks.b64 > app/upload-keystore1.jks
-          echo "storeFile=keystore" >> keystore.properties
-          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
-          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
-          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> keystore.properties
-        env:
-          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
-          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+          echo keyPassword=\${{ secrets.KEYSTORE_KEY_PASSWORD }} > ${{env.PROPERTIES_PATH}}
+          echo storePassword=\${{ secrets.KEYSTORE_STORE_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
+          echo keyAlias=\${{ secrets.KEYSTORE_KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
+       
+      - run: echo "${{ secrets.KEYSTORE_TXT }}" | base64 --decode > android/app/update-keystore1.jks
+        
 
       - name: Create Google Play Config file
         working-directory: android
