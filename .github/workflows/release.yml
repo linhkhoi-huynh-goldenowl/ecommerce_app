@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [closed]
 
+  env:
+        PROPERTIES_PATH: "./android/key.properties"
+
 jobs:
  distribute:
     runs-on: ubuntu-latest
@@ -22,8 +25,7 @@ jobs:
         with:
           flutter-version: '2.10.5'
 
-      env:
-          PROPERTIES_PATH: "./android/key.properties"
+      
       
       - name: Install bundle
         working-directory: android
