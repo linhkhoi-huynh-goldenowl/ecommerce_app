@@ -17,6 +17,12 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.10.4'
+
+      - name: Install app flutter
+        run: |
+          flutter clean
+          flutter pub get
+          flutter build appbundle
       
       - name: Install bundle
         working-directory: android
