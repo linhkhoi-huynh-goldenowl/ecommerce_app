@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [closed]
 
-  env:
-        PROPERTIES_PATH: "./android/key.properties"
+env:
+  PROPERTIES_PATH: "./android/key.properties"
 
 jobs:
  distribute:
