@@ -13,6 +13,7 @@ platform :android do
       sh("flutter", "clean")
        sh("flutter", "packages", "get")
        sh("flutter build appbundle")
+      end
 
     upload_to_play_store(track: 'beta',
                           skip_upload_apk:true,
