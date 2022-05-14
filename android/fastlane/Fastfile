@@ -10,8 +10,8 @@ platform :android do
     version_updated  =  gb[0].to_i + 1
     equal = "="
      Dir.chdir "../.." do
+      sh("flutter", "clean")
        sh("flutter", "packages", "get")
-       sh("flutter", "clean")
        sh("flutter build appbundle")
      end
     
