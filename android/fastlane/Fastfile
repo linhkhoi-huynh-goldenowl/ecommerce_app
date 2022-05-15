@@ -12,12 +12,11 @@ platform :android do
      Dir.chdir "../.." do
       sh("flutter", "clean")
        sh("flutter", "packages", "get")
-       sh("flutter build appbundle")
+       sh("flutter build appbundle --build-number=#{version_updated}")
       end
 
     upload_to_play_store(track: 'beta',
                           skip_upload_apk:true,
-                          version_code:version_updated,
                           package_name: "com.goldenowl.e_commerce_shop_app",
                           aab: "../build/app/outputs/bundle/release/app-release.aab",
                           json_key: "play_config.json")
