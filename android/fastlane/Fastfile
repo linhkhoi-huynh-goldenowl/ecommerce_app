@@ -24,14 +24,12 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :production do
     gb = google_play_track_version_codes(track: 'beta',json_key: 'play_config.json',package_name:'com.goldenowl.e_commerce_shop_app')
-    
     version_updated  =  gb[0].to_i + 1
-     Dir.chdir "../.." do
-       sh("flutter", "packages", "get")
-       sh("flutter", "clean")
-       sh("flutter", "build", "appbundle", "--build-number=#{version_updated}")
-     end
-    
+    Dir.chdir "../.." do
+      sh("flutter", "clean")
+      sh("flutter", "packages", "get")
+      sh("flutter build appbundle --build-number=#{version_updated}")
+    end
 
     upload_to_play_store(track: 'production',
                           skip_upload_apk:true,
